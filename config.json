@@ -1,0 +1,13 @@
+{
+	"server": {
+		"port": 3000,
+		"path": "localhost:",
+		"paths": {
+			"login": "/login", 
+			"addMove": "/addMove",
+			"undoMove": "/undoMove",
+			"forfeit": "/forfeit",
+			"ratings": "/ratings"
+		}
+	}
+}
