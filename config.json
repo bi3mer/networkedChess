@@ -8,6 +8,43 @@
 			"undoMove": "/undoMove",
 			"forfeit": "/forfeit",
 			"ratings": "/ratings"
+		},
+		"httpStatusCodes": {
+			"success": 200,
+			"validationError": 400,
+			"error": 404,
+		}
+	},
+	"db": {
+		"player": {
+			"path": "./playerDBMongo.js",
+			"mongo": {
+				"url": "mongodb://localhost/test",
+				"settings": {
+					"db": { 
+						"native_parser": true 
+					}, 
+					"server": { 
+						"poolSize": 5,
+						"keepAlive": 1 
+					}
+				}
+			}
+		},
+		"game": {
+			"path": "./gameDBMongo.js",
+			"mongo": {
+				"url": "mongodb://localhost/test",
+				"settings": {
+					"db": { 
+						"native_parser": true 
+					}, 
+					"server": { 
+						"poolSize": 5,
+						"keepAlive": 1 
+					}
+				}
+			}
 		}
 	}
 }
