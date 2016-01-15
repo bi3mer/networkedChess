@@ -11,13 +11,37 @@
 		 * @param {string} user - user name
 		 * @param {string} pass - password
 		 * @param {Object} res  - Response object to send back to request
+		 * @return {Object}     - Return status defining whether account was made or not
+		 */
+		createAccount: function(user, pass, res) {
+			// Call Player Db to test credentials
+			PlayersDB.createAccount(user, pass, function loginToServer(err) {
+				// Check valid credentials	
+				if(!err) {
+					// Set status to succesful
+					res.status(global.config.server.httpStatusCodes.success);
+				} else {
+					// Set status to validation error
+					res.status(global.config.server.httpStatusCodes.validationError);
+					res.send('User name already exists');
+				}
+				
+				res.end();
+			});
+		},
+
+		/**
+		 * Log player into server
+		 * @param {string} user - user name
+		 * @param {string} pass - password
+		 * @param {Object} res  - Response object to send back to request
 		 * @return {Object}     - Return status defining whether credentials are correct or not
 		 */
 		login: function(user, pass, res) {
 			// Call Player Db to test credentials
-			PlayersDB.login(user, pass, function loginToServer(isValidCredentials) {
+			PlayersDB.login(user, pass, function loginToServer(err) {
 				// Check valid credentials	
-				if(isValidCredentials) {
+				if(!err) {
 					// Set status to succesful
 					res.status(global.config.server.httpStatusCodes.success);
 
@@ -26,10 +50,9 @@
 				} else {
 					// Set status to validation error
 					res.status(global.config.server.httpStatusCodes.validationError);
+					res.status('Invalid user name or password');
 				}
-				
-				// TODO: Check if send and end is necessary, or if we can remove some of them
-				res.send();
+
 				res.end();
 			});
 		},
@@ -42,18 +65,17 @@
 		 * @return {Object}       - Return status defining whether adding move was succesful or not
 		 */
 		addMove: function(gameID, move, res) {
-			GamesDB.addMove(gameID, move, function addMoveSuccesful(addMoveSuccesful) {
+			GamesDB.addMove(gameID, move, function addMoveSuccesful(err) {
 				// Check if adding move to database was succesful
-				if(addMoveSuccesful) {
+				if(!err) {
 					// Set status to succesful
 					res.status(global.config.server.httpStatusCodes.success);
 				} else {
 					// Game wasn't found
 					res.status(global.config.server.httpStatusCodes.error);
+					res.send('Error adding move');
 				}
 
-				// TODO: Check if send and end is necessary, or if we can remove some of them
-				res.send();
 				res.end();
 			});
 		},
@@ -66,15 +88,14 @@
 		 * @return {Object}       - Return status defining whether adding move was succesful or not
 		 */
 		undoMove: function(gameID, res) {
-			GamesDB.removeMove(gameID, function removeMoveAndUpdateDB(removeMoveSuccesful) {
-				if(removeMoveSuccesful) {
+			GamesDB.removeMove(gameID, function removeMoveAndUpdateDB(err) {
+				if(!err) {
 					res.status(global.config.server.httpStatusCodes.succesful);
 				} else {
 					res.status(global.config.server.httpStatusCodes.error);
+					res.send('Error undoing move');
 				}
 
-				// TODO: Check if send and end is necessary, or if we can remove some of them
-				res.send();
 				res.end();				
 			});
 		},
@@ -87,15 +108,14 @@
 		 * @return {Object}       - Return status defining whether adding move was succesful or not
 		 */
 		forfeit: function(gameID, user, res) {
-			GamesDB.forfeit(gameID, function forfeitGame(forfeitSuccesful) {
-				if(forfeitSuccesful) {
+			GamesDB.forfeit(gameID, function forfeitGame(err) {
+				if(!err) {
 					res.status(global.config.httpStatusCodes.succesful);
 				} else {
 					res.status(global.config.httpStatusCodes.error);
+					res.send('Error forfeiting game')
 				}
 
-				// TODO: Check if send and end is necessary, or if we can remove some of them
-				res.send();
 				res.end();
 			});
 		},
@@ -107,8 +127,8 @@
 		 * @return {Object}       - Return status defining whether adding move was succesful or not
 		 */
 		ratings: function(user, res) {
-			PlayersDB.rating(user, function ratings(error, win, loss, draw) {
-				if(!error) {
+			PlayersDB.rating(user, function ratings(err, win, loss, draw) {
+				if(!err) {
 					res.status(global.config.httpStatusCodes.succesful);
 
 					// send wins, losses,and draws
@@ -119,7 +139,7 @@
 					});
 				} else {
 					res.status(global.config.httpStatusCodes.error);
-					res.send();
+					res.send('Error getting results for user: ', user);
 				}
 
 				res.end();

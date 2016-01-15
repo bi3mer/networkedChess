@@ -21,24 +21,28 @@
 	}));
 
 	// Paths
-	app.post(global.config.server.paths.login, function login(req, res) {
-
+	app.post(global.config.server.paths.createAccount, function serverCreateAccount(req, res) {
+		serverApp.createAccount(req.body.user, req.body.pass, res);
 	});
 
-	app.post(global.config.server.paths.addMove, function addMove(req, res) {
+	app.post(global.config.server.paths.login, function serverLogin(req, res) {
+		serverApp.login(req.body.user, req.body.pass, res);
+	});
 
+	app.post(global.config.server.paths.addMove, function serverAddMove(req, res) {
+		serverApp.addMove(req.body.gameID, req.body.move, res);
 	})
 
-	app.post(global.config.server.paths.undoMove, function undoMove(req, res) {
-
+	app.post(global.config.server.paths.undoMove, function serverUndoMove(req, res) {
+		serverApp.undoMove(req.body.gameID, res);
 	});
 
-	app.post(global.config.server.paths.forfeit, function undoMove(req, res) {
-
+	app.post(global.config.server.paths.forfeit, function serverForfeit(req, res) {
+		serverApp.forfeit(req.body.gameID, req.body.user, res);
 	});
 
-	app.post(global.config.server.paths.ratings, function undoMove(req, res) {
-
+	app.post(global.config.server.paths.ratings, function serverRatings(req, res) {
+		serverApp.ratings(req.body.user, res);
 	});
 
 	// Open server up to calls
