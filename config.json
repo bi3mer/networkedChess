@@ -3,7 +3,7 @@
 		"port": 3000,
 		"path": "localhost:",
 		"paths": {
-			"createAccount": "./createAccount",
+			"createAccount": "/createAccount",
 			"login": "/login", 
 			"addMove": "/addMove",
 			"undoMove": "/undoMove",
@@ -13,12 +13,13 @@
 		"httpStatusCodes": {
 			"success": 200,
 			"validationError": 400,
-			"error": 404,
+			"error": 404
 		}
 	},
 	"db": {
+		"fakeDataTimeOutWaitTime": 2000,
 		"player": {
-			"path": "./playerDBMongo.js",
+			"path": "./playerDBMongo",
 			"mongo": {
 				"url": "mongodb://localhost/test",
 				"settings": {
@@ -33,7 +34,7 @@
 			}
 		},
 		"game": {
-			"path": "./gameDBMongo.js",
+			"path": "./gameDBMongo",
 			"mongo": {
 				"url": "mongodb://localhost/test",
 				"settings": {

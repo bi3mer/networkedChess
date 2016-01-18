@@ -1,20 +1,18 @@
 {
-  "name": "NetworkChess",
+  "name": "backEnd",
   "version": "0.0.0",
   "description": "",
   "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "mongoose": "^4.3.6",
+    "express": "^4.13.3"
+  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bi3mer/networkedChess.git"
-  },
-  "author": "Colan",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bi3mer/networkedChess/issues"
-  },
-  "homepage": "https://github.com/bi3mer/networkedChess"
+  "author": "Colan Biemer",
+  "license": "ISC"
 }

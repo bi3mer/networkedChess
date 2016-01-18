@@ -1,8 +1,8 @@
-;module.exports = (function initPlayerDBDispatcher() {
+;module.exports = (function initGameDBDispatcher() {
 	'use strict';
 
 	// Grab correct db from config
-	var db = require(global.config.db.player.path);
+	// var db = require(global.config.db.player.path);
 	
 	return {
 		/**
@@ -31,7 +31,7 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		rating: function(user, callback) {
-			db.rating(user, callback);
+			db.login(user, callback);
 		},
 
 		/**
