@@ -8,6 +8,9 @@
 	// file name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';
 
+	// Queue to hold players
+	var queue = [];
+
 	return {
 		/**
 		 * Log player into server
@@ -201,14 +204,50 @@
 					console.log(fileName, 'getUpdate: ');
 					
 					res.status(global.config.server.httpStatusCodes.success);
-					res.send('ID: ' + id);
+					res.send('getUpdate: ID, ' + id);
 				} else {
 					res.status(global.config.server.httpStatusCodes.validationError);
-					res.send('Error: ' + id);
+					res.send('getUpdate: Error, ' + id);
 				}
 
 				res.end();
 			});
-		}
+		},
+
+		/**
+		 * End game and declare winner
+		 * @param {string} user   - user name
+		 * @param {Object} res    - Response object to send back to request
+		 * @return {Object}       - Return {GameID | String} with game id or a string with queue message
+		 */
+		getMatch: function(user, res) {
+			// Note, this isn't secure because it doesn't test the username against the player database
+			console.log(fileName, 'getMatch: entered function');
+			res.status(global.config.server.httpStatusCodes.success);
+
+			if(global.utility.checking.isFilledArray(queue)) {
+				console.log(fileName, 'getMatch: found match');
+				console.log(fileName, 'getMatch: TODO, create new game and send that id');
+				res.send(queue.shift());
+			} else {
+				console.log(fileName, 'getMatch: no opponent found, added to queue');
+				queue.push(user);
+				res.send("Placed in queue");
+			}
+
+			res.end();
+		},
+
+		/**
+		 * End game and declare winner
+		 * @param {Object} res    - Response object to send back to request
+		 * @return {Object}       - Return {Array} with available opponenets looking for a game
+		 */
+		getQueue: function(res) {
+			console.log(fileName, 'getQueue: entered function');
+			res.status(global.config.server.httpStatusCodes.success);
+			res.send(queue);
+			res.end();
+		},
 	};
 }());

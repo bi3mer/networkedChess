@@ -9,7 +9,9 @@
 			"undoMove": "/undoMove",
 			"forfeit": "/forfeit",
 			"ratings": "/ratings",
-			"update": "/getUpdate"
+			"update": "/getUpdate",
+			"getQueue": "/getQueue",
+			"getMatch": "/getMatch"
 		},
 		"httpStatusCodes": {
 			"success": 200,

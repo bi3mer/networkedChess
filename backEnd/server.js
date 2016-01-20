@@ -68,6 +68,18 @@
 		serverApp.getUpdate(req.body.user, res);
 	});
 
+	// Listen to path to get users updates for the game
+	app.post(global.config.server.paths.getMatch, function getUpdate(req, res) {
+		console.log(fileName, 'getting match for user or adding to queue');
+		serverApp.getMatch(req.body.user, res);
+	});
+
+	// Listen to path to see the queue, NOTE: for debugging
+	app.post(global.config.server.paths.getQueue, function getUpdate(req, res) {
+		console.log(fileName, 'getting queue for user, NOTE: for debugging');
+		serverApp.getQueue(res);
+	});
+
 	// Open server up to calls on the configurations port
 	app.listen(global.config.server.port, function serverListen() {
 		console.log(fileName, 'Listening on port: ', global.config.server.port);
