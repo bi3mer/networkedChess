@@ -8,6 +8,7 @@
 	// Get utilities
 	global.utility = {};
 	global.utility.path = require('path');
+	global.utility.checking = require('./src/Utility/typeChecking');
 
 	// File name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';
@@ -61,9 +62,14 @@
 		serverApp.ratings(req.body.user, res);
 	});
 
+	// Listen to path to get users updates for the game
+	app.post(global.config.server.paths.update, function getUpdate(req, res) {
+		console.log(fileName, 'getting updates for user');
+		serverApp.getUpdate(req.body.user, res);
+	});
+
 	// Open server up to calls on the configurations port
-    app.listen(global.config.server.port, function serverListen() {
-        console.log(fileName, 'Listening on port: ', global.config.server.port);
-   });
-    
+	app.listen(global.config.server.port, function serverListen() {
+		console.log(fileName, 'Listening on port: ', global.config.server.port);
+	});
 }());

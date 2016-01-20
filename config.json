@@ -8,7 +8,8 @@
 			"addMove": "/addMove",
 			"undoMove": "/undoMove",
 			"forfeit": "/forfeit",
-			"ratings": "/ratings"
+			"ratings": "/ratings",
+			"update": "/getUpdate"
 		},
 		"httpStatusCodes": {
 			"success": 200,

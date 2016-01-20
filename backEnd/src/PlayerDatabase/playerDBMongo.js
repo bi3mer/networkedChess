@@ -8,6 +8,7 @@
 		userName: String,
 		passWord: String,
 		gameIDs: [String],
+		isPlaying: Boolean,
 		wins: Number,
 		losses: Number,
 		draws: Number
@@ -41,6 +42,7 @@
 			userName: user,
 			passWord: pass,
 			gameIDs: [],
+			isPlaying: false,
 			wins: 0,
 			losses: 0,
 			draws: 0
@@ -69,11 +71,12 @@
 		createAccount: function(user, pass, callback) {
 			console.log(fileName, 'createAccount: entered function');
 
+			// Get user from database
 			Player.find(createUserNameQuery(user), function createAccountCheckUser(err, results) {
 				// Check if valid results found
 				if(results && results.length > 0) {
 					// User Name was found
-					console.log(fileName, 'createAccount: user with this name found');
+					console.log(fileName, 'createAccount: User with this name found');
 					callback(true);
 				} else {
 					// User Name not found
@@ -86,13 +89,13 @@
 		/**
 		 * Log player into server
 		 * @param {string} user        - user name
-		 * @param {string} pass        - password
 		 * @param {function} callback  - Response object to send back to request
 		 * @return {bool}              - Return in callback success or not
 		 */
-		login: function(user, pass, callback) {
+		login: function(user, callback) {
 			console.log(fileName, 'login: entered function');
 
+			// Get user from database
 			Player.find(createUserNameQuery(user), function createAccountCheckUser(err, results) {
 				if(results && results.length > 0) {
 					// User Name was found
@@ -115,7 +118,8 @@
 		rating: function(user, callback) {
 			console.log(fileName, 'rating: entered function');
 
-			Player.find(createUserNameQuery(user), function createAccountCheckUser(err, results) {
+			// Get user from database
+			Player.find(createUserNameQuery(user), function getUserRating(err, results) {
 				if(results && results.length > 0) {
 					// User Name was found
 					console.log(fileName, 'rating: rating found');
@@ -126,6 +130,42 @@
 
 					// User Name not found
 					callback(true, -1, -1, -1);
+				}
+			});
+		},
+
+		/**
+		 * call getGameID(...) on correct db
+		 * @param {string} user            - user name
+		 * @param {function} callback      - Response object to send back to request
+		 * @return {bool, errStr | Number} - Errstr is error string and number on no error is the game id
+		 */
+		getGameID: function(user, callback) {
+			console.log(fileName, 'getGameID: getting user');
+
+			// Get user from database
+			Player.find(createUserNameQuery(user), function getUserGameID(err, results) {
+				// Make sure we have valid result
+				if(global.utility.checking.isFilledArray(results)) {
+					console.log(fileName, 'getGameID: valid user found');
+
+					// Check if player is playing and has a game id
+					if(results[0].isPlaying && global.utility.checking.isFilledArray(results[0].gameIDs)) {
+						console.log(fileName, 'getGameID: sending valid game id');
+
+						// Send game id
+						callback(false, results[0].gameIDs[results[0].gameIDs.length - 1]);
+					} else {
+						console.log(fileName, 'getGameID: user is not playing a game');
+
+						// Send error, the player is not playing a game
+						callback(true, 'User is not playing a game')
+					}
+				} else {
+					console.log(fileName, 'getGameID: no user found');
+
+					// Send error, the username wasn't found
+					callback(true, 'Username not found');
 				}
 			});
 		},

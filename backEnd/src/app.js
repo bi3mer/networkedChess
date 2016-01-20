@@ -52,7 +52,7 @@
 			console.log(fileName, 'login: entered function');
 
 			// Call Player Db to test credentials
-			PlayersDB.login(user, pass, function loginToServer(err, validPass) {
+			PlayersDB.login(user, function loginToServer(err, validPass) {
 				// Check valid credentials	
 				if(!err) {
 					console.log(fileName, 'login: no error found');
@@ -186,5 +186,29 @@
 				res.end();
 			});
 		},
+
+		/**
+		 * End game and declare winner
+		 * @param {string} user   - user name
+		 * @param {Object} res    - Response object to send back to request
+		 * @return {Object}       - Return {object} with updates to the game
+		 */
+		getUpdate: function(user, res) {
+			console.log(fileName, 'getUpdate: entered function');
+
+			PlayersDB.getGameID(user, function gameID(err, id) {
+				if(!err) {
+					console.log(fileName, 'getUpdate: ');
+					
+					res.status(global.config.server.httpStatusCodes.success);
+					res.send('ID: ' + id);
+				} else {
+					res.status(global.config.server.httpStatusCodes.validationError);
+					res.send('Error: ' + id);
+				}
+
+				res.end();
+			});
+		}
 	};
 }());

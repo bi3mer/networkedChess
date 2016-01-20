@@ -1,7 +1,7 @@
 ;module.exports = (function initTypeChecking() {
 	'use strict';
 
-	var fileName = global.utility.path.baseName(__filename) + ' ->';
+	var fileName = global.utility.path.basename(__filename) + ' ->';
 
 	return {
 		/**
@@ -52,9 +52,37 @@
 		 * @param {function} callback
 		 * @return {bool} - whether the callback is valid or not
 		 */
-		isValidObj: function(callback) {
+		isValidObj: function(obj) {
 			console.log(fileName, 'isValidObj: checking if valid or not. TODO: implement this');
 			return true;
 		},
+
+		/**
+		 * Check if the callback is a funciton and valid
+		 * @param {Array} arr
+		 * @return {bool} - whether the array is valid or not
+		 */
+		isArray: function(arr) {
+			console.log(fileName, 'isArray: checking if array is an array');
+			if(arr && Array.isArray(arr)) {
+				return true;
+			}
+
+			return false;
+		},
+
+		/**
+		 * Check if the callback is a funciton and valid
+		 * @param {Array} arr
+		 * @return {bool} - whether the callback is valid or not
+		 */
+		isFilledArray: function(arr) {
+			console.log(fileName, 'isFilledArray: checking if array is filled and valid or not.');
+			if(this.isArray(arr) && arr.length > 0) {
+				return true;
+			}
+
+			return false;
+		}
 	}
 }());
