@@ -15,17 +15,6 @@
 		},
 
 		/**
-		 * Check if the string is a string and not empty
-		 * @param {function} callback
-		 * @return {bool} - whether the callback is valid or not
-		 */
-		isValidString: function(string) {
-			console.log(fileName, 'isValidString: checking if valid or not. TODO: implement this');
-			// TODO: is this needed?
-			return true;
-		},
-
-		/**
 		 * Check if the callback is a number
 		 * @param {function} callback
 		 * @return {bool} - whether the callback is valid or not
@@ -65,6 +54,22 @@
 		isArray: function(arr) {
 			console.log(fileName, 'isArray: checking if array is an array');
 			if(arr && Array.isArray(arr)) {
+				return true;
+			}
+
+			return false;
+		},
+
+		/**
+		 * Check if str is valid string
+		 * @param {String} str - a string to be tested
+		 *
+		 */
+		isString: function(str) {
+			console.log(fileName, 'isString: checking if string is a string');
+
+			// Check if is valid or not
+			if(str && str !== '') {
 				return true;
 			}
 

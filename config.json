@@ -10,21 +10,25 @@
 			"forfeit": "/forfeit",
 			"ratings": "/ratings",
 			"update": "/getUpdate",
-			"getQueue": "/getQueue",
+			"getMatchMaking": "/getMatchMaking",
 			"getMatch": "/getMatch"
 		},
 		"httpStatusCodes": {
 			"success": 200,
+			"notModified": 304,
 			"validationError": 400,
 			"error": 404
 		}
+	},
+	"queue": {
+		"queuePath": "./standardQueue"
 	},
 	"db": {
 		"fakeDataTimeOutWaitTime": 2000,
 		"player": {
 			"path": "./playerDBMongo",
 			"mongo": {
-				"url": "mongodb://localhost/test",
+				"url": "mongodb://localhost/player",
 				"settings": {
 					"db": { 
 						"native_parser": true 
@@ -39,7 +43,7 @@
 		"game": {
 			"path": "./gameDBMongo",
 			"mongo": {
-				"url": "mongodb://localhost/test",
+				"url": "mongodb://localhost/game",
 				"settings": {
 					"db": { 
 						"native_parser": true 

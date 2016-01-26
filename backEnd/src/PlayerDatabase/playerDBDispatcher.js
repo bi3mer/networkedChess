@@ -50,12 +50,23 @@
 		},
 
 		/**
-		 * disconnect correct db
-		 * @param {function} callback - Response object to send back to request
+		 * call isPlaying(...) on correct db
+		 * @param {string} user        - user name
+		 * @param {function} callback  - Response object to send back to request
 		 */
-		disconnect: function(callback) {
-			console.log(fileName, 'disconnect: dispatching to db');
-			db.disconnect(call);
+		isPlaying: function(user, callback) {
+			console.log(fileName, 'isPlaying: dispatching to db');
+			db.getGameID(user, callback);
+		},
+		
+		/**
+		 * call getGameID(...) on correct db
+		 * @param {string} user        - user name
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		addGameID: function(user, callback) {
+			console.log(fileName, 'getGameID: dispatching to db');
+			db.getGameID(user, callback);
 		}
 	};
 }());

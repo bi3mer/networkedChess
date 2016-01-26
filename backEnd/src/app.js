@@ -1,25 +1,24 @@
 ;module.exports = (function initServerApp() {
 	'use strict';
 
-	// Databases
-	var PlayersDB = require('./PlayerDatabase/playerDBDispatcher');
-	var GamesDB   = require('./GameDatabase/gameDBDispatcher');
+	// Custom Modules
+	var PlayersDB   = require('./PlayerDatabase/playerDBDispatcher');
+	var GamesDB     = require('./GameDatabase/gameDBDispatcher');
+
+	var MatchMaking = require('./MatchMaking/matchMakingDispatcher');
 
 	// file name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';
 
-	// Queue to hold players
-	var queue = [];
-
 	return {
 		/**
 		 * Log player into server
-		 * @param {string} user - user name
-		 * @param {string} pass - password
-		 * @param {Object} res  - Response object to send back to request
-		 * @return {Object}     - Return status defining whether account was made or not
+		 * @param {string} user       - user name
+		 * @param {string} pass       - password
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether account was made or not
 		 */
-		createAccount: function(user, pass, res) {
+		createAccount: function(user, pass, callback) {
 			console.log(fileName, 'createAccount: entered function');
 
 			// Call Player Db to test credentials
@@ -27,151 +26,121 @@
 				// Check valid credentials	
 				if(!err) {
 					console.log(fileName, 'Create Account: Valid username, sent success');
-					res.send('Account created');
-
-					// Set status to succesful
-					res.status(global.config.server.httpStatusCodes.success);
+					callback(global.config.server.httpStatusCodes.success);
 				} else {
-					
 					console.log(fileName, 'Create Account: Invalid username');
-					res.status(global.config.server.httpStatusCodes.validationError);
-
-					// Set status to validation error
-					res.send('User name already exists');
+					callback(global.config.server.httpStatusCodes.validationError, 'User name already exists');
 				}
-				
-				res.end();
 			});
 		},
 
 		/**
 		 * Log player into server
-		 * @param {string} user - user name
-		 * @param {string} pass - password
-		 * @param {Object} res  - Response object to send back to request
-		 * @return {Object}     - Return status defining whether credentials are correct or not
+		 * @param {string} user       - user name
+		 * @param {string} pass       - password
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether credentials are correct or not
 		 */
-		login: function(user, pass, res) {
+		login: function(user, pass, callback) {
 			console.log(fileName, 'login: entered function');
 
 			// Call Player Db to test credentials
 			PlayersDB.login(user, function loginToServer(err, validPass) {
 				// Check valid credentials	
 				if(!err) {
-					console.log(fileName, 'login: no error found');
-
 					// Check password
 					if(pass === validPass) {
 						console.log(fileName, 'login: valid password');
-
-						// Set status to succesful
-						res.status(global.config.server.httpStatusCodes.success);
+						callback(global.config.server.httpStatusCodes.success);
 					} else {
 						console.log(fileName, 'login: invalid password');
-
-						// Set to failure
-						res.status(global.config.server.httpStatusCodes.validationError);
-						res.status('Invalid user name or password');
+						callback(global.config.server.httpStatusCodes.validationError, 'Invalid user name or password');
 					}
 				} else {
 					console.log(fileName, 'login: multiple or 0 accounts found');
-
-					// Set to failure
-					res.status(global.config.server.httpStatusCodes.validationError);
-					res.status('Invalid user name or password');
+					callback(global.config.server.httpStatusCodes.validationError, 'Invalid user name or password');
 				}
-
-				res.end();
 			});
 		},
 
 		/**
 		 * Add move to database
-		 * @param {string} gameID - id for game
-		 * @param {string} move   - users move
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return status defining whether adding move was succesful or not
+		 * @param {string} gameID     - id for game
+		 * @param {string} move       - users move
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		addMove: function(user, move, res) {
+		addMove: function(user, move, callback) {
 			console.log(fileName, 'addMove: entered function');
 
 			GamesDB.addMove(user, move, function addMoveSuccesful(err) {
 				// Check if adding move to database was succesful
 				if(!err) {
-					// Set status to succesful
-					res.status(global.config.server.httpStatusCodes.success);
+					console.log(fileName, 'addMove: sending back succes');
+					callback(global.config.server.httpStatusCodes.success);
 				} else {
-					// Game wasn't found
-					res.status(global.config.server.httpStatusCodes.error);
-					res.send('Error adding move');
+					console.log(fileName, 'addMove: sending back error, no game found');
+					callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
 				}
-
-				res.end();
 			});
 		},
 
+		// TODO: askUndoMove server path
 		/**
 		 * Remove move from database
-		 * @param {string} user   - users name
-		 * @param {string} move   - users move
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return status defining whether adding move was succesful or not
+		 * @param {string} user       - users name
+		 * @param {string} move       - users move
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		undoMove: function(user, res) {
+		undoMove: function(user, callback) {
 			console.log(fileName, 'undoMove: entered function');
 
 			// Todo: update to get users current game id
 			GamesDB.removeMove(gameID, function removeMoveAndUpdateDB(err) {
 				if(!err) {
-					res.status(global.config.server.httpStatusCodes.succesful);
+					console.log(fileName, 'undoMove: succesfull undid move');
+					callback(global.config.server.httpStatusCodes.succesful);
 				} else {
-					res.status(global.config.server.httpStatusCodes.error);
-					res.send('Error undoing move');
-				}
-
-				res.end();				
+					console.log(fileName, 'undoMove: unable to undomove');
+					callback(global.config.server.httpStatusCodes.error, 'Error: coudln\t undo move');
+				}			
 			});
 		},
 
 		/**
 		 * End game and declare winner
-		 * @param {string} user   - id for game
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return status defining whether adding move was succesful or not
+		 * @param {string} user       - id for game
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		forfeit: function(user, res) {
+		forfeit: function(user, callback) {
 			console.log(fileName, 'forfeit: entered function');
 
 			GamesDB.forfeit(gameID, function forfeitGame(err) {
 				if(!err) {
-					res.status(global.config.server.httpStatusCodes.success);
+					console.log(fileName, 'forfeit: entered function');
+					callback(global.config.httpStatusCodes.success);
 				} else {
-					res.status(global.config.httpStatusCodes.error);
-					res.send('Error forfeiting game')
+					console.log(fileName, 'forfeit: entered function');
+					callback(global.config.httpStatusCodes.error, 'Error forfeiting game');
 				}
-
-				res.end();
 			});
 		},
 
 		/**
 		 * End game and declare winner
-		 * @param {string} user   - user name
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return status defining whether adding move was succesful or not
+		 * @param {string} user       - user name
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		ratings: function(user, res) {
+		ratings: function(user, callback) {
 			console.log(fileName, 'ratings: entered function');
 
 			PlayersDB.rating(user, function ratings(err, win, loss, draw) {
 				if(!err) {
 					console.log(fileName, 'ratings: success, sending ratings')
-
-					// Set status to success
-					res.status(global.config.server.httpStatusCodes.success);
-
-					// send wins, losses,and draws
-					res.send({
+					callback(global.config.server.httpStatusCodes.success, {
 						'win': win,
 						'loss': loss,
 						'draw': draw
@@ -180,74 +149,93 @@
 					console.log(fileName, 'ratings: error from database');
 
 					// Set status to error
-					res.status(global.config.server.httpStatusCodes.validationError);
-
-					// Send error message
-					res.send('Error getting results for user: ' + user);
+					callback(global.config.server.httpStatusCodes.validationError, 'Error getting results for user: ' + user);
 				}
-
-				res.end();
 			});
 		},
 
 		/**
 		 * End game and declare winner
-		 * @param {string} user   - user name
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return {object} with updates to the game
+		 * @param {string} user       - user name
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return {object} with updates to the game
 		 */
-		getUpdate: function(user, res) {
+		getUpdate: function(user, isPlaying, callback) {
 			console.log(fileName, 'getUpdate: entered function');
 
+			// Get current game id for user
 			PlayersDB.getGameID(user, function gameID(err, id) {
 				if(!err) {
-					console.log(fileName, 'getUpdate: ');
-					
-					res.status(global.config.server.httpStatusCodes.success);
-					res.send('getUpdate: ID, ' + id);
-				} else {
-					res.status(global.config.server.httpStatusCodes.validationError);
-					res.send('getUpdate: Error, ' + id);
-				}
+					// If the user is playing
+					if(isPlaying) {
+						console.log(fileName, 'getUpdate: valid game id');
 
-				res.end();
+						// TODO: update this to go into games db
+						// Go to games database and check for updates
+						callback(global.config.server.httpStatusCodes.success, 'getUpdate: ID, ' + id + ' is in a game');
+					} else if(id) {
+						console.log(fileName, 'getUpdate: found game id for player');
+
+						// Player has found a match and will be notified
+						callback(global.config.server.httpStatusCodes.success, 'getUpdate: ID, ' + id + ' has found a match');
+					} else {
+						console.log(fileName, 'getUpdate: no match has been found');
+
+						// Player hasn't found a match yet
+						callback(global.config.server.httpStatusCodes.notModified, 'getUpdate: ID, ' + id + ' no match found yet');
+					}
+				} else {
+					console.log(fileName, 'getUpdate: error getting id');
+					callback(global.config.server.httpStatusCodes.validationError, 'getUpdate: Error, ' + id);
+				}
 			});
 		},
 
 		/**
 		 * End game and declare winner
-		 * @param {string} user   - user name
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return {GameID | String} with game id or a string with queue message
+		 * @param {string} user       - user name
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return {GameID | String} with game id or a string with queue message
 		 */
-		getMatch: function(user, res) {
+		getMatch: function(user, callback) {
 			// Note, this isn't secure because it doesn't test the username against the player database
 			console.log(fileName, 'getMatch: entered function');
-			res.status(global.config.server.httpStatusCodes.success);
 
-			if(global.utility.checking.isFilledArray(queue)) {
+			// Add or get player from queue
+			var otherPlayer = MatchMaking.goIntoMatchMaking(user);
+
+			// Check if other player found
+			if(global.utility.checking.isString(otherPlayer)) {
 				console.log(fileName, 'getMatch: found match');
-				console.log(fileName, 'getMatch: TODO, create new game and send that id');
-				res.send(queue.shift());
-			} else {
-				console.log(fileName, 'getMatch: no opponent found, added to queue');
-				queue.push(user);
-				res.send("Placed in queue");
-			}
 
-			res.end();
+				// Create a game
+				GamesDB.createGame(user, otherPlayer, function getGameID(err, id) {
+					if(!err) {
+						console.log(fileName, 'getMatch: valid game made, sending id to user');
+
+						// TODO: should I put this in after I update the dataabse entries?
+						callback(global.config.server.httpStatusCodes.success, id);
+
+						// TODO: update and uncomment
+						// PlayersDB.addGameID(user, id);
+						// PlayersDB.addGameID(otherPlayer, id);
+					}
+				});
+			} else {
+				console.log(fileName, 'getMatch: no opponent found, added to MatchMaking');
+
+				callback(global.config.server.httpStatusCodes.success, "Placed in MatchMaking");
+			}
 		},
 
 		/**
 		 * End game and declare winner
-		 * @param {Object} res    - Response object to send back to request
-		 * @return {Object}       - Return {Array} with available opponenets looking for a game
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return {Array} with available opponenets looking for a game
 		 */
-		getQueue: function(res) {
-			console.log(fileName, 'getQueue: entered function');
-			res.status(global.config.server.httpStatusCodes.success);
-			res.send(queue);
-			res.end();
+		getMatchMaking: function(callback) {
+			console.log(fileName, 'getMatchMaking: entered function');
+			callback(global.config.server.httpStatusCodes.success, MatchMaking.getDataStructure());
 		},
 	};
 }());

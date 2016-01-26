@@ -2,36 +2,38 @@
 	'use strict';
 
 	// Grab correct db from config
-	// var db = require(global.config.db.player.path);
+	var db = require(global.config.db.game.path);
 	
 	return {
 		/**
-		 * Call createAccount(...) on correct db
-		 * @param {string} user        - user name
-		 * @param {string} pass        - password
+		 * Call createGame(...) on correct db
+		 * @param {String} userOne     - id of first user
+		 * @param {String} userTwo     - id of second user
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		createAccount: function(user, pass, callback) {
-			db.createAccount(user, pass, callback);
+		createGame: function(id, userOne, userTwo, callback) {
+			db.createGame(userOne, userTwo, callback);
 		},
 
 		/**
-		 * Call login(...) on correct db
-		 * @param {string} user        - user name
-		 * @param {string} pass        - password
+		 * Call getUpdate(...) on correct db
+		 * @param {string} id          - id of game
+		 * @param {string} user        - user requesting update
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		login: function(user, pass, callback) {
-			db.login(user, pass, callback);
+		getUpdate: function(id, user, callback) {
+			db.getUpdate(id, callback);
 		},
 
 		/**
-		 * call rating(...) on correct db
-		 * @param {string} user        - user name
+		 * Call addMove(...) on correct db
+		 * @param {string} id          - id of game
+		 * @param {string} fromMove    - original place of move
+		 * @param {string} toMove      - place that piece moved to
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		rating: function(user, callback) {
-			db.login(user, callback);
+		addMove: function(id, fromMove, toMove, callback) {
+			db.addMove(id, fromMove, toMove, callback);
 		},
 
 		/**
@@ -39,7 +41,7 @@
 		 * @param {function} callback - Response object to send back to request
 		 */
 		disconnect: function(callback) {
-			db.disconnect(call);
+			db.disconnect(callback);
 		}
 	};
 }());

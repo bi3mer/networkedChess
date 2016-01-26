@@ -1,8 +1,25 @@
 ;module.exports = (function initPlayerDBMongo() {
 	'use strict';
 
+	/*
+
+
+
+
+
+
+	call callback in utility?
+
+
+
+
+
+
+
+
+	*/
 	var mongoose  = require('mongoose');
-	mongoose.connect(global.config.db.player.mongo.url, global.config.db.player.mongo.options);
+	var db = mongoose.createConnection(global.config.db.player.mongo.url, global.config.db.player.mongo.options);
 
 	var PlayerSchema = {
 		userName: String,
@@ -14,13 +31,15 @@
 		draws: Number
 	};
 
-	var Player = mongoose.model(global.config.db.player.mongo.url, PlayerSchema);
+	var Player = db.model(global.config.db.player.mongo.url, PlayerSchema);
 
 	// file name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';
 
 	/**
 	 * Create a query with the user name
+	 * @param {String} user - users name
+	 * @param {Object}      - return query
 	 */
 	function createUserNameQuery(user) {
 		return {
@@ -141,7 +160,7 @@
 		 * @return {bool, errStr | Number} - Errstr is error string and number on no error is the game id
 		 */
 		getGameID: function(user, callback) {
-			console.log(fileName, 'getGameID: getting user');
+			console.log(fileName, 'getGameID()');
 
 			// Get user from database
 			Player.find(createUserNameQuery(user), function getUserGameID(err, results) {
@@ -156,16 +175,62 @@
 						// Send game id
 						callback(false, results[0].gameIDs[results[0].gameIDs.length - 1]);
 					} else {
-						console.log(fileName, 'getGameID: user is not playing a game');
+						console.log(fileName, 'getGameID: user is not currently playing a game');
 
-						// Send error, the player is not playing a game
-						callback(true, 'User is not playing a game')
+						// Send bad game id, the player is not playing a game
+						callback(false, undefined)
 					}
 				} else {
 					console.log(fileName, 'getGameID: no user found');
 
 					// Send error, the username wasn't found
 					callback(true, 'Username not found');
+				}
+			});
+		},
+
+		/**
+		 * Add game ID to te player and update inGame to true
+		 * @param {string} gameID      - game id
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		addGameID: function(id, callback) {
+			console.log(fileName, 'addGameID()');
+
+			// push id to the gameId's field and set isPlaying to true
+			Player.update(createUserNameQuery(user), {
+				$set: {
+					isPlaying: true
+				},
+				$push: {
+					gameIDs: id
+				}
+			}, function updatedPlayerInfo(err, result){
+				if(!err) {
+					console.log(fileName, 'getGameID: success updating player info');
+					callback(false);
+				} else {
+					console.log(fileName, 'getGameID: error updating player info');
+					callback(true, 'Error adding game id to player')
+				}
+			});
+		},
+
+		/**
+		 * call isPlaying(...) on correct db
+		 * @param {string} user        - user name
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		isPlaying: function(user, callback) {
+			// Find user to test if is playing or not
+			Player.find(createUserNameQuery(user), function checkIfPlayerIsPlaying(err, results) {
+				// Check if array is empty
+				if(global.utility.checking.isFilledArray(results)) {
+					// return if user is playing
+					callback(results[0].isPlaying);
+				} else {
+					// Return false because user isn't valid
+					callback(false);
 				}
 			});
 		},
