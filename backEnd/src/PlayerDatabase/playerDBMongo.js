@@ -1,26 +1,11 @@
 ;module.exports = (function initPlayerDBMongo() {
 	'use strict';
 
-	/*
-
-
-
-
-
-
-	call callback in utility?
-
-
-
-
-
-
-
-
-	*/
+	// Create connection to database
 	var mongoose  = require('mongoose');
 	var db = mongoose.createConnection(global.config.db.player.mongo.url, global.config.db.player.mongo.options);
 
+	// Databse structure for Player
 	var PlayerSchema = {
 		userName: String,
 		passWord: String,
@@ -31,6 +16,7 @@
 		draws: Number
 	};
 
+	// Add model to player databsae
 	var Player = db.model(global.config.db.player.mongo.url, PlayerSchema);
 
 	// file name for debugging
@@ -57,6 +43,7 @@
 	function createNewAccount(user, pass, callback) {
 		console.log(fileName, 'createNewAccount: entered function');
 
+		// Create the new account
 		var newAccount = new Player({
 			userName: user,
 			passWord: pass,
@@ -191,29 +178,42 @@
 
 		/**
 		 * Add game ID to te player and update inGame to true
+		 * @param {string} user        - user name
 		 * @param {string} gameID      - game id
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		addGameID: function(id, callback) {
-			console.log(fileName, 'addGameID()');
+		addGameID: function(user, id, callback) {
+			console.log(fileName, 'addGameID() push ' + id + ' to user ' + user);
 
-			// push id to the gameId's field and set isPlaying to true
-			Player.update(createUserNameQuery(user), {
-				$set: {
-					isPlaying: true
-				},
-				$push: {
-					gameIDs: id
-				}
-			}, function updatedPlayerInfo(err, result){
-				if(!err) {
-					console.log(fileName, 'getGameID: success updating player info');
-					callback(false);
+			Player.findOne(createUserNameQuery(user), function addingGameID(err, doc) { 	
+				if(!err && doc && doc !== null) {
+					console.log(fileName, 'getGameID: success getting player info');
+
+					// Update data
+					doc.isPlaying = true;
+					doc.gameIDs.push(id);
+
+					// Save data
+					doc.save(function savingUpdatedDoc(err) {
+						if(!err) {
+							console.log(fileName, 'getGameID: success updating player info');
+							if(callback) {
+								callback(false);
+							}
+						} else {
+							if(callback) {
+								callback(true, 'Error saving game id to plyaer');
+							}
+						}
+					});
 				} else {
-					console.log(fileName, 'getGameID: error updating player info');
-					callback(true, 'Error adding game id to player')
+					console.log(fileName, 'getGameID: error getting and updating player info');
+					if(callback) {
+						callback(true, 'Error adding game id to player');
+					}
 				}
 			});
+
 		},
 
 		/**
@@ -231,6 +231,25 @@
 				} else {
 					// Return false because user isn't valid
 					callback(false);
+				}
+			});
+		},
+
+		/**
+		 * Check if is a valid  user
+		 * @param {string} user        - user name
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		isUser: function(user, callback) {
+			console.log(fileName, 'isUser: entered function');
+
+			Player.findOne(createUserNameQuery(user), function addingGameID(err, doc) { 
+				if(!err && doc && doc !== null) {
+					console.log(fileName, 'isUser: Valid user found');
+					callback(false);
+				} else {
+					console.log(fileName, 'isUser: Invlaid user');
+					callback(true);
 				}
 			});
 		},

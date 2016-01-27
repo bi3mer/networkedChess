@@ -58,15 +58,25 @@
 			console.log(fileName, 'isPlaying: dispatching to db');
 			db.getGameID(user, callback);
 		},
+
+		/**
+		 * call isPlaying(...) on correct db
+		 * @param {string} user        - user name
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		isUser: function(user, callback) {
+			console.log(fileName, 'isPlaying: dispatching to db');
+			db.isUser(user, callback);
+		},
 		
 		/**
 		 * call getGameID(...) on correct db
 		 * @param {string} user        - user name
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		addGameID: function(user, callback) {
+		addGameID: function(user, id, callback) {
 			console.log(fileName, 'getGameID: dispatching to db');
-			db.getGameID(user, callback);
+			db.addGameID(user, id, callback);
 		}
 	};
 }());

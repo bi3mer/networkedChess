@@ -10,9 +10,10 @@
 	return {
 		/**
 		 * @param user      - user id
+		 * @param {Function} callback 
 		 * @Return {String} - Return id of player or null
 		 */
-		goIntoMatchMaking: function(user) {
+		goIntoMatchMaking: function(user, callback) {
 			console.log(fileName, 'goIntoMatchMaking: checking for user');
 
 			var otherPlayer = null;
@@ -28,15 +29,16 @@
 				queue.push(user);
 			}
 
-			return otherPlayer;
+			callback(otherPlayer);
 		},
 
 		/**
+		 * @param {Function} callback 
 		 * @Return {Array | Object} - Return datastructure that represents queue for debugging
 		 */
-		getDataStructure: function() {
+		getDataStructure: function(callback) {
 			console.log(fileName, 'getDataStructure: returning queue: ' + queue);
-			return queue;
+			callback(queue);
 		}
 	};
 }());

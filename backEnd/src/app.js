@@ -201,31 +201,39 @@
 			// Note, this isn't secure because it doesn't test the username against the player database
 			console.log(fileName, 'getMatch: entered function');
 
-			// Add or get player from queue
-			var otherPlayer = MatchMaking.goIntoMatchMaking(user);
+			// CHeck if user is valid
+			PlayersDB.isUser(user, function(err) {
+				if(!err) {
+					// Add or get player from queue
+					MatchMaking.goIntoMatchMaking(user, function getMatchmatchMaking(otherPlayer) {
+						// Check if other player found
+						if(global.utility.checking.isString(otherPlayer)) {
+							console.log(fileName, 'getMatch: found match');
 
-			// Check if other player found
-			if(global.utility.checking.isString(otherPlayer)) {
-				console.log(fileName, 'getMatch: found match');
+							// Create a game
+							GamesDB.createGame(user, otherPlayer, function getGameID(err, id) {
+								if(!err) {
+									console.log(fileName, 'getMatch: valid game made, sending id to user');
 
-				// Create a game
-				GamesDB.createGame(user, otherPlayer, function getGameID(err, id) {
-					if(!err) {
-						console.log(fileName, 'getMatch: valid game made, sending id to user');
+									// TODO: should I put this in after I update the dataabse entries?
+									callback(global.config.server.httpStatusCodes.success, id);
 
-						// TODO: should I put this in after I update the dataabse entries?
-						callback(global.config.server.httpStatusCodes.success, id);
+									// TODO: update and uncomment
+									PlayersDB.addGameID(user, id);
+									PlayersDB.addGameID(otherPlayer, id);
+								}
+							});
+						} else {
+							console.log(fileName, 'getMatch: no opponent found, added to MatchMaking');
 
-						// TODO: update and uncomment
-						// PlayersDB.addGameID(user, id);
-						// PlayersDB.addGameID(otherPlayer, id);
-					}
-				});
-			} else {
-				console.log(fileName, 'getMatch: no opponent found, added to MatchMaking');
-
-				callback(global.config.server.httpStatusCodes.success, "Placed in MatchMaking");
-			}
+							callback(global.config.server.httpStatusCodes.success, "Placed in MatchMaking");
+						}
+					});
+				} else {
+					console.log(fileName, 'getMatch: Invalid user attempted to go into matchmaking');
+					callback(global.config.server.httpStatusCodes.error, 'getMatch: Invalid user attempted to go into matchmaking');
+				}
+			});
 		},
 
 		/**
@@ -235,7 +243,10 @@
 		 */
 		getMatchMaking: function(callback) {
 			console.log(fileName, 'getMatchMaking: entered function');
-			callback(global.config.server.httpStatusCodes.success, MatchMaking.getDataStructure());
+
+			MatchMaking.getDataStructure(function getMatchMakingData(data) {
+				callback(global.config.server.httpStatusCodes.success, data);
+			});
 		},
 	};
 }());

@@ -11,7 +11,7 @@
 		 * @param {String} userTwo     - id of second user
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		createGame: function(id, userOne, userTwo, callback) {
+		createGame: function(userOne, userTwo, callback) {
 			db.createGame(userOne, userTwo, callback);
 		},
 

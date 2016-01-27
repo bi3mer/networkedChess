@@ -13,7 +13,8 @@
 			toMove: String
 		}],
 		blackPlayerUpdates: [Object],
-		whitePlayerUpdates: [Object]
+		whitePlayerUpdates: [Object],
+		lastUpdate: Date
 	};
 
 	var Game = db.model(global.config.db.game.mongo.url, GameSchema);
@@ -32,6 +33,11 @@
 		};
 	};
 
+	/**
+	 * reset the updates for the correct type of player
+	 * @param {String} id   - id of game
+	 * @param {Stirng} type - type of user
+	 */
 	function resetUpdatesForPlayer(id, type) {
 		console.log(fileName, 'resetUpdatesForPlayer: entered function');
 
@@ -46,6 +52,7 @@
 			if(!err) {
 				console.log(fileName, 'resetUpdatesForPlayer: success updating player info');
 			} else {
+				// TODO: should we do somethinga bout this?
 				console.log(fileName, 'resetUpdatesForPlayer: error updating player info');
 			}
 		});
@@ -59,8 +66,8 @@
 		 * @param {String} userTwo     - id of second user
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		createGame: function(id, userOne, userTwo, callback) {
-			console.log(fileName, 'createNewAccount: entered function');
+		createGame: function(userOne, userTwo, callback) {
+			console.log(fileName, 'createGame: entered function');
 
 			// Initialize new game
 			var newGame = new Game({
@@ -68,7 +75,8 @@
 				whitePlayer: userTwo,
 				moves: [],
 				blackPlayerUpdates: [],
-				whitePlayerUpdates: []
+				whitePlayerUpdates: [],
+				lastUpdate: new Date()
 			});
 
 			// Save new account to database
@@ -78,7 +86,7 @@
 
 				if(!err) {
 					console.log(fileName, 'createGame: Created game in database');
-					callback(false);
+					callback(false, response._id);
 				} else {
 					console.error(fileName, 'createGame: creating new createGame error on save: ', err);
 					callback(true);
@@ -133,7 +141,7 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		addMove: function(id, fromMove, toMove, callback) {
-			db.addMove(id, fromMove, toMove, callback);
+			// TODO: Add move and update time since last update
 		},
 
 		/**
@@ -143,6 +151,7 @@
 		disconnect: function(callback) {
 			console.log(fileName, 'disconnect: discconnecting form database');
 
+			// Disconnect from database
 			mongoose.disconnect();
 			callback(true);
 		}

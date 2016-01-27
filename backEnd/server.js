@@ -94,6 +94,8 @@
 		});
 	});
 
+	// TODO: accept or decline port path
+
 	// Listen to path to get the users ratings
 	app.post(global.config.server.paths.ratings, function serverRatings(req, res) {
 		console.log(fileName, 'getting server ratings');
