@@ -170,9 +170,17 @@
 					if(isPlaying) {
 						console.log(fileName, 'getUpdate: valid game id');
 
-						// TODO: update this to go into games db
 						// Go to games database and check for updates
-						callback(global.config.server.httpStatusCodes.success, 'getUpdate: ID, ' + id + ' is in a game');
+						GamesDB.getUpdate(id, user, function(err, updates) {
+							// Check for error
+							if(!err) {
+								console.log(fileName, 'getUpdate: valid game id sending updates: ' + JSON.stringify(updates));
+								callback(global.config.server.httpStatusCodes.success, updates);
+							} else {
+								console.log(fileName, 'getUpdate: invalid game id given');
+								callback(global.config.server.httpStatusCodes.error, 'No valid game found');
+							}
+						});
 					} else if(id) {
 						console.log(fileName, 'getUpdate: found game id for player');
 

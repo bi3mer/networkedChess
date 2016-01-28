@@ -22,7 +22,7 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		getUpdate: function(id, user, callback) {
-			db.getUpdate(id, callback);
+			db.getUpdate(id, user, callback);
 		},
 
 		/**

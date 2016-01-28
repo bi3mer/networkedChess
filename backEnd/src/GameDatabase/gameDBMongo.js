@@ -46,7 +46,7 @@
 		resetObj[type] = [];
 
 		// reset the array with the object created
-		Player.update(createIDQuery(id), {
+		Game.update(createIDQuery(id), {
 			$set: resetObj
 		}, function resetPlayerUpdates(err, result) {
 			if(!err) {
@@ -101,9 +101,9 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		getUpdate: function(id, user, callback) {
-			console.log(fileName, 'getUpdate: entered function');
+			console.log(fileName, 'getUpdate: entered function with id: ' + id);
 
-			Game.find(createIDQuery(user), function getGameUpdate(err, results) {
+			Game.find(createIDQuery(id), function getGameUpdate(err, results) {
 				// Check if game was found
 				if(results && results.length > 0) {
 					console.log(fileName, 'getUpdate: found game');
