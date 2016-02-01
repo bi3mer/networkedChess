@@ -26,9 +26,12 @@
 				otherPlayer = queue.shift();
 			} else {
 				console.log(fileName, 'goIntoMatchMaking: adding player to queue');
+
+				// Add user to queue
 				queue.push(user);
 			}
 
+			// Return result in callback
 			callback(otherPlayer);
 		},
 
@@ -39,6 +42,16 @@
 		getDataStructure: function(callback) {
 			console.log(fileName, 'getDataStructure: returning queue: ' + queue);
 			callback(queue);
+		},
+
+		/**
+		 * @param {String} user       - user id
+		 * @param {Function} callback 
+		 * @Return {String}           - Return id of player or null
+		 */
+		leaveQueue: function(user, callback) {
+			console.log(fileName, 'getDataStructure: leaving queue');
+			MatchMaking.leaveQueue(user, callback);
 		}
 	};
 }());

@@ -150,17 +150,20 @@
 			console.log(fileName, 'getGameID()');
 
 			// Get user from database
-			Player.find(createUserNameQuery(user), function getUserGameID(err, results) {
+			Player.findOne(createUserNameQuery(user), function getUserGameID(err, user) {
 				// Make sure we have valid result
-				if(global.utility.checking.isFilledArray(results)) {
+				if(!err && user) {
 					console.log(fileName, 'getGameID: valid user found');
 
+					console.log('result (1): ' + JSON.stringify(user));
+					console.log('result (2): ' + user.gameIDs[user.gameIDs.length - 1])
+
 					// Check if player is playing and has a game id
-					if(results[0].isPlaying && global.utility.checking.isFilledArray(results[0].gameIDs)) {
+					if(user.isPlaying && user.gameIDs) {
 						console.log(fileName, 'getGameID: sending valid game id');
 
 						// Send game id
-						callback(false, results[0].gameIDs[results[0].gameIDs.length - 1]);
+						callback(false, user.gameIDs[user.gameIDs.length - 1]);
 					} else {
 						console.log(fileName, 'getGameID: user is not currently playing a game');
 
@@ -187,27 +190,30 @@
 
 			Player.findOne(createUserNameQuery(user), function addingGameID(err, doc) { 	
 				if(!err && doc && doc !== null) {
-					console.log(fileName, 'getGameID: success getting player info');
+					console.log(fileName, 'addGameID: success getting player info');
 
 					// Update data
 					doc.isPlaying = true;
 					doc.gameIDs.push(id);
 
 					// Save data
-					doc.save(function savingUpdatedDoc(err) {
-						if(!err) {
-							console.log(fileName, 'getGameID: success updating player info');
+					doc.save(function savingUpdatedDoc(errSave) {
+						if(!errSave) {
+							console.log(fileName, 'addGameID: success updating player info');
+
 							if(callback) {
 								callback(false);
 							}
 						} else {
+							console.log(fileName, 'addGameID: Error saving ' + errSave);
+
 							if(callback) {
 								callback(true, 'Error saving game id to plyaer');
 							}
 						}
 					});
 				} else {
-					console.log(fileName, 'getGameID: error getting and updating player info');
+					console.log(fileName, 'addGameID: error getting and updating player info');
 					if(callback) {
 						callback(true, 'Error adding game id to player');
 					}
@@ -217,7 +223,7 @@
 		},
 
 		/**
-		 * call isPlaying(...) on correct db
+		 * Get whether or not the player is playing or not
 		 * @param {string} user        - user name
 		 * @param {function} callback  - Response object to send back to request
 		 */
@@ -236,9 +242,53 @@
 		},
 
 		/**
+		 * Update the player to playing or not
+		 * @param {string} user        - user name
+		 * @param {bool} isPlaying     - update val
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		updateIsPlaying: function(user, isPlaying, callback) {
+			console.log(fileName, 'updateIsPlaying: dispatching to db');
+			
+			Player.findOne(createUserNameQuery(user), function updatingIsPlaying(err, player) {
+				if(!err) {
+					console.log(fileName, 'updateIsPlaying: found player');
+
+					// Update is playing
+					player.isPlaying = isPlaying;
+
+					player.save(function createNewAccountCallback(err, response) {
+						if(!err) {
+							console.log(fileName, 'updateIsPlaying: saved isPlaying');
+
+							// Check callback
+							if(callback) {
+								callback(false);
+							}
+						} else {
+							console.error(fileName, 'updateIsPlaying: Error saving isPlaying: ', err);
+
+							// Check callback
+							if(callback) {
+								callback(true);
+							}
+						}
+					});
+				} else {
+					console.error(fileName, 'updateIsPlaying: Error finding user ' + user + ': ', err);
+
+					// Check callback
+					if(callback) {
+						callback(true);
+					}
+				}
+			});
+		},
+
+		/**
 		 * Check if is a valid  user
 		 * @param {string} user        - user name
-		 * @param {function} callback  - Response object to send back to request
+		 * @param {function} callback  - Response object to send back to request with found or not
 		 */
 		isUser: function(user, callback) {
 			console.log(fileName, 'isUser: entered function');
@@ -250,6 +300,64 @@
 				} else {
 					console.log(fileName, 'isUser: Invlaid user');
 					callback(true);
+				}
+			});
+		},
+
+		/**
+		 * Update ratings for the player in the db using the result object
+		 * @param {string} user             - user name of player
+		 * @param {Object} result           - results of game
+		 * @param {Boolean} updateIsPlaying - flag on whether or not to also change isPlaying
+		 * @param {Function } callback      - return results in callback
+		 */
+		updateRatings: function(user, result, callback, updateIsPlaying) {
+			console.log(fileName, 'updateRatings: entered function');
+
+			Player.findOne(createUserNameQuery(user), function updateRankingsInDB(err, user) {
+				if(!err && user) {
+					// Update ratings
+					if(result && result.win) {
+						console.log(fileName, 'updateRatings: updated wins');
+						++ user.wins;
+					} else if (result && result.loss) {
+						console.log(fileName, 'updateRatings: updated losses');
+						++ user.losses;
+					} else {
+						console.log(fileName, 'updateRatings: updated draws');
+						++ user.draws;
+					}
+
+					if(updateIsPlaying) {
+						console.log(fileName, 'updateRatings: updating is playing flag set off');
+						user.isPlaying = false;
+					}
+
+					// save to db
+					user.save(function updateWithNewRatings(err) {
+						if(!err) {
+							console.log(fileName, 'updateRatings: saved new ratings');
+
+							// Check callback
+							if(callback) {
+								callback(false);
+							}
+						} else {
+							console.log(fileName, 'updateRatings: err saving new ratings: ' + err);
+
+							// Check callback
+							if(callback) {
+								callback(false);
+							}
+						}
+					});
+				} else {
+					console.log(fileName, 'updateRatings: Invlaid user');
+
+					// Check callback
+					if(callback) {
+						callback(true);
+					}
 				}
 			});
 		},

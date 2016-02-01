@@ -8,12 +8,13 @@
 	var GameSchema = {
 		blackPlayer: String,
 		whitePlayer: String,
+		gameOver: Boolean,
 		moves: [{
 			fromMove: String,
 			toMove: String
 		}],
-		blackPlayerUpdates: [Object],
-		whitePlayerUpdates: [Object],
+		blackPlayerUpdates: [mongoose.Schema.Types.Mixed],
+		whitePlayerUpdates: [mongoose.Schema.Types.Mixed],
 		lastUpdate: Date
 	};
 
@@ -58,6 +59,32 @@
 		});
 	};
 
+	/** 
+	 * Save game
+	 * @param {Object} game        - mongo object to be saved
+	 * @param {String} otherPlayer - username of other player in game
+	 * @param {Function} callback  - returns success or not and other player
+	 */
+	function saveGame(game, otherPlayer, callback) {
+		game.save(function saveForfeitToDB(saveErr) {
+			if(!saveErr) {
+				console.log(fileName, 'forfeit: Saved forfeit to updates');
+
+				// Check callback
+				if(callback) {
+					callback(false, otherPlayer);
+				}
+			} else {
+				console.log(fileName, 'forfeit: error updating db: ' + saveErr);
+
+				// Check callback
+				if(callback) {
+					callback(true);
+				}
+			}
+		});
+	};
+
 		
 	return {
 		/**
@@ -73,6 +100,7 @@
 			var newGame = new Game({
 				blackPlayer: userOne,
 				whitePlayer: userTwo,
+				gameOver: false,
 				moves: [],
 				blackPlayerUpdates: [],
 				whitePlayerUpdates: [],
@@ -103,22 +131,26 @@
 		getUpdate: function(id, user, callback) {
 			console.log(fileName, 'getUpdate: entered function with id: ' + id);
 
-			Game.find(createIDQuery(id), function getGameUpdate(err, results) {
+			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
 				// Check if game was found
-				if(results && results.length > 0) {
+				if(!err && game) {
 					console.log(fileName, 'getUpdate: found game');
 
 					// Used to reset db updates after being initiailized
 					var playerType;
 
 					// Return updates for proper player
-					if(results[0].blackPlayer === user) {
-						// Return white player errors
-						callback(false, results[0].blackPlayerUpdates);
+					if(game.blackPlayer === user) {
+						console.log(fileName, 'getUpdate: return blackPlayer updates');
+
+						// Return black player errors
+						callback(false, game.blackPlayerUpdates, game.gameOver);
 						playerType = "blackPlayerUpdates";
 					} else {
-						// Return black player moves
-						callback(false, results[0].whitePlayerUpdates);
+						console.log(fileName, 'getUpdate: return whitePlayer updates');
+
+						// Return white player moves
+						callback(false, game.whitePlayerUpdates, game.gameOver);
 						playerType = "whitePlayerUpdates";
 					}
 
@@ -141,7 +173,57 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		addMove: function(id, fromMove, toMove, callback) {
+			console.log(fileName, 'addMove: entered function, TODO: implement');
 			// TODO: Add move and update time since last update
+		},
+
+		/**
+		 * Forfeit game and add to updates
+		 * @param {string} id         - id of game
+		 * @param {string} user       - user name
+		 * @param {function} callback - callback to return results with
+		 */
+		forfeit: function(id, user, callback) {
+			console.log(fileName, 'forfeit: entered function with id: ' + id);
+			
+			Game.findOne(createIDQuery(id), function updateGameWithForfeit(err, game) {
+				if(!err && game) {
+					console.log(fileName, 'forfeit: updating game information');
+
+					// Create update object
+					var update = {
+						forfeit: true
+					};
+
+					var otherPlayer = game.whitePlayer;
+
+					// end the game
+					game.gameOver = true;
+
+					// Debugging, TODO: Remove when done
+					console.log('game: ', JSON.stringify(game));
+
+					// Check which player to add the updates to
+					if(user === game.whitePlayer) {
+						console.log(fileName, 'forfeit: updating black player');
+						game.blackPlayerUpdates.push(update);
+						otherPlayer = game.blackPlayer;
+					} else {
+						console.log(fileName, 'forfeit: updating white player');
+						game.whitePlayerUpdates.push(update);
+					}
+
+					// Save the update
+					saveGame(game, otherPlayer, callback);
+				} else {
+					console.log(fileName, 'forfeit: error finding game: ' + err);
+					
+					// Check callback
+					if(callback) {
+						callback(true);
+					}
+				}
+			});
 		},
 
 		/**

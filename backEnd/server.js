@@ -84,12 +84,12 @@
 		});
 	});
 
-	// Listen to path to forfeit a users game
+	// Listen to path to accept or decline a forfeit for a users game
 	app.post(global.config.server.paths.forfeit, function serverForfeit(req, res) {
 		console.log(fileName, 'forfeiting game');
 
 		serverApp.forfeit(req.body.user, function forfeitGetResponse(status, message) {
-			console.log(fileName, 'forfeiting game: sending to suer');
+			console.log(fileName, 'forfeiting game: sending to user');
 			sendMessageToUser(res, status, message);
 		});
 	});

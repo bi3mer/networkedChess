@@ -15,7 +15,7 @@
 		 */
 		goIntoMatchMaking: function(user, callback) {
 			console.log(fileName, 'goIntoMatchMaking: dispatching to correct queue');
-			return MatchMaking.goIntoMatchMaking(user, callback);
+			MatchMaking.goIntoMatchMaking(user, callback);
 		},
 
 		/**
@@ -24,7 +24,17 @@
 		 */
 		getDataStructure: function(callback) {
 			console.log(fileName, 'getDataStructure: dispatching to correct queue ');
-			return MatchMaking.getDataStructure(callback);
+			MatchMaking.getDataStructure(callback);
+		},
+
+		/**
+		 * @param {String} user       - user id
+		 * @param {Function} callback 
+		 * @Return {String}           - Return id of player or null
+		 */
+		leaveQueue: function(user, callback) {
+			console.log(fileName, 'getDataStructure: leaving queue');
+			MatchMaking.leaveQueue(user, callback);
 		}
 	};
 }());

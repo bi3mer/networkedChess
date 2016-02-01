@@ -10,6 +10,23 @@
 	// file name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';
 
+	/**
+	 * Update the player to no longer playing if they are
+	 * @param {string} user       - user name
+	 */
+	function updatePlayerToNotPlaying(user) {
+		console.log(fileName, 'updatePlayerToNotPlaying: entered function');
+
+		// Update isPlaying to false
+		PlayersDB.updateIsPlaying(user, false, function setPlayerIsPlayingToFalse(err) {
+			if(!err) {
+				console.log(fileName, 'updatePlayerToNotPlaying: Updated isPlaying to false');
+			} else {
+				console.log(fileName, 'updatePlayerToNotPlaying: Error updating isPlaying to false: ' + err);
+			}
+		});
+	};
+
 	return {
 		/**
 		 * Log player into server
@@ -73,16 +90,28 @@
 		addMove: function(user, move, callback) {
 			console.log(fileName, 'addMove: entered function');
 
-			GamesDB.addMove(user, move, function addMoveSuccesful(err) {
-				// Check if adding move to database was succesful
-				if(!err) {
-					console.log(fileName, 'addMove: sending back succes');
-					callback(global.config.server.httpStatusCodes.success);
-				} else {
-					console.log(fileName, 'addMove: sending back error, no game found');
-					callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
-				}
-			});
+			// Check if move is valid
+			if(global.utility.checking.isValidMove(move)) {
+				// CHeck if user is valid
+				PlayersDB.isUser(user, function(err) {
+					if(!err) {
+						GamesDB.addMove(user, move, function addMoveSuccesful(err) {
+							// Check if adding move to database was succesful
+							if(!err) {
+								console.log(fileName, 'addMove: sending back succes');
+								callback(global.config.server.httpStatusCodes.success);
+							} else {
+								console.log(fileName, 'addMove: sending back error, no game found');
+								callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
+							}
+						});
+					} else {
+						callback(global.config.server.httpStatusCodes.error, 'Error finding valid user');
+					}
+				});
+			} else {
+				callback(global.config.server.httpStatusCodes.error, 'Invalid move format');
+			}
 		},
 
 		// TODO: askUndoMove server path
@@ -117,13 +146,29 @@
 		forfeit: function(user, callback) {
 			console.log(fileName, 'forfeit: entered function');
 
-			GamesDB.forfeit(gameID, function forfeitGame(err) {
+			// Check if user is valid
+			PlayersDB.getGameID(user, function(err, gameID) {
 				if(!err) {
-					console.log(fileName, 'forfeit: entered function');
-					callback(global.config.httpStatusCodes.success);
+					GamesDB.forfeit(gameID, user,function forfeitGame(err, otherPlayer) {
+						if(!err) {
+							console.log(fileName, 'forfeit: forfeited game');
+
+							// Return success for forfeit succesful
+							callback(global.config.server.httpStatusCodes.success);
+
+							console.log(fileName, 'forfeit: updating isPlaying to false');
+							PlayersDB.updateIsPlaying(user, false);
+
+							// Update ratings for both players
+							PlayersDB.updateRatings(user, {loss: true});
+							PlayersDB.updateRatings(otherPlayer, {win: true});
+						} else {
+							console.log(fileName, 'forfeit: error forfeiting game: ' + err);
+							callback(global.config.httpStatusCodes.error, 'Error forfeiting game');
+						}
+					});
 				} else {
-					console.log(fileName, 'forfeit: entered function');
-					callback(global.config.httpStatusCodes.error, 'Error forfeiting game');
+					console.log(fileName, 'forfeit: No user found');
 				}
 			});
 		},
@@ -168,10 +213,10 @@
 				if(!err) {
 					// If the user is playing
 					if(isPlaying) {
-						console.log(fileName, 'getUpdate: valid game id');
+						console.log(fileName, 'getUpdate: valid game id: ' + id);
 
 						// Go to games database and check for updates
-						GamesDB.getUpdate(id, user, function(err, updates) {
+						GamesDB.getUpdate(id, user, function(err, updates, shouldUpdateIsPlaying) {
 							// Check for error
 							if(!err) {
 								console.log(fileName, 'getUpdate: valid game id sending updates: ' + JSON.stringify(updates));
@@ -180,12 +225,18 @@
 								console.log(fileName, 'getUpdate: invalid game id given');
 								callback(global.config.server.httpStatusCodes.error, 'No valid game found');
 							}
+
+							// Check whether or not the game is over
+							if(shouldUpdateIsPlaying) {
+								console.log(fileName, 'getUpdate: updating is playing to false');
+								PlayersDB.updateIsPlaying(user, false);
+							}
 						});
 					} else if(id) {
 						console.log(fileName, 'getUpdate: found game id for player');
 
 						// Player has found a match and will be notified
-						callback(global.config.server.httpStatusCodes.success, 'getUpdate: ID, ' + id + ' has found a match');
+						callback(global.config.server.httpStatusCodes.success, {id: id});
 					} else {
 						console.log(fileName, 'getUpdate: no match has been found');
 
@@ -206,10 +257,9 @@
 		 * @return {Object}           - Return {GameID | String} with game id or a string with queue message
 		 */
 		getMatch: function(user, callback) {
-			// Note, this isn't secure because it doesn't test the username against the player database
 			console.log(fileName, 'getMatch: entered function');
 
-			// CHeck if user is valid
+			// Check if user is valid
 			PlayersDB.isUser(user, function(err) {
 				if(!err) {
 					// Add or get player from queue
@@ -219,14 +269,14 @@
 							console.log(fileName, 'getMatch: found match');
 
 							// Create a game
-							GamesDB.createGame(user, otherPlayer, function getGameID(err, id) {
+							GamesDB.createGame(user, otherPlayer, function getGameIDInApp(err, id) {
 								if(!err) {
 									console.log(fileName, 'getMatch: valid game made, sending id to user');
 
-									// TODO: should I put this in after I update the dataabse entries?
+									// Send info to user
 									callback(global.config.server.httpStatusCodes.success, id);
 
-									// TODO: update and uncomment
+									// Update game ids for each player
 									PlayersDB.addGameID(user, id);
 									PlayersDB.addGameID(otherPlayer, id);
 								}
@@ -237,6 +287,9 @@
 							callback(global.config.server.httpStatusCodes.success, "Placed in MatchMaking");
 						}
 					});
+
+					// Update to not playing, since we are now queueing
+					updatePlayerToNotPlaying(user);
 				} else {
 					console.log(fileName, 'getMatch: Invalid user attempted to go into matchmaking');
 					callback(global.config.server.httpStatusCodes.error, 'getMatch: Invalid user attempted to go into matchmaking');

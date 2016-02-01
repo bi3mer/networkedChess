@@ -60,13 +60,36 @@
 		},
 
 		/**
+		 * call updateIsPlaying(...) on correct db
+		 * @param {string} user        - user name
+		 * @param {bool} isPlaying     - update val
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		updateIsPlaying: function(user, isPlaying, callback) {
+			console.log(fileName, 'updateIsPlaying: dispatching to db');
+			db.updateIsPlaying(user, isPlaying, callback);
+		},
+
+		/**
 		 * call isPlaying(...) on correct db
 		 * @param {string} user        - user name
-		 * @param {function} callback  - Response object to send back to request
+		 * @param {function} callback  - Response object to send back to request with is user and is playing
 		 */
 		isUser: function(user, callback) {
 			console.log(fileName, 'isPlaying: dispatching to db');
 			db.isUser(user, callback);
+		},
+
+		/**
+		 * Update ratings for the player in the db using the result object
+		 * @param {string} user        - user name of player
+		 * @param {Object} result      - results of game
+		 * @param {Function } callback - return results in callback
+		 */
+		updateRatings: function(user, result, callback) {
+			console.log(fileName, 'updateRatings: dispatching to db');
+			db.updateRatings(user, result, callback);
+
 		},
 		
 		/**
