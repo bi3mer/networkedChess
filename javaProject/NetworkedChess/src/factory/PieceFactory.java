@@ -2,7 +2,7 @@ package factory;
 
 import java.util.ArrayList;
 
-import intface.ChessFactory;
+import intf.ChessFactory;
 import model.PawnMovement;
 import model.Piece;
 import model.PieceMovement;

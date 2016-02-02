@@ -3,12 +3,11 @@ package model;
 import factory.PieceFactory;
 
 /**
- * Yet to be completed 
- * 
- * TODO: 	- Setup board with pieces 
- * 			- Allow moving pieces after selecting  
+ * Hold piece values  
  * 
  * @author KLD
+ * 
+ * @See #Piece
  */
 public class ChessBoard extends Board 
 {
@@ -35,6 +34,12 @@ public class ChessBoard extends Board
 		}
 		
 		//set up pieces
+	}
+	
+	public void movePiece(int fromX, int fromY, int toX, int toY)
+	{
+		setTileValue(toX, toY, getTileValue(fromX, fromY)); 
+		setTileValue(fromX, fromY, 0);
 	}
 
 	/**
