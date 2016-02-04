@@ -31,9 +31,13 @@ public class ChessGame extends Game
 		board = new ChessBoard(); 
 		mobilityBoard= new MobilityBoard(board); 
 		
-		int[] pieces = {Piece.TYPE_PAWN,Piece.TYPE_ROOK, 
-				Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_KING, Piece.TYPE_QUEEN }; 
+		//int[] pieces = {Piece.TYPE_PAWN,Piece.TYPE_ROOK, 
+		//		Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 		
+		int[] pieces = {0,Piece.TYPE_ROOK, 
+				0, 0, 0, Piece.TYPE_KING }; 
+				
+				
 		
 		for(int i=0; i<16; i++)
 		{
@@ -130,7 +134,38 @@ public class ChessGame extends Game
 			if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
 			{
 					//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
-					board.movePiece(selectedX, selectedY, x, y);	
+					
+					int piece = Math.abs(board.getTileValue(selectedX, selectedY)) ; 
+					
+					if(piece == Piece.TYPE_KING ||piece == Piece.TYPE_ROOK)
+					{
+						//System.out.println("Moving a king or rook");
+						//int tag = 0; 
+						if(piece == Piece.TYPE_ROOK && (selectedY == 0 || selectedY == 7))
+						{
+							//System.out.println("Moving rook");
+							if(selectedX == 0)
+							{
+								mobilityBoard.markRookMove(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_LEFT); 
+								//System.out.println("Left Rook Moved!");
+							}
+							else if(selectedX == 7)
+							{
+								mobilityBoard.markRookMove(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_RIGHT); 
+								//System.out.println("Right Rook Moved!");
+							}
+							
+							
+						}
+						else if(piece == Piece.TYPE_KING)
+						{
+							mobilityBoard.markKingMove(board.teamAt(selectedX, selectedY)); 
+							//System.out.println("King Moved!");
+						}
+							
+					}
+					
+					board.movePiece(selectedX, selectedY, x, y);
 					board.deselect(mobilityBoard);	
 			}
 			else

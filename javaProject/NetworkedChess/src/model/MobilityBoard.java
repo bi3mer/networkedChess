@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 /**
  * A board that highlights available moment (including attack) places on a chess board 
  * 
@@ -10,6 +12,12 @@ public class MobilityBoard extends Board
 	public final static int MARK_INVISIBLE = 0; 
 	public final static int MARK_MOVE = 1; 
 	public final static int MARK_ATTACK = 2; 
+	
+	public final static int TAG_LEFT = 0; 
+	public final static int TAG_RIGHT = 1; 
+	
+	private ArrayList<Boolean> didMove; 
+	
 
 	/**
 	 * Dependency 
@@ -24,6 +32,7 @@ public class MobilityBoard extends Board
 	{
 		super(cboard.getWidth(), cboard.getHeight(), MARK_INVISIBLE); 
 		this.cboard = cboard; 
+		didMove = new ArrayList<Boolean>(); 
 	}
 
 	/**
@@ -93,5 +102,42 @@ public class MobilityBoard extends Board
 			for(int j=0; j<getWidth(); j++)
 				unMark(j, i); 
 	}
+	
+	
+	public void markKingMove(int team)
+	{
+		//convert -1 and 1 >> into >> 0 and 1 
+		team = (team+1)/2; 
+		while(didMove.size() < team+1)
+			didMove.add(false); 
+		
+		didMove.set(team, true); 
+	}
+	
+	public void markRookMove(int team, int tag)
+	{
+		team = (team+1)/2; 
+		int index = Piece.TYPE_ROOK +(team+tag); 
+		
+		while(didMove.size() < index+1)
+			didMove.add(false); 
+		
+		didMove.set(index, true); 
+	}
+	
+	public boolean didMove(int piece, int team, int tag)
+	{
+		//convert -1 and 1 >> into >> 0 and 1 
+		team = (team+1)/2; 
+		int index =(team+piece+(tag%piece))/(1+(piece%3));
+		
+		if(didMove.size()<=index)
+			return false; 
+		
+		
+		return didMove.get(index); 
+	}
+	
+	
 	
 }

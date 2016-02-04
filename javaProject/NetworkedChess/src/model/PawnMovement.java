@@ -22,16 +22,24 @@ public class PawnMovement extends PieceMovement
 	
 		//either 1 or -1
 		int team = cboard.teamAt(cx, cy); 
-		
-		//initial move proven mathematically 
-		if(team == cy || team+7 == cy)
-			didMark = didMark | mboard.markMove(cx, cy + 2*team); 
 				
 		didMark = didMark | mboard.markMove(cx, cy + team); 
 		
 		didMark = didMark | mboard.markAttack(cx+1, cy+team, team); 
 		didMark = didMark | mboard.markAttack(cx-1, cy+team, team); 
 		
+
+		if(!didMark)
+			return false; 
+		
+		
+		//initial move proven mathematically 
+			if(team == cy || team+7 == cy)
+			{
+				didMark = didMark | mboard.markMove(cx, cy + 2*team); 
+			}
+			
+			
 		
 		return didMark; 
 	}

@@ -12,7 +12,8 @@
 # eclipse specific git ignore
 *.pydevproject
 .project
-.metadata
+*.metadata
+*.recommenders
 bin/**
 tmp/**
 tmp/**/*
@@ -24,6 +25,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+
 
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

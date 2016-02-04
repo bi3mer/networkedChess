@@ -117,7 +117,7 @@ public class PieceMovement
 						didMark = true; 
 				else
 				{
-					System.out.println("conned: "+ px + " " + py);
+					//System.out.println("conned: "+ px + " " + py); fuckyou 
 					continue; 
 				}
 			}//end else 

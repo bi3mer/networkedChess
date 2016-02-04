@@ -3,6 +3,7 @@ package factory;
 import java.util.ArrayList;
 
 import intf.ChessFactory;
+import model.KingMovement;
 import model.PawnMovement;
 import model.Piece;
 import model.PieceMovement;
@@ -14,11 +15,11 @@ import model.PieceMovement;
  * 
  * @TODO singleton and document 
  */
-public class PieceFactory implements ChessFactory<Piece>
+public class PieceMovementFactory implements ChessFactory<Piece>
 {
 	private ArrayList<Piece> pieces; 
 	
-	public PieceFactory() 
+	public PieceMovementFactory() 
 	{
 		pieces = new ArrayList<>(); 
 	}
@@ -54,7 +55,7 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorKing() 
 	{
-		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 1, PieceMovement.createMove(0, 1, null) ), false); 
+		PieceMovement m = new KingMovement();//new PieceMovement(PieceMovement.createMove(1, 1, PieceMovement.createMove(0, 1, null) ), false); 
 		Piece noobking = new Piece(Piece.TYPE_KING, m);
 	
 		return noobking;
@@ -73,7 +74,7 @@ public class PieceFactory implements ChessFactory<Piece>
 	public Piece factorRook() 
 	{
 		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 0, null ), true); 
-		Piece rockSolid = new Piece(Piece.TYPE_QUEEN, m);
+		Piece rockSolid = new Piece(Piece.TYPE_ROOK, m);
 	
 		return rockSolid; 
 	}
@@ -100,7 +101,7 @@ public class PieceFactory implements ChessFactory<Piece>
 	public Piece factorPawn() 
 	{
 		PieceMovement m = new PawnMovement(); //this piece if dick follows no logic 
-		Piece dick = new Piece(Piece.TYPE_QUEEN, m);
+		Piece dick = new Piece(Piece.TYPE_PAWN, m);
 		
 		return dick;
 	}

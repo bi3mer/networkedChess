@@ -1,9 +1,11 @@
 package model;
 
-import factory.PieceFactory;
+import factory.PieceMovementFactory;
 
 /**
- * Hold piece values  
+ * Hold piece values 
+		
+		
  * 
  * @author KLD
  * 
@@ -24,7 +26,7 @@ public class ChessBoard extends Board
 		
 		//define pieces 
 		
-		PieceFactory pissFactory = new PieceFactory(); 
+		PieceMovementFactory pissFactory = new PieceMovementFactory(); 
 		
 		pieces = new Piece[7];
 		
@@ -40,6 +42,15 @@ public class ChessBoard extends Board
 	{
 		setTileValue(toX, toY, getTileValue(fromX, fromY)); 
 		setTileValue(fromX, fromY, 0);
+		
+		//castling 
+		if(Math.abs(getTileValue(toX, toY)) == Piece.TYPE_KING && Math.abs(toX-fromX) > 1)
+		{
+			int y = 8 - (9 - (getTileValue(toX, toY)))%9;
+			int delta = toX-fromX;	
+			movePiece(((9-delta)%11), y,((delta+2)/2)+3, y);
+		}
+		
 	}
 
 	/**
