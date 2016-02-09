@@ -62,17 +62,19 @@
 	/** 
 	 * Save game
 	 * @param {Object} game        - mongo object to be saved
-	 * @param {String} otherPlayer - username of other player in game
 	 * @param {Function} callback  - returns success or not and other player
+	 * @param {String} otherPlayer - username of other player in game
 	 */
-	function saveGame(game, otherPlayer, callback) {
+	function saveGame(game, callback, otherPlayer) {
 		game.save(function saveForfeitToDB(saveErr) {
 			if(!saveErr) {
 				console.log(fileName, 'forfeit: Saved forfeit to updates');
 
 				// Check callback
-				if(callback) {
+				if(callback && otherPlayer) {
 					callback(false, otherPlayer);
+				} else {
+					callback(false);
 				}
 			} else {
 				console.log(fileName, 'forfeit: error updating db: ' + saveErr);
@@ -166,15 +168,69 @@
 		},
 
 		/**
-		 * Call addMove(...) on correct db
+		 * Call addUpdate(...) on correct db
 		 * @param {string} id          - id of game
-		 * @param {string} fromMove    - original place of move
-		 * @param {string} toMove      - place that piece moved to
+		 * @param {string} user        - user requesting update
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		addMove: function(id, fromMove, toMove, callback) {
+		addUpdate: function(id, user, update, callback) {
+			console.log(fileName, 'getUpdate: entered function');
+
+			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
+				// Check if game was found
+				if(!err && game) {
+					// chekc player
+					if(game.blackPlayer === user) {
+						console.log(fileName, 'addUpdate: add update to whitePlayer');
+						game.whitePlayerUpdates.push(update);
+					} else {
+						console.log(fileName, 'addUpdate: add update to blackPlayer');
+						game.blackPlayerUpdates.push(update);
+					}
+
+					// Return success
+					callback(false);
+				} else {
+					console.log(fileName, 'addUpdate: no game found');
+
+					// return with error
+					callback(true);
+				}
+			});
+		},
+
+		/**
+		 * Call addMove(...) on correct db
+		 * @param {string} id          - id of game
+		 * @param {string} user        - user name
+		 * @param {Object} move        - Object that represents a move
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		addMove: function(id, user, move, callback) {
 			console.log(fileName, 'addMove: entered function, TODO: implement');
-			// TODO: Add move and update time since last update
+			
+			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
+				// Check if game was found
+				if(!err && game) {
+					// Add to moves
+					game.moves.push(move);
+
+					// Add to updates
+					if(game.blackPlayer === user) {
+						console.log(fileName, 'addUpdate: add update to whitePlayer');
+						game.whitePlayerUpdates.push(move);
+					} else {
+						console.log(fileName, 'addUpdate: add update to blackPlayer');
+						game.blackPlayerUpdates.push(move2);
+					}
+
+					// Save updates to game
+					saveGame(game, callback);
+				} else {
+					console.log(fileName, 'addUpdate: unable to find game');
+					callback(true);
+				}
+			});
 		},
 
 		/**
@@ -214,7 +270,7 @@
 					}
 
 					// Save the update
-					saveGame(game, otherPlayer, callback);
+					saveGame(game, callback, otherPlayer);
 				} else {
 					console.log(fileName, 'forfeit: error finding game: ' + err);
 					

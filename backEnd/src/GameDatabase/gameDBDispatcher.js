@@ -31,15 +31,26 @@
 		},
 
 		/**
-		 * Call addMove(...) on correct db
+		 * Call addUpdate(...) on correct db
 		 * @param {string} id          - id of game
-		 * @param {string} fromMove    - original place of move
-		 * @param {string} toMove      - place that piece moved to
+		 * @param {string} user        - user requesting update
 		 * @param {function} callback  - Response object to send back to request
 		 */
-		addMove: function(id, fromMove, toMove, callback) {
+		addUpdate: function(id, user, update, callback) {
+			console.log(fileName, 'getUpdate: dispatching to db');
+			db.addUpdate(id, user, update, callback);
+		},
+
+		/**
+		 * Call addMove(...) on correct db
+		 * @param {string} id          - id of game
+		 * @param {string} user        - user name
+		 * @param {Object} move        - Object that represents a move
+		 * @param {function} callback  - Response object to send back to request
+		 */
+		addMove: function(id, user, move, callback) {
 			console.log(fileName, 'addMove: dispatching to db');
-			db.addMove(id, fromMove, toMove, callback);
+			db.addMove(id, move, callback);
 		},
 
 		/**

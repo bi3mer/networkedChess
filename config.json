@@ -6,7 +6,8 @@
 			"createAccount": "/createAccount",
 			"login": "/login", 
 			"addMove": "/addMove",
-			"undoMove": "/undoMove",
+			"requestUndo": "/requestUndo",
+			"acceptUndo": "/acceptUndo",
 			"forfeit": "/forfeit",
 			"ratings": "/ratings",
 			"update": "/getUpdate",
@@ -18,6 +19,11 @@
 			"notModified": 304,
 			"validationError": 400,
 			"error": 404
+		}
+	},
+	"templates": {
+		"forfeit": {
+			"forfeit": true
 		}
 	},
 	"queue": {

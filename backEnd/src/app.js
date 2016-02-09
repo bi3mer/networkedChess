@@ -93,9 +93,9 @@
 			// Check if move is valid
 			if(global.utility.checking.isValidMove(move)) {
 				// CHeck if user is valid
-				PlayersDB.isUser(user, function(err) {
+				PlayersDB.getGameID(user, function(err, gameID) {
 					if(!err) {
-						GamesDB.addMove(user, move, function addMoveSuccesful(err) {
+						GamesDB.addMove(gameID, user, move, function addMoveSuccesful(err) {
 							// Check if adding move to database was succesful
 							if(!err) {
 								console.log(fileName, 'addMove: sending back succes');
@@ -114,27 +114,44 @@
 			}
 		},
 
-		// TODO: askUndoMove server path
 		/**
-		 * Remove move from database
+		 * requestUndo
 		 * @param {string} user       - users name
 		 * @param {string} move       - users move
 		 * @param {Function} callback - send info back to the server with
 		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		undoMove: function(user, callback) {
-			console.log(fileName, 'undoMove: entered function');
+		requestUndo: function(user, callback) {
+			console.log(fileName, 'requestUndo: entered function');
 
-			// Todo: update to get users current game id
-			GamesDB.removeMove(gameID, function removeMoveAndUpdateDB(err) {
-				if(!err) {
-					console.log(fileName, 'undoMove: succesfull undid move');
-					callback(global.config.server.httpStatusCodes.succesful);
+			// Check if user is valid
+			PlayersDB.getGameID(user, function(err, gameID) {
+				if(!err && gameID) {
+					GamesDB.addUpdate(gameID, user, global.config.template.undoRequest, function removeMoveAndUpdateDB(errGame) {
+						if(!errGame) {
+							console.log(fileName, 'requestUndo: succesfull undid move');
+							callback(global.config.server.httpStatusCodes.succesful);
+						} else {
+							console.log(fileName, 'requestUndo: unable to request undo move');
+							callback(global.config.server.httpStatusCodes.error, 'Error: coudln\t undo move');
+						}			
+					});
 				} else {
-					console.log(fileName, 'undoMove: unable to undomove');
-					callback(global.config.server.httpStatusCodes.error, 'Error: coudln\t undo move');
-				}			
+					console.log(fileName, 'requestUndo: unable to find game');
+					callback(global.config.server.httpStatusCodes.error, 'Unable to find game to undo ' + err)
+				}
 			});
+		},
+
+		/**
+		 * acceptUndo
+		 * @param {string} user       - users name
+		 * @param {string} move       - users move
+		 * @param {Function} callback - send info back to the server with
+		 * @return {Object}           - Return status defining whether adding move was succesful or not
+		 */
+		acceptUndo: function(user, callback) {
+			console.log(fileName, 'acceptUndo: entered function, TODO: implement this');
 		},
 
 		/**
