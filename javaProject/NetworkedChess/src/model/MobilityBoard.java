@@ -59,6 +59,7 @@ public class MobilityBoard extends Board
 	 */
 	public boolean markMove(int x, int y)
 	{
+		//System.out.println("move mark at: " + x + " " + y );
 		if(cboard.isEmpty(x, y))
 			return mark(MARK_MOVE, x, y);
 		

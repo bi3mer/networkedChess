@@ -44,11 +44,9 @@ public class UIPiece implements ChessFactory<Image>
 	
 	private void initlize(int index) 
 	{
-		//index /= 2; 
-		
-		if(pieceImages.get(index)==null)
+		if(pieceImages.get(index) == null)
 		{
-			pieceImages.set(index, loader.loadImage(""+index)); 
+			pieceImages.set(index, loader.loadImage( ("c"+index) ) ); 
 		}
 		
 		

@@ -14,19 +14,22 @@ import GameTest.*;
 import KLD.*;
 import KLD.obj.GameObject;
 import KLD.util.ShapeMaker;
+import ui.ChessBoardUI;
 
  
 /**
- * Launches a game into a the console (basically main method) 
+ * Launches a game into a the console (main is found KLD.GameFrame.java) 
  */
 public class Launcher 
 {
+	
 	public Launcher()
 	{
 		//setting the main panel. You could also use GameMenuPanel.setGame(class).
-		GameFrame.mainGame = ChessGame.class; 
+		GameFrame.mainGame = ChessBoardUI.class; 
 		
 		//TODO read json: config
+		
 		
 		
 		GameFrame.width = 800; 
@@ -35,7 +38,7 @@ public class Launcher
 		//adding a title to the game frame. 
 		GameFrame.setTitle("default lame title!!");
 		GameFrame.setResizable(true);
-		GameFrame.FPS = 10; 
+		GameFrame.FPS = 30; 
 		
 	}
 }

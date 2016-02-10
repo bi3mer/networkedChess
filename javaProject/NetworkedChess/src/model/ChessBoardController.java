@@ -1,5 +1,11 @@
 package model;
 
+/**
+ * Allows two player to play 
+ * 
+ * 
+ * @author KLD 
+ */
 public class ChessBoardController 
 {
 	private ChessBoard cboard; 
