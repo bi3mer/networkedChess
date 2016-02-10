@@ -203,7 +203,18 @@
 		}
 	});
 
-	// TODO: Listen to path to cancel queueing
+	// listen to path to cancel if in queue
+	app.post(global.config.server.paths.cancelQueue, function cancelQueue(req, res) {
+		if(isValidReq(req) && global.utility.checking.isString(req.body.user)) {
+			serverApp.cancelQueue(req.body.user, function cancelQueueSuccess(status, message) {
+				console.log(fileName, 'cancel queue, sending message');
+				sendMessageToUser(res, status, message);
+			});
+		} else {
+			console.log(fileName, 'cancel queue, invalid args');
+			sendErrorToUser(res);
+		}
+	});
 
 	// Open server up to calls on the configurations port
 	app.listen(global.config.server.port, function serverListen() {

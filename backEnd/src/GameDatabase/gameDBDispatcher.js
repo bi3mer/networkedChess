@@ -50,7 +50,7 @@
 		 */
 		addMove: function(id, user, move, callback) {
 			console.log(fileName, 'addMove: dispatching to db');
-			db.addMove(id, move, callback);
+			db.addMove(id, user, move, callback);
 		},
 
 		/**

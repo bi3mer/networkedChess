@@ -12,7 +12,8 @@
 			"ratings": "/ratings",
 			"update": "/getUpdate",
 			"getMatchMaking": "/getMatchMaking",
-			"getMatch": "/getMatch"
+			"getMatch": "/getMatch",
+			"cancelQueue": "/cancelQueue"
 		},
 		"httpStatusCodes": {
 			"success": 200,

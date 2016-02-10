@@ -155,9 +155,6 @@
 				if(!err && user) {
 					console.log(fileName, 'getGameID: valid user found');
 
-					console.log('result (1): ' + JSON.stringify(user));
-					console.log('result (2): ' + user.gameIDs[user.gameIDs.length - 1])
-
 					// Check if player is playing and has a game id
 					if(user.isPlaying && user.gameIDs) {
 						console.log(fileName, 'getGameID: sending valid game id');

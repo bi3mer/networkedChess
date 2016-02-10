@@ -50,8 +50,20 @@
 		 * @Return {String}           - Return id of player or null
 		 */
 		leaveQueue: function(user, callback) {
-			console.log(fileName, 'getDataStructure: leaving queue');
-			MatchMaking.leaveQueue(user, callback);
+			console.log(fileName, 'leaveQueue: leaving queue');
+			var index = queue.indexOf(user);
+			if(index > -1) {
+				console.log(fileName, 'leaveQueue: left queue');
+
+				// Remove only one element at index found
+				queue.splice(index, 1);
+
+				// return no error
+				callback(false);
+			} else {
+				console.log(fileName, 'leaveQueue: not in queue');
+				callback(true);
+			}
 		}
 	};
 }());

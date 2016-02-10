@@ -10,8 +10,8 @@
 		whitePlayer: String,
 		gameOver: Boolean,
 		moves: [{
-			fromMove: String,
-			toMove: String
+			from: String,
+			to: String
 		}],
 		blackPlayerUpdates: [mongoose.Schema.Types.Mixed],
 		whitePlayerUpdates: [mongoose.Schema.Types.Mixed],
@@ -66,9 +66,11 @@
 	 * @param {String} otherPlayer - username of other player in game
 	 */
 	function saveGame(game, callback, otherPlayer) {
+		console.log(fileName, 'saveGame()');
+		
 		game.save(function saveForfeitToDB(saveErr) {
 			if(!saveErr) {
-				console.log(fileName, 'forfeit: Saved forfeit to updates');
+				console.log(fileName, 'saveGame: Saved forfeit to updates');
 
 				// Check callback
 				if(callback && otherPlayer) {
@@ -77,7 +79,7 @@
 					callback(false);
 				}
 			} else {
-				console.log(fileName, 'forfeit: error updating db: ' + saveErr);
+				console.log(fileName, 'saveGame: error updating db: ' + saveErr);
 
 				// Check callback
 				if(callback) {
@@ -207,8 +209,8 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		addMove: function(id, user, move, callback) {
-			console.log(fileName, 'addMove: entered function, TODO: implement');
-			
+			console.log(fileName, 'addMove: entered function');
+
 			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
 				// Check if game was found
 				if(!err && game) {
@@ -221,9 +223,11 @@
 						game.whitePlayerUpdates.push(move);
 					} else {
 						console.log(fileName, 'addUpdate: add update to blackPlayer');
-						game.blackPlayerUpdates.push(move2);
+						game.blackPlayerUpdates.push(move);
 					}
 
+					console.log('Game:', JSON.stringify(game));
+					console.log('callback:', JSON.stringify(callback));
 					// Save updates to game
 					saveGame(game, callback);
 				} else {

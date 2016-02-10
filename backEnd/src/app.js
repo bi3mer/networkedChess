@@ -90,28 +90,23 @@
 		addMove: function(user, move, callback) {
 			console.log(fileName, 'addMove: entered function');
 
-			// Check if move is valid
-			if(global.utility.checking.isValidMove(move)) {
-				// CHeck if user is valid
-				PlayersDB.getGameID(user, function(err, gameID) {
-					if(!err) {
-						GamesDB.addMove(gameID, user, move, function addMoveSuccesful(err) {
-							// Check if adding move to database was succesful
-							if(!err) {
-								console.log(fileName, 'addMove: sending back succes');
-								callback(global.config.server.httpStatusCodes.success);
-							} else {
-								console.log(fileName, 'addMove: sending back error, no game found');
-								callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
-							}
-						});
-					} else {
-						callback(global.config.server.httpStatusCodes.error, 'Error finding valid user');
-					}
-				});
-			} else {
-				callback(global.config.server.httpStatusCodes.error, 'Invalid move format');
-			}
+			// CHeck if user is valid
+			PlayersDB.getGameID(user, function(err, gameID) {
+				if(!err && gameID) {
+					console.log(fileName, 'addMove: found player game id');
+					GamesDB.addMove(gameID, user, move, function addMoveSuccesful(err) {
+						if(!err) {
+							console.log(fileName, 'addMove: sending  back success');
+							callback(global.config.server.httpStatusCodes.success);
+						} else {
+							console.log(fileName, 'addMove: sending back error, no game found');
+							callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
+						}
+					});
+				} else {
+					callback(global.config.server.httpStatusCodes.error, 'Error finding valid user or gameID: ' + gameID);
+				}
+			});
 		},
 
 		/**
@@ -165,7 +160,7 @@
 
 			// Check if user is valid
 			PlayersDB.getGameID(user, function(err, gameID) {
-				if(!err) {
+				if(!err && gameID) {
 					GamesDB.forfeit(gameID, user,function forfeitGame(err, otherPlayer) {
 						if(!err) {
 							console.log(fileName, 'forfeit: forfeited game');
@@ -181,11 +176,12 @@
 							PlayersDB.updateRatings(otherPlayer, {win: true});
 						} else {
 							console.log(fileName, 'forfeit: error forfeiting game: ' + err);
-							callback(global.config.httpStatusCodes.error, 'Error forfeiting game');
+							callback(global.config.server.httpStatusCodes.error, 'Error forfeiting game');
 						}
 					});
 				} else {
 					console.log(fileName, 'forfeit: No user found');
+					callback(global.config.server.httpStatusCodes.error, 'Player is not in game');
 				}
 			});
 		},
@@ -227,7 +223,7 @@
 
 			// Get current game id for user
 			PlayersDB.getGameID(user, function gameID(err, id) {
-				if(!err) {
+				if(!err && id) {
 					// If the user is playing
 					if(isPlaying) {
 						console.log(fileName, 'getUpdate: valid game id: ' + id);
@@ -324,6 +320,25 @@
 
 			MatchMaking.getDataStructure(function getMatchMakingData(data) {
 				callback(global.config.server.httpStatusCodes.success, data);
+			});
+		},
+
+		/**
+		 * User has decided to leave the queue
+		 * @param {String} user
+		 * @param {Function} callback
+		 */
+		cancelQueue: function(user, callback) {
+			console.log(fileName, 'cancelQueue()');
+
+			MatchMaking.leaveQueue(user, function leaveQueue(err) {
+				if(!err) {
+					console.log(fileName, 'cancelQueue: left queeu');
+					callback(global.config.server.httpStatusCodes.success, 'Left queue');
+				} else {
+					console.log(fileName, 'cancelQueue: unable to leave queue');
+					callback(global.config.server.httpStatusCodes.error, 'Unable to leave queue');
+				}
 			});
 		},
 	};
