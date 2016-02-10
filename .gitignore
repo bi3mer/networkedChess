@@ -1,6 +1,10 @@
 ######## Java ######## 
 *.class
 
+javaProject/*
+!javaProject/src
+!javaProject/uml
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
