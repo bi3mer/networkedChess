@@ -1,12 +1,8 @@
 ######## Java ######## 
 *.class
 
-javaProject/*
-!javaProject/NetworkedChess
-
-javaProject/NetworkedChess/*
-!javaProject/NetworkedChess/src
-!javaProject/NetworkedChess/uml
+# Code Recommenders
+.recommenders/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -17,19 +13,14 @@ javaProject/NetworkedChess/*
 *.ear
 
 # eclipse specific git ignore
-*.pydevproject
-.project
-*.metadata
-*.recommenders
-bin/**
-tmp/**
-tmp/**/*
+.metadata
+bin/
+tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
-.classpath
 .settings/
 .loadpath
 
