@@ -122,10 +122,10 @@
 			// Check if user is valid
 			PlayersDB.getGameID(user, function(err, gameID) {
 				if(!err && gameID) {
-					GamesDB.addUpdate(gameID, user, global.config.template.undoRequest, function removeMoveAndUpdateDB(errGame) {
+					GamesDB.addUpdate(gameID, user, global.config.templates.undoRequest, function removeMoveAndUpdateDB(errGame) {
 						if(!errGame) {
 							console.log(fileName, 'requestUndo: succesfull undid move');
-							callback(global.config.server.httpStatusCodes.succesful);
+							callback(global.config.server.httpStatusCodes.success);
 						} else {
 							console.log(fileName, 'requestUndo: unable to request undo move');
 							callback(global.config.server.httpStatusCodes.error, 'Error: coudln\t undo move');
@@ -139,14 +139,54 @@
 		},
 
 		/**
-		 * acceptUndo
+		 * acceptOrDenyUndo
 		 * @param {string} user       - users name
 		 * @param {string} move       - users move
+		 * @param {Boolean} accepted  - whether the player has accepted or denied the undo
 		 * @param {Function} callback - send info back to the server with
 		 * @return {Object}           - Return status defining whether adding move was succesful or not
 		 */
-		acceptUndo: function(user, callback) {
-			console.log(fileName, 'acceptUndo: entered function, TODO: implement this');
+		acceptOrDenyUndo: function(user, accepted, callback) {
+			console.log(fileName, 'acceptOrDenyUndo()');
+
+			// check if user is valid
+			PlayersDB.getGameID(user, function aceeptOrDenyGetGameID(err, gameID) {
+				if(!err && gameID) {
+					// Check if the player has accepted or declined undo request
+					if(accepted) {
+						console.log(fileName, 'acceptOrDenyUndo: has accepted undo, updating db');
+
+						// Undo the move on the database
+						GamesDB.undoMove(gameID, user, function acceptUndoDB(undoErr, undoneMove) {
+							// CHeck for err
+							if(!undoErr && undoneMove) {
+								console.log(fileName, 'acceptOrDenyUndo: updated db, returning move');
+								callback(global.config.server.httpStatusCodes.success, undoneMove);
+							} else {
+								console.log(fileName, 'acceptOrDenyUndo: unable to update db ->', undoErr);
+								callback(global.config.server.httpStatusCodes.error, undoErr);
+							}
+						});
+					} else {
+						console.log(fileName, 'acceptOrDenyUndo: has not accepted undo, updating db');
+
+						// update the other players database
+						GamesDB.addUpdate(gameID, user, global.config.templates.denyUndo, function addUpdateDenyUndo(addUpdateErr) {
+							// check for error
+							if(!addUpdateErr) {
+								console.log(fileName, 'acceptOrDenyUndo: success, updated databse and sending success to player');
+								callback(global.config.server.httpStatusCodes.success, 'success, did not accept undo');
+							} else {
+								console.log(fileName, 'acceptOrDenyUndo: error, could not deny undo ->', addUpdateErr);
+								callback(global.config.server.httpStatusCodes.error, 'error, could not deny move');
+							}
+						});
+					}
+				} else {
+					console.log(fileName, 'acceptUndo: unable to find game or user');
+					callback(global.config.server.httpStatusCodes.error, 'unable to find game to accept or decline undo ' + err);
+				}
+			});
 		},
 
 		/**

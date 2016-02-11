@@ -4,6 +4,16 @@
 	var mongoose  = require('mongoose');
 	var db = mongoose.createConnection(global.config.db.game.mongo.url, global.config.db.game.mongo.options);
 
+	// Update structure
+	var updateStructure = {
+		move: {
+			from: String,
+			to: String
+		},
+		undoRequest: Boolean,
+		undo: Boolean
+	};
+
 	// Structure for database
 	var GameSchema = {
 		blackPlayer: String,
@@ -13,8 +23,8 @@
 			from: String,
 			to: String
 		}],
-		blackPlayerUpdates: [mongoose.Schema.Types.Mixed],
-		whitePlayerUpdates: [mongoose.Schema.Types.Mixed],
+		blackPlayerUpdates: [updateStructure],
+		whitePlayerUpdates: [updateStructure],
 		lastUpdate: Date
 	};
 
@@ -79,7 +89,7 @@
 					callback(false);
 				}
 			} else {
-				console.log(fileName, 'saveGame: error updating db: ' + saveErr);
+				console.log(fileName, 'saveGame: error updating db ->', saveErr);
 
 				// Check callback
 				if(callback) {
@@ -181,7 +191,7 @@
 			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
 				// Check if game was found
 				if(!err && game) {
-					// chekc player
+					// chekc player and add update to other player
 					if(game.blackPlayer === user) {
 						console.log(fileName, 'addUpdate: add update to whitePlayer');
 						game.whitePlayerUpdates.push(update);
@@ -190,8 +200,7 @@
 						game.blackPlayerUpdates.push(update);
 					}
 
-					// Return success
-					callback(false);
+					saveGame(game, callback);
 				} else {
 					console.log(fileName, 'addUpdate: no game found');
 
@@ -219,19 +228,20 @@
 
 					// Add to updates
 					if(game.blackPlayer === user) {
-						console.log(fileName, 'addUpdate: add update to whitePlayer');
+						console.log(fileName, 'addMove: add update to whitePlayer');
 						game.whitePlayerUpdates.push(move);
 					} else {
-						console.log(fileName, 'addUpdate: add update to blackPlayer');
+						console.log(fileName, 'addMove: add update to blackPlayer');
 						game.blackPlayerUpdates.push(move);
 					}
 
 					console.log('Game:', JSON.stringify(game));
 					console.log('callback:', JSON.stringify(callback));
+
 					// Save updates to game
 					saveGame(game, callback);
 				} else {
-					console.log(fileName, 'addUpdate: unable to find game');
+					console.log(fileName, 'addMove: unable to find game');
 					callback(true);
 				}
 			});
@@ -282,6 +292,50 @@
 					if(callback) {
 						callback(true);
 					}
+				}
+			});
+		},
+
+		/** 
+		 * Call undoMove(...) on correct db
+		 * @param {string} id         - id of game
+		 * @param {string} user       - user name
+		 * @param {Function} callback - return with move undone
+		 */
+		undoMove: function(id, user, callback) {
+			console.log(fileName, 'undoMove()');
+			
+			Game.findOne(createIDQuery(id), function gindGameUndoMove(err, game) {
+				// Check for error
+				if(!err && game) {
+					console.log(fileName, 'undoMove: game found, updating it');
+
+					// removing move
+					var move = game.moves.pop();
+
+					// Remove id field from dictionary
+					delete move._id;
+
+					// Update database for other user
+					if(user === game.whitePlayer) {
+						// add undone move to black player
+						game.blackPlayerUpdates.push({
+							undo: true,
+							move: move
+						});
+					} else {
+						// add undone move to white player
+						game.whitePlayerUpdates.push({
+							undo: true,
+							move: move
+						});
+					}
+
+					// save changes to game
+					saveGame(game, callback, move);
+				} else {
+					console.log(fileName, 'undoMove: no game found or error ->', err);
+					callback(true);
 				}
 			});
 		},

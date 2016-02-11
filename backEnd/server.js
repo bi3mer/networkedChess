@@ -116,13 +116,13 @@
 		}
 	});
 
-	// Listen to path to acceptUndo a move in a users game
-	app.post(global.config.server.paths.acceptUndo, function serverUndoMove(req, res) {
-		console.log(fileName, 'acceptUndo move');
+	// Listen to path to acceptOrDenyUndo a move in a users game
+	app.post(global.config.server.paths.acceptOrDenyUndo, function serverUndoMove(req, res) {
+		console.log(fileName, 'acceptOrDenyUndo move');
 
-		if(isValidReq(req) && eq.body.isString(req.body.user)) {
-			serverApp.acceptUndo(req.body.user, function undoMoveGetResponse(status, message) {
-				console.log(fileName, 'acceptUndo move: sending to user');
+		if(isValidReq(req) && global.utility.checking.isString(req.body.user)) {
+			serverApp.acceptOrDenyUndo(req.body.user, req.body.acceptUndo, function undoMoveGetResponse(status, message) {
+				console.log(fileName, 'acceptOrDenyUndo move: sending to user');
 				sendMessageToUser(res, status, message);
 			});
 		} else {

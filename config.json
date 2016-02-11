@@ -7,7 +7,7 @@
 			"login": "/login", 
 			"addMove": "/addMove",
 			"requestUndo": "/requestUndo",
-			"acceptUndo": "/acceptUndo",
+			"acceptOrDenyUndo": "/acceptOrDenyUndo",
 			"forfeit": "/forfeit",
 			"ratings": "/ratings",
 			"update": "/getUpdate",
@@ -25,6 +25,15 @@
 	"templates": {
 		"forfeit": {
 			"forfeit": true
+		},
+		"undoRequest": {
+			"undoRequest": true
+		},
+		"denyUndo": {
+			"undo": false
+		},
+		"acceptUndo": {
+			"undo": true
 		}
 	},
 	"queue": {

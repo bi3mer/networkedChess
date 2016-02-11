@@ -64,6 +64,17 @@
 			db.forfeit(id, user, callback);
 		},
 
+		/** 
+		 * Call undoMove(...) on correct db
+		 * @param {string} id         - id of game
+		 * @param {string} user       - user name
+		 * @param {Function} callback - return with move undone
+		 */
+		undoMove: function(id, user, callback) {
+			console.log(fileName, 'undoMove: dispatching to db');
+			db.undoMove(id, user, callback);
+		},
+
 		/**
 		 * disconnect correct db
 		 * @param {function} callback - Response object to send back to request
