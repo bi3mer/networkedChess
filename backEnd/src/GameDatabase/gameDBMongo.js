@@ -80,7 +80,7 @@
 		
 		game.save(function saveForfeitToDB(saveErr) {
 			if(!saveErr) {
-				console.log(fileName, 'saveGame: Saved forfeit to updates');
+				console.log(fileName, 'saveGame: Saved updates to game');
 
 				// Check callback
 				if(callback && otherPlayer) {
@@ -186,7 +186,7 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		addUpdate: function(id, user, update, callback) {
-			console.log(fileName, 'getUpdate: entered function');
+			console.log(fileName, 'addUpdate: entered function');
 
 			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
 				// Check if game was found
