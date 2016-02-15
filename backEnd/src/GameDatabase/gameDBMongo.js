@@ -226,13 +226,19 @@
 					// Add to moves
 					game.moves.push(move);
 
+					var newMove = updateStructure;
+					newMove.move.from = move.from;
+					newMove.move.to = move.to;
+					newMove.undoRequest = false;
+					newMove.undo = false;
+
 					// Add to updates
 					if(game.blackPlayer === user) {
 						console.log(fileName, 'addMove: add update to whitePlayer');
-						game.whitePlayerUpdates.push(move);
+						game.whitePlayerUpdates.push(newMove);
 					} else {
 						console.log(fileName, 'addMove: add update to blackPlayer');
-						game.blackPlayerUpdates.push(move);
+						game.blackPlayerUpdates.push(newMove);
 					}
 
 					console.log('Game:', JSON.stringify(game));
@@ -269,9 +275,6 @@
 
 					// end the game
 					game.gameOver = true;
-
-					// Debugging, TODO: Remove when done
-					console.log('game: ', JSON.stringify(game));
 
 					// Check which player to add the updates to
 					if(user === game.whitePlayer) {
