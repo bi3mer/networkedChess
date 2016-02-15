@@ -17,22 +17,29 @@
 			console.log(fileName, 'goIntoMatchMaking: checking for user');
 
 			var otherPlayer = null;
+			var err = false;
 
-			// Check if queue has a member
-			if(global.utility.checking.isFilledArray(queue)) {
-				console.log(fileName, 'goIntoMatchMaking: found other player');
+			if(queue.indexOf(user) === -1) {
+				// Check if queue has a member
+				if(global.utility.checking.isFilledArray(queue)) {
+					console.log(fileName, 'goIntoMatchMaking: found other player');
 
-				// Get player id from queue
-				otherPlayer = queue.shift();
+					// Get player id from queue
+					otherPlayer = queue.shift();
+				} else {
+					console.log(fileName, 'goIntoMatchMaking: adding player to queue');
+
+					// Add user to queue
+					queue.push(user);
+				}
 			} else {
-				console.log(fileName, 'goIntoMatchMaking: adding player to queue');
+				console.log(fileName, 'goIntoMatchMaking: error, already in queue');
 
-				// Add user to queue
-				queue.push(user);
+				err = true;
 			}
 
 			// Return result in callback
-			callback(otherPlayer);
+			callback(err, otherPlayer);
 		},
 
 		/**

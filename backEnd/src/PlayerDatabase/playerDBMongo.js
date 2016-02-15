@@ -309,7 +309,7 @@
 		 * @param {Function } callback      - return results in callback
 		 */
 		updateRatings: function(user, result, callback, updateIsPlaying) {
-			console.log(fileName, 'updateRatings: entered function');
+			console.log(fileName, 'updateRatings()');
 
 			Player.findOne(createUserNameQuery(user), function updateRankingsInDB(err, user) {
 				if(!err && user) {

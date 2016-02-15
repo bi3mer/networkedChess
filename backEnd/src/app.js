@@ -40,7 +40,7 @@
 
 			// Call Player Db to test credentials
 			PlayersDB.createAccount(user, pass, function loginToServer(err) {
-				// Check valid credentials	
+				// Check valid credentials
 				if(!err) {
 					console.log(fileName, 'Create Account: Valid username, sent success');
 					callback(global.config.server.httpStatusCodes.success);
@@ -133,7 +133,7 @@
 					});
 				} else {
 					console.log(fileName, 'requestUndo: unable to find game');
-					callback(global.config.server.httpStatusCodes.error, 'Unable to find game to undo ' + err)
+					callback(global.config.server.httpStatusCodes.error, 'Unable to find game to undo ' + err);
 				}
 			});
 		},
@@ -316,14 +316,14 @@
 			PlayersDB.isUser(user, function(err) {
 				if(!err) {
 					// Add or get player from queue
-					MatchMaking.goIntoMatchMaking(user, function getMatchmatchMaking(otherPlayer) {
+					MatchMaking.goIntoMatchMaking(user, function getMatchmatchMaking(matchmakingErr, otherPlayer) {
 						// Check if other player found
-						if(global.utility.checking.isString(otherPlayer)) {
+						if(!matchmakingErr && global.utility.checking.isString(otherPlayer)) {
 							console.log(fileName, 'getMatch: found match');
 
 							// Create a game
-							GamesDB.createGame(user, otherPlayer, function getGameIDInApp(err, id) {
-								if(!err) {
+							GamesDB.createGame(user, otherPlayer, function getGameIDInApp(gameDBErr, id) {
+								if(!gameDBErr) {
 									console.log(fileName, 'getMatch: valid game made, sending id to user');
 
 									// Send info to user
@@ -334,6 +334,10 @@
 									PlayersDB.addGameID(otherPlayer, id);
 								}
 							});
+						} else if (matchmakingErr) {
+							console.log(fileName, 'getMatch: error, was in queue already');
+
+							callback(global.config.server.httpStatusCodes.notModified, "Already in queue");
 						} else {
 							console.log(fileName, 'getMatch: no opponent found, added to MatchMaking');
 
