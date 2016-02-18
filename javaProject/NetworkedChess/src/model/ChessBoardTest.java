@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import factory.PieceMovementFactory;
+
 public class ChessBoardTest {
 
 
@@ -24,6 +26,18 @@ public class ChessBoardTest {
 		
 		MobilityBoard bordy_on_wheels = new MobilityBoard(bordy);
 		bordy.selectForMark(2, 2, bordy_on_wheels);
-		bordy.deselect(bordy_on_wheels);
+		bordy.deselect(bordy_on_wheels);  //basic mobility tests
+		bordy.toString();
+		
+		bordy_on_wheels.markMove(-6, -6);
+		bordy_on_wheels.markAttack(-6, -6,1); // invalid mobility tests
+		
+		bordy_on_wheels.markKingMove(1);
+		bordy_on_wheels.markRookMove(1, 6);
+		bordy_on_wheels.didMove(1, 1, 1);
+		
+		//Piece kingkong = new Piece(KingMovement()); //I can't seem to call onto KingMovement
+		
+		
 	}
 }
