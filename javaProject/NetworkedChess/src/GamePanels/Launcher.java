@@ -10,11 +10,9 @@
 
 package GamePanels;
 
-import GameTest.*;
 import KLD.*;
 import KLD.obj.GameObject;
 import KLD.util.ShapeMaker;
-import ui.ChessBoardUI;
 
  
 /**
@@ -26,7 +24,7 @@ public class Launcher
 	public Launcher()
 	{
 		//setting the main panel. You could also use GameMenuPanel.setGame(class).
-		GameFrame.mainGame = ChessBoardUI.class; 
+		GameFrame.mainGame = SinglePlayerChess.class; 
 		
 		//TODO read json: config
 		
@@ -37,7 +35,7 @@ public class Launcher
 		//frame size is set by default 500x500 
 		//adding a title to the game frame. 
 		GameFrame.setTitle("default lame title!!");
-		GameFrame.setResizable(true);
+		GameFrame.setResizable(false);
 		GameFrame.FPS = 30; 
 		
 	}

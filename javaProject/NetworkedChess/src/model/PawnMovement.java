@@ -16,32 +16,31 @@ public class PawnMovement extends PieceMovement
 	}
 	
 	@Override
-	public boolean markAvailableMovement(MobilityBoard mboard, ChessBoard cboard, int cx, int cy) 
+	public int markAvailableMovement(MobilityBoard mboard, ChessBoard cboard, int cx, int cy) 
 	{
-		boolean didMark = false; 
+		int marks = 0; 
 	
 		//either 1 or -1
 		int team = cboard.teamAt(cx, cy); 
 				
-		didMark = didMark | mboard.markMove(cx, cy + team); 
+		marks += (mboard.markMove(cx, cy + team))? 1 : 0; 
 		
-		didMark = didMark | mboard.markAttack(cx+1, cy+team, team); 
-		didMark = didMark | mboard.markAttack(cx-1, cy+team, team); 
+		marks += (mboard.markAttack(cx+1, cy+team, team))? 1 : 0; 
 		
-
-		if(!didMark)
-			return false; 
+		marks += (mboard.markAttack(cx-1, cy+team, team))? 1 : 0; 
+		
+		
+		if(marks==0)
+			return 0; 
 		
 		
 		//initial move proven mathematically 
 			if(team == cy || team+7 == cy)
-			{
-				didMark = didMark | mboard.markMove(cx, cy + 2*team); 
-			}
+				marks += (mboard.markMove(cx, cy + 2*team))? 1 : 0;  
 			
 			
-		
-		return didMark; 
+			
+		return marks; 
 	}
 
 }

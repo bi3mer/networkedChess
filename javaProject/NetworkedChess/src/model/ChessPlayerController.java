@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import GamePanels.MultiplayerChessGame;
 import intf.MovementTracker;
-import ui.ChessBoardUI;
 
 public class ChessPlayerController
 {
@@ -21,13 +20,13 @@ public class ChessPlayerController
 	private ServerSocket server; 
 	private Socket suckit; 
 	
-	private ChessBoardUI board; 
+	private MultiplayerChessGame board; 
 	
 	private boolean isConnecting; 
 	
 	Thread networkThread; 
 	
-	public ChessPlayerController(ChessBoardUI board)
+	public ChessPlayerController(MultiplayerChessGame board)
 	{
 		this.board = board; 
 		this.host = "localhost"; //TODO 
@@ -73,7 +72,7 @@ public class ChessPlayerController
 							System.out.println("found connection");
 							
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
+						
 							e1.printStackTrace();
 						} 
 						
@@ -81,7 +80,7 @@ public class ChessPlayerController
 					} 
 					try
 					{
-					play(); 
+						play(); 
 					}
 					catch (Exception e)
 					{

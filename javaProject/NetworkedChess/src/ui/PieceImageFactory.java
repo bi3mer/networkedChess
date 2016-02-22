@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import KLD.Loader;
 import intf.ChessFactory;
 
-public class UIPiece implements ChessFactory<Image>
+public class PieceImageFactory implements ChessFactory<Image>
 {
-	private static UIPiece instence;
+	private static PieceImageFactory instence;
 	private ArrayList<Image> pieceImages; 
 	private Loader loader; 
 	
-	private UIPiece()
+	private PieceImageFactory()
 	{
 		pieceImages = new ArrayList<Image>();
 		loader = new Loader(); 
@@ -23,10 +23,10 @@ public class UIPiece implements ChessFactory<Image>
 		loader.setAlpha(new Color(255, 174, 201));
 	}
 	
-	public static UIPiece Instnece()
+	public static PieceImageFactory Instnece()
 	{
 		if(instence==null)
-			instence = new UIPiece(); 
+			instence = new PieceImageFactory(); 
 		
 		return instence; 
 	}
