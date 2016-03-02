@@ -35,8 +35,15 @@ public class ChessBoardTest {
 		bordy_on_wheels.markKingMove(1);
 		bordy_on_wheels.markRookMove(1, 6);
 		bordy_on_wheels.didMove(1, 1, 1);
+		bordy_on_wheels.didMove(3, 1,1);
 		
-		//Piece kingkong = new Piece(KingMovement()); //I can't seem to call onto KingMovement
+		PieceMovementFactory fact = new PieceMovementFactory(); 
+		
+		Piece factorQueen = fact.factorKing();
+		KingMovement movie = new KingMovement();
+		PawnMovement meek = new PawnMovement();
+		movie.markAvailableMovement(bordy_on_wheels, bordy, 1, 1);
+		meek.markAvailableMovement(bordy_on_wheels, bordy, 0, 0);
 		
 		
 	}
