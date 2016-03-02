@@ -1,13 +1,8 @@
 ;(function initServer() {
 	'use strict';
 
-	// Get configuration file for use throughout server
-	global.config = require('../config');
-
-	// Get utilities
-	global.utility = {};
-	global.utility.path = require('path');
-	global.utility.checking = require('./src/Utility/typeChecking');
+	// Get globals
+	require('./global.js');
 
 	// File name for debugging
 	var fileName = global.utility.path.basename(__filename) + ' ->';

@@ -27,6 +27,16 @@
 		});
 	};
 
+	/**
+	 * @param {String} errorStr - error string 
+	 * @return {Object} with error as JSON
+	 */
+	function createError(errorStr) {
+		return {
+			error: errorStr
+		};
+	};
+
 	return {
 		/**
 		 * Log player into server
@@ -276,7 +286,7 @@
 								callback(global.config.server.httpStatusCodes.success, updates);
 							} else {
 								console.log(fileName, 'getUpdate: invalid game id given');
-								callback(global.config.server.httpStatusCodes.error, 'No valid game found');
+								callback(global.config.server.httpStatusCodes.error, createError('No valid game found'));
 							}
 
 							// Check whether or not the game is over
@@ -288,17 +298,31 @@
 					} else if(id) {
 						console.log(fileName, 'getUpdate: found game id for player');
 
-						// Player has found a match and will be notified
-						callback(global.config.server.httpStatusCodes.success, {id: id});
+						// Get initial info
+						GamesDB.getInitialInfo(id, user, function getInitInfoFromGamesDB(err, resp){
+							if(!err && resp) {
+								console.log(fileName, 'getUpdate: found game info for player');
+
+								// Player has found a match and will be notified
+								callback(global.config.server.httpStatusCodes.success, resp);
+							} else {
+								console.log(fileName, 'getUpdate: error geting game info for player');
+
+								// Return error
+								callback(global.config.server.httpStatusCodes.error, createError('Unable to find requested game info'));
+							}
+						});
+
+						
 					} else {
 						console.log(fileName, 'getUpdate: no match has been found');
 
 						// Player hasn't found a match yet
-						callback(global.config.server.httpStatusCodes.notModified, 'getUpdate: ID, ' + id + ' no match found yet');
+						callback(global.config.server.httpStatusCodes.notModified, createError('getUpdate: ID, ' + id + ' no match found yet'));
 					}
 				} else {
 					console.log(fileName, 'getUpdate: error getting id');
-					callback(global.config.server.httpStatusCodes.validationError, 'getUpdate: Error, ' + id);
+					callback(global.config.server.httpStatusCodes.validationError, createError('getUpdate: Error, ' + id));
 				}
 			});
 		},
@@ -327,7 +351,7 @@
 									console.log(fileName, 'getMatch: valid game made, sending id to user');
 
 									// Send info to user
-									callback(global.config.server.httpStatusCodes.success, id);
+									callback(global.config.server.httpStatusCodes.success, {whitePlayer: false, otherPlayer: otherPlayer});
 
 									// Update game ids for each player
 									PlayersDB.addGameID(user, id);

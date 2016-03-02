@@ -76,6 +76,17 @@
 		},
 
 		/**
+		 * call getInitialINfo(...) on correct db
+		 * @param {string} id         - id of game
+		 * @param {string} user       - user name
+		 * @param {Function} callback - return with move undone
+		 */
+		getInitialInfo: function(id, user, callback) {
+			console.log(fileName, 'getInitialInfo: dispatching to db');
+			db.getInitialInfo(id, user, callback);
+		},
+
+		/**
 		 * disconnect correct db
 		 * @param {function} callback - Response object to send back to request
 		 */
