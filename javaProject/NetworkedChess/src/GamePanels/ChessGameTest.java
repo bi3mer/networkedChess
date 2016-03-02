@@ -10,7 +10,7 @@ public class ChessGameTest {
 	@Test
 	public void gametest() {
 	 @SuppressWarnings("unused")
-	ChessGame game;
+	 MultiplayerChessGame game;
 	}
 
 }

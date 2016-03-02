@@ -16,6 +16,11 @@ public class MobilityBoard extends Board
 	public final static int TAG_LEFT = 0; 
 	public final static int TAG_RIGHT = 1; 
 	
+	public final static int THREAT_COOL = 0; 
+	public final static int THREAT_CKECK = 1; 
+	public final static int THREAT_CKECKMATE = 2; 
+	
+	
 	private ArrayList<Boolean> didMove; 
 	
 
@@ -59,6 +64,7 @@ public class MobilityBoard extends Board
 	 */
 	public boolean markMove(int x, int y)
 	{
+		//System.out.println("move mark at: " + x + " " + y );
 		if(cboard.isEmpty(x, y))
 			return mark(MARK_MOVE, x, y);
 		
@@ -104,7 +110,7 @@ public class MobilityBoard extends Board
 	}
 	
 	
-	public void markKingMove(int team)
+	public void markKingMoved(int team)
 	{
 		//convert -1 and 1 >> into >> 0 and 1 
 		team = (team+1)/2; 
@@ -114,7 +120,7 @@ public class MobilityBoard extends Board
 		didMove.set(team, true); 
 	}
 	
-	public void markRookMove(int team, int tag)
+	public void markRookMoved(int team, int tag)
 	{
 		team = (team+1)/2; 
 		int index = Piece.TYPE_ROOK +(team+tag); 
@@ -131,13 +137,11 @@ public class MobilityBoard extends Board
 		team = (team+1)/2; 
 		int index =(team+piece+(tag%piece))/(1+(piece%3));
 		
-		if(didMove.size()<=index)
+		if(didMove.size() <= index)
 			return false; 
 		
 		
 		return didMove.get(index); 
 	}
-	
-	
-	
+
 }

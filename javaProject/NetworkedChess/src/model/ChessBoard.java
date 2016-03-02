@@ -1,11 +1,9 @@
 package model;
 
-import factory.PieceMovementFactory;
+import factory.PieceFactory;
 
 /**
  * Hold piece values 
-		
-		
  * 
  * @author KLD
  * 
@@ -20,13 +18,16 @@ public class ChessBoard extends Board
 	 * 
 	 * TODO set up about with pieces 
 	 */
+	
+	private int lastKilled; 
+	
 	public ChessBoard() 
 	{
 		super(8,8);
 		
 		//define pieces 
 		
-		PieceMovementFactory pissFactory = new PieceMovementFactory(); 
+		PieceFactory pissFactory = PieceFactory.instence(); 
 		
 		pieces = new Piece[7];
 		
@@ -40,6 +41,8 @@ public class ChessBoard extends Board
 	
 	public void movePiece(int fromX, int fromY, int toX, int toY)
 	{
+		lastKilled = getTileValue(toX, toY); 
+		
 		setTileValue(toX, toY, getTileValue(fromX, fromY)); 
 		setTileValue(fromX, fromY, 0);
 		
@@ -52,9 +55,24 @@ public class ChessBoard extends Board
 		}
 		
 	}
+	
+	/**
+	 * Undo's last killed piece 
+	 * @param fromX last piece moved from X co-od 
+	 * @param fromY last piece moved from  Y co-od 
+	 * @param toX last piece killed at X co-od 
+	 * @param toY last piece killed at Y co-od 
+	 */
+	public void untoLastMove(int fromX, int fromY, int toX, int toY)
+	{
+		setTileValue(fromX, fromX, getTileValue(toX, toY)); 
+		setTileValue(toX, toY, lastKilled);
+	}
 
 	/**
-	 * to be deleted (or set private 
+	 * to be deleted (or set private) Do not use 
+	 * 
+	 * @see #movePiece(int, int, int, int)
 	 */
 	public void placePiece(int x, int y, int pieceType)
 	{
@@ -83,12 +101,14 @@ public class ChessBoard extends Board
 	 * @param y coordinate
 	 * @param mboard markable board 
 	 */
-	public void selectForMark(int x, int y, MobilityBoard mboard)
+	public int selectForMark(int x, int y, MobilityBoard mboard)
 	{
-		int pieceValue = getTileValue(x, y); 
+		int pieceValue = getPiece(x, y); 
 		
 		if(pieceValue != Board.EMPTY)
-			pieces[Math.abs(pieceValue)-1].movement.markAvailableMovement(mboard, this, x, y); 
+			return pieces[pieceValue-1].movement.markAvailableMovement(mboard, this, x, y); 
+		
+		return 0; 
 	}
 	
 	/**
@@ -98,6 +118,19 @@ public class ChessBoard extends Board
 	public void deselect(MobilityBoard mboard)
 	{
 		mboard.reset(); 
+	}
+	
+	/**
+	 * return piece values 
+	 * @param x x co-ord 
+	 * @param y y co-ord 
+	 * @return 0 if no piece, otherwise piece value 
+	 * 
+	 * @see Piece
+	 */
+	public int getPiece(int x, int y)
+	{
+		return Math.abs(getTileValue(x, y));
 	}
 
 }

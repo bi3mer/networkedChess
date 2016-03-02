@@ -308,7 +308,7 @@
 		undoMove: function(id, user, callback) {
 			console.log(fileName, 'undoMove()');
 			
-			Game.findOne(createIDQuery(id), function gindGameUndoMove(err, game) {
+			Game.findOne(createIDQuery(id), function findGameUndoMove(err, game) {
 				// Check for error
 				if(!err && game) {
 					console.log(fileName, 'undoMove: game found, updating it');
@@ -338,6 +338,42 @@
 					saveGame(game, callback, move);
 				} else {
 					console.log(fileName, 'undoMove: no game found or error ->', err);
+					callback(true);
+				}
+			});
+		},
+
+		/**
+		 * call getInitialINfo(...) on correct db
+		 * @param {string} id         - id of game
+		 * @param {string} user       - user name
+		 * @param {Function} callback - return with move undone
+		 */
+		getInitialInfo: function(id, user, callback) {
+			console.log(fileName, 'getInitialInfo()');
+			
+			// Find game
+			Game.findOne(createIDQuery(id), function getInitInfoFromDB(err, game) {
+				// checking for error
+				if(!err && game) {
+					console.log(fileName, 'undoMove: game found, getting info');
+
+					// Create dictionary
+					var info = {};
+
+					// get correct color and other user
+					if(game.whitePlayer == user) {
+						info.whitePlayer = true;
+						info.otherPlayer = game.blackPlayer;
+					} else {
+						info.whitePlayer = false;
+						info.otherPlayer = game.whitePlayer;
+					}
+
+					// Return info
+					callback(false, info);
+				} else {
+					console.log(fileName, 'getInitialInfo: no game found or error ->', err);
 					callback(true);
 				}
 			});

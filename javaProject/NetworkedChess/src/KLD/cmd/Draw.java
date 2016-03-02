@@ -42,7 +42,7 @@ public abstract class Draw extends LinkObject{
 		
 		final Graphics gugu = g; // we love gugu, again <3 
 		
-		if( visible)
+		if(visible)
 			draw(g);
 		
 		g= gugu; 

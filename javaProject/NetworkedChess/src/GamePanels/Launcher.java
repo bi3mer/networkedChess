@@ -10,23 +10,24 @@
 
 package GamePanels;
 
-import GameTest.*;
 import KLD.*;
 import KLD.obj.GameObject;
 import KLD.util.ShapeMaker;
 
  
 /**
- * Launches a game into a the console (basically main method) 
+ * Launches a game into a the console (main is found KLD.GameFrame.java) 
  */
 public class Launcher 
 {
+	
 	public Launcher()
 	{
 		//setting the main panel. You could also use GameMenuPanel.setGame(class).
-		GameFrame.mainGame = ChessGame.class; 
+		GameFrame.mainGame = SinglePlayerChess.class; 
 		
 		//TODO read json: config
+		
 		
 		
 		GameFrame.width = 800; 
@@ -34,8 +35,8 @@ public class Launcher
 		//frame size is set by default 500x500 
 		//adding a title to the game frame. 
 		GameFrame.setTitle("default lame title!!");
-		GameFrame.setResizable(true);
-		GameFrame.FPS = 10; 
+		GameFrame.setResizable(false);
+		GameFrame.FPS = 30; 
 		
 	}
 }

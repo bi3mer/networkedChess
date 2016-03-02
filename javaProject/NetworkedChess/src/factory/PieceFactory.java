@@ -15,11 +15,26 @@ import model.PieceMovement;
  * 
  * @TODO singleton and document 
  */
-public class PieceMovementFactory implements ChessFactory<Piece>
+public class PieceFactory implements ChessFactory<Piece>
 {
+	//singleton 
+	private static PieceFactory insentce; 
+	
+	public static PieceFactory instence()
+	{
+		if(insentce==null)
+			insentce = new PieceFactory(); 
+		
+		return insentce; 
+	}
+	//end singleton 
+
+	/**
+	 * memorize created pieces by index  
+	 */
 	private ArrayList<Piece> pieces; 
 	
-	public PieceMovementFactory() 
+	private PieceFactory() 
 	{
 		pieces = new ArrayList<>(); 
 	}
@@ -100,7 +115,7 @@ public class PieceMovementFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorPawn() 
 	{
-		PieceMovement m = new PawnMovement(); //this piece if dick follows no logic 
+		PieceMovement m = new PawnMovement(); //this piece of dick follows no logic 
 		Piece dick = new Piece(Piece.TYPE_PAWN, m);
 		
 		return dick;

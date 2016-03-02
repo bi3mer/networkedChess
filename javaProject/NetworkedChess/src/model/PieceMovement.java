@@ -1,5 +1,7 @@
 package model;
 
+import factory.PieceFactory;
+
 /**
  * Identifies possibles tiles a piece can move and marks those areas with either move or attack markers 
  * 
@@ -7,6 +9,7 @@ package model;
  */
 public class PieceMovement 
 {
+	
 	/**
 	 * True means the same pattern of a move occurs in greater distance 
 	 */
@@ -15,7 +18,7 @@ public class PieceMovement
 	/**
 	 * A linked list of movement offsets value(s) away from center 
 	 */
-	private Move move;
+	private MovePattern move;
 	
 	/**
 	 * @param move movement offset(s) pattern 
@@ -23,7 +26,7 @@ public class PieceMovement
 	 * 
 	 * @see Move
 	 */
-	public PieceMovement(Move move, boolean isCon)
+	public PieceMovement(MovePattern move, boolean isCon)
 	{
 		this.move = move;
 		isContinued = isCon; 	
@@ -37,7 +40,7 @@ public class PieceMovement
 	 */
 	public PieceMovement(int ox, int oy, boolean isCon)
 	{
-		this(new Move(ox,oy), isCon); 
+		this(new MovePattern(ox,oy), isCon); 
 	}
 	
 	/**
@@ -47,24 +50,43 @@ public class PieceMovement
 	 * @param cboard board to check empty and occupied from 
 	 * @param cx center x if piece 
 	 * @param cy center y of piece 
-	 * @return true if at least one tile is marked, otherwise false 
+	 * @param team relative team
+	 * 
+	 * @return number of marks 
 	 * 
 	 * @see #markAvailableMove
 	 */
-	public boolean markAvailableMovement(MobilityBoard mboard,ChessBoard cboard, int cx, int cy)
+	public int markAvailableMovement(MobilityBoard mboard,ChessBoard cboard, int cx, int cy, int team)
 	{
-		boolean marked = false; 
+		int marks = 0; 
+
+		marks +=  markAvailableMove(mboard, cboard, cx, cy, team, move);
 		
-		marked =  marked | markAvailableMove(mboard, cboard, cx, cy, move);
-		
-		Move pointer = move.next; 
+		MovePattern pointer = move.next; 
 		while(pointer != null)
 		{
-			marked =  marked | markAvailableMove(mboard, cboard, cx, cy, pointer);
+			marks +=  markAvailableMove(mboard, cboard, cx, cy,team, pointer);
 			pointer = pointer.next; 
 		}
+
+		return marks; 
+	
 		
-		return marked; 
+	}
+	/**
+	 * Marks a mobility board wit possible moves and attacks using all possible move patterns 
+	 * 
+	 * @param mboard board to be marked 
+	 * @param cboard board to check empty and occupied from 
+	 * @param cx center x if piece 
+	 * @param cy center y of piece 
+	 * @return number of marks 
+	 * 
+	 * @see #markAvailableMove
+	 */
+	public int markAvailableMovement(MobilityBoard mboard,ChessBoard cboard, int cx, int cy)
+	{
+		return markAvailableMovement(mboard, cboard, cx, cy,cboard.teamAt(cx, cy)); 
 	}
 	
 	/**
@@ -76,11 +98,11 @@ public class PieceMovement
 	 * @param cy center y of piece 
 	 * @param move move pattern used 
 	 * 
-	 * @return true if at least one tile is marked, otherwise false 
+	 * @return number of marks 
 	 */
-	private boolean markAvailableMove(MobilityBoard mboard, ChessBoard cboard, int cx, int cy, Move move)
+	public int markAvailableMove(MobilityBoard mboard, ChessBoard cboard, int cx, int cy, int team, MovePattern move)
 	{
-		boolean didMark = false;  
+		int marks = 0;  
 		
 		int DIR = 4;  //directions 
 		
@@ -102,19 +124,20 @@ public class PieceMovement
 			
 			if(cboard.isEmpty(px, py))
 			{		
+				
 				if(mboard.markMove(px , py))
 				{
-					didMark = true; 
+					marks++; 
 					if(isContinued)
 					{
-						recursiveMarking(mboard, cboard, cx, cy, dx, dy); 
+						marks += recursiveMarking(mboard, cboard, cx, cy, dx, dy, team); 
 					}//end isContinued
 				}//end markMove
 			}//end isEmpty
 			else
 			{
-				if (mboard.markAttack(px, py, cboard.teamAt(cx, cy)))
-						didMark = true; 
+				if (mboard.markAttack(px, py, team))
+					marks++; 
 				else
 				{
 					//System.out.println("conned: "+ px + " " + py); fuckyou 
@@ -123,7 +146,7 @@ public class PieceMovement
 			}//end else 
 		}//end for i 
 		
-		return didMark; 
+		return marks; 
 	}
 	
 	/**
@@ -135,8 +158,9 @@ public class PieceMovement
 	 * @param ox pattern's offset x 
 	 * @param oy pattern's offset y
 	 */
-	private void recursiveMarking(MobilityBoard mboard,ChessBoard cboard, int cx, int cy, int ox, int oy)
+	private int recursiveMarking(MobilityBoard mboard,ChessBoard cboard, int cx, int cy, int ox, int oy, int team)
 	{
+		int marks = 0 ;
 		int multyplier = 2; 
 		
 		//recursive x, y 
@@ -145,7 +169,7 @@ public class PieceMovement
 		
 		while(cboard.isEmpty(rx, ry))
 		{
-			mboard.markMove(rx,ry); 
+			marks += (mboard.markMove(rx,ry))? 1 : 0 ; 
 			
 			multyplier++; 
 			rx = multyplier*ox + cx;
@@ -154,8 +178,11 @@ public class PieceMovement
 		
 		if(cboard.isOccupied(rx, ry))
 		{
-			mboard.markAttack(rx, ry, cboard.teamAt(cx, cy)); 
+			marks += (mboard.markAttack(rx, ry, team))? 1 : 0 ; 
 		}//end if isOccupied
+		
+		
+		return marks; 
 	}
 	
 	/**
@@ -166,9 +193,9 @@ public class PieceMovement
 	 * 
 	 * @return a move pattern object 
 	 */
-	public static Move createMove(int x, int y, Move move)
+	public static MovePattern createMove(int x, int y, MovePattern move)
 	{
-		Move m =  new Move(x, y);
+		MovePattern m =  new MovePattern(x, y);
 		m.next = move; 
 		return m; 
 	}
@@ -182,14 +209,14 @@ public class PieceMovement
  * 
  * @author KLD
  */
-class Move
+class MovePattern
 {
 	public int x; 
 	public int y; 
 	
-	public Move next; 
+	public MovePattern next; 
 	
-	public Move(int x, int y)
+	public MovePattern(int x, int y)
 	{
 		this.x = x; 
 		this.y = y; 

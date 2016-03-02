@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import factory.PieceMovementFactory;
+import factory.PieceFactory;
 
 public class ChessBoardTest {
 
@@ -32,8 +32,8 @@ public class ChessBoardTest {
 		bordy_on_wheels.markMove(-6, -6);
 		bordy_on_wheels.markAttack(-6, -6,1); // invalid mobility tests
 		
-		bordy_on_wheels.markKingMove(1);
-		bordy_on_wheels.markRookMove(1, 6);
+		bordy_on_wheels.markKingMoved(1);
+		bordy_on_wheels.markRookMoved(1, 6);
 		bordy_on_wheels.didMove(1, 1, 1);
 		bordy_on_wheels.didMove(3, 1,1);
 		

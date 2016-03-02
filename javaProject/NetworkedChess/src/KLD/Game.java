@@ -49,10 +49,8 @@ import KLD.cmd.Command;
 import KLD.cmd.CommandList;
 import KLD.cmd.Draw;
 import KLD.cmd.DrawList;
-import KLD.cmd.KLDList;
 import KLD.cmd.LinkObject;
-import KLD.obj.GameObject;
-import KLD.obj.IdObject;
+
 /**
  * Game is an abstract class that represent a game or a state of a game which includes graphics, sound, and objects.
  * Game's abstract methods are:  init(), draw(Graphics), and update(). 
@@ -231,7 +229,7 @@ public abstract class Game implements CommandFace, ActionFace, DrawFace {
 			}};
 	}
 	
-	public void setFade(Graphics g, float f){
+	public static void setFade(Graphics g, float f){
 		Graphics2D g2d = (Graphics2D) g;
 	    g2d.setComposite(AlphaComposite.getInstance(
 	            AlphaComposite.SRC_OVER, f));
@@ -244,26 +242,30 @@ public abstract class Game implements CommandFace, ActionFace, DrawFace {
 
 
 	@Override
-	public void callAllAction() {
+	public void callAllAction() 
+	{
 		maxWidth = Console.maxWidth;
 		maxHeight = Console.maxHeight;
-		update();
+		
 		if(gameActions!=null)
 			gameActions.callAllAction();
 		if(gameCommands!=null)
 			gameCommands.callAllAction();
+		
+		update();
 		
 	}
 
 
 
 	@Override
-	public void callAllDraw(Graphics g) {
-		draw(g);
+	public void callAllDraw(Graphics g) 
+	{
 		if(gameDraws!=null)
 			gameDraws.callAllDraw(g);
 		if(gameCommands!=null)
 			gameCommands.callAllDraw(g);
+		draw(g);
 	}
 	
 	
