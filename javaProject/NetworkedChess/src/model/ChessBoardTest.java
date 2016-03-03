@@ -2,6 +2,8 @@ package model;
 
 import static org.junit.Assert.*;
 
+import java.awt.Graphics;
+
 import org.junit.Test;
 
 import factory.PieceFactory;
@@ -24,8 +26,11 @@ public class ChessBoardTest {
 		bordy.teamAt(2, 2); // check for the queen team
 		bordy.teamAt(0, 0); // check empty
 		
+		bordy.untoLastMove(0, 0, 1, 1);
+		
 		MobilityBoard bordy_on_wheels = new MobilityBoard(bordy);
 		bordy.selectForMark(2, 2, bordy_on_wheels);
+		bordy.selectForMark(-1, -1, bordy_on_wheels);
 		bordy.deselect(bordy_on_wheels);  //basic mobility tests
 		bordy.toString();
 		
@@ -35,15 +40,12 @@ public class ChessBoardTest {
 		bordy_on_wheels.markKingMoved(1);
 		bordy_on_wheels.markRookMoved(1, 6);
 		bordy_on_wheels.didMove(1, 1, 1);
-		bordy_on_wheels.didMove(3, 1,1);
+		bordy_on_wheels.didMove(3, 1,1); //castling attempt tests
 		
-		PieceMovementFactory fact = new PieceMovementFactory(); 
-		
-		Piece factorQueen = fact.factorKing();
-		KingMovement movie = new KingMovement();
-		PawnMovement meek = new PawnMovement();
-		movie.markAvailableMovement(bordy_on_wheels, bordy, 1, 1);
-		meek.markAvailableMovement(bordy_on_wheels, bordy, 0, 0);
+		PawnMovement pawn = new PawnMovement();
+		pawn.markAvailableMovement(bordy_on_wheels, bordy, 2, 2);
+		KingMovement kong = new KingMovement();
+		kong.markAvailableMovement(bordy_on_wheels, bordy, 0, 0); //pawn and king movement tests
 		
 		
 	}

@@ -13,9 +13,13 @@ public class MathTest {
 		math.solve("2+2-3*7/2");
 		char []c = new char [3];
 		c[0] = 'T';
-		c[1] = 'U';
+		c[1] = '1';
 		c[2] = 1;
-		math.matchNumber(c);
+		math.matchNumber(c); // Math class tests
+		
+		math.matchNumberRev(c);
+		
+		//possible digit tracking issues
 		
 	}
 
