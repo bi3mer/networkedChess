@@ -3,6 +3,11 @@ package GamePanels;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.io.IOException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import KLD.Game;
 import KLD.GameFrame;
@@ -47,20 +52,18 @@ public class MultiplayerChessGame extends Game
 	@Override
 	protected void init() 
 	{
-		player = new ChessPlayerController(this); 
+		// Add player to static controller
+		ChessPlayerController.getInstance().setBoard(this);
 		
-		
+		// Create board
 		board = new ChessBoard(); 
 		mobilityBoard= new MobilityBoard(board); 
-			
-		//int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, 
-				//Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 				
 		int[] pieces = {0, Piece.TYPE_ROOK, 
 				Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 					
 		
-		for(int i=0; i<16; i++)
+		for(int i=0; i<16; ++i)
 		{
 			int piece = pieces[(i/8)*(  (i-7)+((i/13)*(3-((2*i)%13)))  )%6]; 
 			
@@ -71,8 +74,6 @@ public class MultiplayerChessGame extends Game
 			board.setTileValue(i%8, 6+i/8, -piece); 	
 		}
 		
-		System.out.println(board);
-		
 		tileWidth = GameFrame.width/10; 
 		tileHeight = GameFrame.height/10; 
 		
@@ -82,81 +83,16 @@ public class MultiplayerChessGame extends Game
 		turnReady = false; 
 		waitingTime = 0; 
 		reverse = player.getTeam(); 
-		//System.out.println(board);
-		
 		
 		//this will allow the board to be drawn automatically 
 		boradui = new BoardUI(board, mobilityBoard, reverse); 
 		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight); 
 		this.addDraw(boradui);
-
 	}
 
 	@Override
 	protected void draw(Graphics g) 
 	{
-		//g.drawRect(50, 59, 100, 100);
-		
-		
-		/*Color[] tileColors = {Color.WHITE, Color.BLACK};
-			
-		//board background
-		for(int i=0; i<board.getHeight(); i++)
-		{
-			for(int j=0; j<board.getWidth(); j++)
-			{
-				int y = Math.abs(reverse-i); 
-				
-				g.setColor(tileColors[(j%2+i%2)%2]); 
-				g.fillRect(offsetX+j*tileWidth, offsetY+y*tileHeight, tileWidth, tileHeight);
-			  //draw tiles 
-			}
-		}
-		
-		//drawing mobility 
-		Color[] mobilityColor ={Color.CYAN, Color.RED};
-		for(int i=0; i<board.getHeight(); i++)
-		{
-			for(int j=0; j<board.getWidth(); j++)
-			{
-				int y = Math.abs(reverse-i); 
-				
-				if(mobilityBoard.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
-				{
-					
-					Game.setFade(g, 0.8f);
-					
-					g.setColor(mobilityColor[Math.abs(mobilityBoard.getTileValue(j, i))-1]);
-					g.fillRect(offsetX+j*tileWidth, offsetY+y*tileHeight, tileWidth, tileHeight);
-					 
-					Game.setFade(g, 1f);
-					
-				}
-			}
-		}
-		
-		
-			//draw pieces 
-		for(int i=0; i<board.getHeight(); i++)
-		{
-			for(int j=0; j<board.getWidth(); j++)
-			{
-				int y = Math.abs(reverse-i); 
-				
-				
-			  int pieceIndex = 2*Math.abs(board.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
-			  //draw tiles 
-			 
-			  
-			  if(pieceIndex > 0)
-			  {
-				  g.drawImage(PieceImageFactory.Instnece().factor(pieceIndex), offsetX+j*tileWidth, offsetY+y*tileHeight,tileWidth, tileHeight, null); 
-				  //g.setColor(Color.red);
-				  //g.drawString(""+pieceIndex, offsetX+j*tileWidth, offsetY+y*tileHeight);
-			  }
-			}
-		}
-		*/
 		if(!turnReady)
 		{
 			Game.setFade(g, .7f);
@@ -178,22 +114,62 @@ public class MultiplayerChessGame extends Game
 			g.setColor(Color.black);
 			g.drawString("You turn dumbdumb", GameFrame.width/2-50, offsetY/2);
 		}
-		
-		
-		
 	}//end color 
 
 	@Override
 	protected void update() 
-	{
-		//keeps player connected 
-		player.connect();
-		
+	{	
 		//check for check 
 		
 		//check for checkmate
 		
-		
+		// Get Update from Server
+		JSONArray updates;
+		try 
+		{
+			// Get updates
+			updates = ChessPlayerController.getInstance().getUpdate(true).getJSONArray("updates");
+			
+			// Loop through array
+			for(int i = 0; i < updates.length(); ++i)
+			{
+				// Get update object
+				JSONObject update = updates.getJSONObject(i);
+				
+				if(update.has("forfeit"))
+				{
+					System.out.println("TODO: Game is over, end game");
+				}
+				else if(update.has("from"))
+				{
+					// Get form and to
+					JSONObject from = (JSONObject) update.get("from");
+					JSONObject to   = (JSONObject) update.get("to");
+					
+					// Add move to board
+					board.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+				}
+				else if(update.has("undoRequest")) 
+				{
+					System.out.println("TODO: update to show undo request");
+				}
+				else if(update.has("undo"))
+				{
+					if(update.getBoolean("undo"))
+					{
+						System.out.println("TODO: undo request was accepted");
+					}
+					else
+					{
+						System.out.println("TODO: undo request was denyed");
+					}
+				}
+			}
+		}
+		catch (JSONException | IOException | InterruptedException e) 
+		{
+			// Pass, call again next frame
+		}
 		
 		//can request undo 
 		//TODO
@@ -202,15 +178,11 @@ public class MultiplayerChessGame extends Game
 		//TODO
 	
 		//player not allowed further interaction  
-		if(!turnReady)
-			return; 
-
-		//when click within board 
-		unitClicking(); 
-		
-		
-	
-		
+		if(turnReady)
+		{
+			//when click within board 
+			unitClicking(); 
+		}
 	}
 	
 	public void markRead()
@@ -218,16 +190,17 @@ public class MultiplayerChessGame extends Game
 		turnReady = true; 
 	}
 	
+	// TODO: is this needed?
 	public boolean recieveMovement(int fromX, int fromY, int toX, int toY)
 	{
-		
 		board.movePiece(fromX, fromY, toX, toY);
-		return true; 
+		
+		return true;
 	}
 	
 	public void setMovementTraker(MovementTracker mt)
 	{
-		traker = mt; 
+		traker = mt;
 	}
 	
 	public void revereBoard()
@@ -235,16 +208,15 @@ public class MultiplayerChessGame extends Game
 		reverse = 7; 
 		boradui.setReverse(reverse);
 		System.out.println("reserve");
-		
 	}
 	
 	public void unitClicking()
 	{
 		if(input.mouseIsClicked(new Rectangle(offsetX, offsetY, offsetX+tileWidth*7, offsetY+tileHeight*7)) )
 		{
-			//get co-ordenate 
-			int x = ((Input.point.x - offsetX) /tileWidth); 
-			int y = ((Input.point.y - offsetY) /tileHeight); 
+			//get coordinates 
+			int x = ((Input.point.x - offsetX) / tileWidth); 
+			int y = ((Input.point.y - offsetY) / tileHeight); 
 			
 			System.out.printf("clicked %d %d\n", x, y);
 			
@@ -252,44 +224,66 @@ public class MultiplayerChessGame extends Game
 			
 			if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
 			{
-					//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
-					
-					int piece = Math.abs(board.getTileValue(selectedX, selectedY)) ; 
-					
-					if(piece == Piece.TYPE_KING ||piece == Piece.TYPE_ROOK)
+				int piece = Math.abs(board.getTileValue(selectedX, selectedY)) ; 
+				
+				if(piece == Piece.TYPE_KING ||piece == Piece.TYPE_ROOK)
+				{
+					//System.out.println("Moving a king or rook");
+					//int tag = 0; 
+					if(piece == Piece.TYPE_ROOK && (selectedY == 0 || selectedY == 7))
 					{
-						//System.out.println("Moving a king or rook");
-						//int tag = 0; 
-						if(piece == Piece.TYPE_ROOK && (selectedY == 0 || selectedY == 7))
+						//System.out.println("Moving rook");
+						if(selectedX == 0)
 						{
-							//System.out.println("Moving rook");
-							if(selectedX == 0)
-							{
-								mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_LEFT); 
-								//System.out.println("Left Rook Moved!");
-							}
-							else if(selectedX == 7)
-							{
-								mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_RIGHT); 
-								//System.out.println("Right Rook Moved!");
-							}
-							
-							
+							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_LEFT); 
+							//System.out.println("Left Rook Moved!");
 						}
-						else if(piece == Piece.TYPE_KING)
+						else if(selectedX == 7)
 						{
-							mobilityBoard.markKingMoved(board.teamAt(selectedX, selectedY)); 
-							//System.out.println("King Moved!");
+							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_RIGHT); 
+							//System.out.println("Right Rook Moved!");
 						}
-							
+						
+						
 					}
+					else if(piece == Piece.TYPE_KING)
+					{
+						mobilityBoard.markKingMoved(board.teamAt(selectedX, selectedY)); 
+						//System.out.println("King Moved!");
+					}
+						
+				}
+				
+				// Update board
+				turnReady = false; 
+				board.movePiece(selectedX, selectedY, x, y);
+				
+				// Update tracker
+				traker.sendMovment(selectedX, selectedY, x, y);
+				
+				
+				JSONObject from = new JSONObject();
+				JSONObject to = new JSONObject();
+				
+				try 
+				{
+					// Create from object
+					from.append("x", selectedX);
+					from.append("y", selectedY);
 					
-					turnReady = false; 
-					board.movePiece(selectedX, selectedY, x, y);
+					// Create to object
+					to.append("x", x);
+					to.append("y", y);
 					
-					traker.sendMovment(selectedX, selectedY, x, y);
-					
-					board.deselect(mobilityBoard);	
+					// Update server with from and to object
+					ChessPlayerController.getInstance().addMove(from, to);
+				} 
+				catch (JSONException | IOException | InterruptedException e) 
+				{
+					System.out.println("Error pushing to server");
+				}
+				
+				board.deselect(mobilityBoard);	
 			}//end mobility 
 			else
 			{
@@ -301,20 +295,16 @@ public class MultiplayerChessGame extends Game
 					int marked = board.selectForMark(x, y, mobilityBoard);
 					
 					System.out.println("Marked " + marked);
-					
 				}
 			}
 
 			selectedX = x; 
 			selectedY = y; 
 					
-		}else if(input.mouseIsClicked())
+		}
+		else if(input.mouseIsClicked())
 		{
 			board.deselect(mobilityBoard);	
 		}
-	}
-	
-	
-	
-}//end class
-	
+	}	
+}

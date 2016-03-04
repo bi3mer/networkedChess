@@ -4,11 +4,17 @@
 	var mongoose  = require('mongoose');
 	var db = mongoose.createConnection(global.config.db.game.mongo.url, global.config.db.game.mongo.options);
 
+	// move structure
+	var moveStructure = {
+		x: Number,
+		y: Number
+	};
+
 	// Update structure
 	var updateStructure = {
 		move: {
-			from: String,
-			to: String
+			from: moveStructure,
+			to: moveStructure
 		},
 		undoRequest: Boolean,
 		undo: Boolean
@@ -226,6 +232,7 @@
 					// Add to moves
 					game.moves.push(move);
 
+					// Create new move
 					var newMove = updateStructure;
 					newMove.move.from = move.from;
 					newMove.move.to = move.to;

@@ -37,6 +37,16 @@
 		};
 	};
 
+	/**
+	 * @param {String} errorStr - error string 
+	 * @return {Object} with error as JSON
+	 */
+	function createSuccess(errorStr) {
+		return {
+			success: errorStr
+		};
+	};
+
 	return {
 		/**
 		 * Log player into server
@@ -81,11 +91,11 @@
 						callback(global.config.server.httpStatusCodes.success);
 					} else {
 						console.log(fileName, 'login: invalid password');
-						callback(global.config.server.httpStatusCodes.validationError, 'Invalid user name or password');
+						callback(global.config.server.httpStatusCodes.validationError, createError('Invalid user name or password'));
 					}
 				} else {
 					console.log(fileName, 'login: multiple or 0 accounts found');
-					callback(global.config.server.httpStatusCodes.validationError, 'Invalid user name or password');
+					callback(global.config.server.httpStatusCodes.validationError, createError('Invalid user name or password'));
 				}
 			});
 		},
@@ -110,11 +120,11 @@
 							callback(global.config.server.httpStatusCodes.success);
 						} else {
 							console.log(fileName, 'addMove: sending back error, no game found');
-							callback(global.config.server.httpStatusCodes.error, 'Error adding move, no valid game found');
+							callback(global.config.server.httpStatusCodes.error, createError('Error adding move, no valid game found'));
 						}
 					});
 				} else {
-					callback(global.config.server.httpStatusCodes.error, 'Error finding valid user or gameID: ' + gameID);
+					callback(global.config.server.httpStatusCodes.error, createError('Error finding valid user or gameID: ' + gameID));
 				}
 			});
 		},
@@ -134,16 +144,16 @@
 				if(!err && gameID) {
 					GamesDB.addUpdate(gameID, user, global.config.templates.undoRequest, function removeMoveAndUpdateDB(errGame) {
 						if(!errGame) {
-							console.log(fileName, 'requestUndo: succesfull undid move');
+							console.log(fileName, 'requestUndo: succesfull requested undo move');
 							callback(global.config.server.httpStatusCodes.success);
 						} else {
 							console.log(fileName, 'requestUndo: unable to request undo move');
-							callback(global.config.server.httpStatusCodes.error, 'Error: coudln\t undo move');
+							callback(global.config.server.httpStatusCodes.error, createError('Error: coudln\t undo move'));
 						}			
 					});
 				} else {
 					console.log(fileName, 'requestUndo: unable to find game');
-					callback(global.config.server.httpStatusCodes.error, 'Unable to find game to undo ' + err);
+					callback(global.config.server.httpStatusCodes.error, createError('Unable to find game to undo ' + err));
 				}
 			});
 		},
@@ -185,16 +195,16 @@
 							// check for error
 							if(!addUpdateErr) {
 								console.log(fileName, 'acceptOrDenyUndo: success, updated databse and sending success to player');
-								callback(global.config.server.httpStatusCodes.success, 'success, did not accept undo');
+								callback(global.config.server.httpStatusCodes.success, createSuccess('success, did not accept undo'));
 							} else {
 								console.log(fileName, 'acceptOrDenyUndo: error, could not deny undo ->', addUpdateErr);
-								callback(global.config.server.httpStatusCodes.error, 'error, could not deny move');
+								callback(global.config.server.httpStatusCodes.error, createError('error, could not deny move'));
 							}
 						});
 					}
 				} else {
 					console.log(fileName, 'acceptUndo: unable to find game or user');
-					callback(global.config.server.httpStatusCodes.error, 'unable to find game to accept or decline undo ' + err);
+					callback(global.config.server.httpStatusCodes.error, createError('unable to find game to accept or decline undo ' + err));
 				}
 			});
 		},
@@ -226,12 +236,12 @@
 							PlayersDB.updateRatings(otherPlayer, {win: true});
 						} else {
 							console.log(fileName, 'forfeit: error forfeiting game: ' + err);
-							callback(global.config.server.httpStatusCodes.error, 'Error forfeiting game');
+							callback(global.config.server.httpStatusCodes.error, createError('Error forfeiting game'));
 						}
 					});
 				} else {
 					console.log(fileName, 'forfeit: No user found');
-					callback(global.config.server.httpStatusCodes.error, 'Player is not in game');
+					callback(global.config.server.httpStatusCodes.error, createError('Player is not in game'));
 				}
 			});
 		},
@@ -257,7 +267,7 @@
 					console.log(fileName, 'ratings: error from database');
 
 					// Set status to error
-					callback(global.config.server.httpStatusCodes.validationError, 'Error getting results for user: ' + user);
+					callback(global.config.server.httpStatusCodes.validationError, createError('Error getting results for user: ' + user));
 				}
 			});
 		},
@@ -283,7 +293,14 @@
 							// Check for error
 							if(!err) {
 								console.log(fileName, 'getUpdate: valid game id sending updates: ' + JSON.stringify(updates));
-								callback(global.config.server.httpStatusCodes.success, updates);
+
+								// Format the updates
+								formattedUpdates = {
+									updates: updates
+								};
+
+								// Return in callback
+								callback(global.config.server.httpStatusCodes.success, formattedUpdates);
 							} else {
 								console.log(fileName, 'getUpdate: invalid game id given');
 								callback(global.config.server.httpStatusCodes.error, createError('No valid game found'));
@@ -361,11 +378,11 @@
 						} else if (matchmakingErr) {
 							console.log(fileName, 'getMatch: error, was in queue already');
 
-							callback(global.config.server.httpStatusCodes.notModified, "Already in queue");
+							callback(global.config.server.httpStatusCodes.notModified, createSuccess('Already in queue'));
 						} else {
 							console.log(fileName, 'getMatch: no opponent found, added to MatchMaking');
 
-							callback(global.config.server.httpStatusCodes.success, "Placed in MatchMaking");
+							callback(global.config.server.httpStatusCodes.success, createSuccess('Placed in MatchMaking'));
 						}
 					});
 
@@ -373,7 +390,7 @@
 					updatePlayerToNotPlaying(user);
 				} else {
 					console.log(fileName, 'getMatch: Invalid user attempted to go into matchmaking');
-					callback(global.config.server.httpStatusCodes.error, 'getMatch: Invalid user attempted to go into matchmaking');
+					callback(global.config.server.httpStatusCodes.error, createError('getMatch: Invalid user attempted to go into matchmaking'));
 				}
 			});
 		},
@@ -405,7 +422,7 @@
 					callback(global.config.server.httpStatusCodes.success, 'Left queue');
 				} else {
 					console.log(fileName, 'cancelQueue: unable to leave queue');
-					callback(global.config.server.httpStatusCodes.error, 'Unable to leave queue');
+					callback(global.config.server.httpStatusCodes.error, createError('Unable to leave queue'));
 				}
 			});
 		},
