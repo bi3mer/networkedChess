@@ -26,10 +26,7 @@ public class Launcher
 		//setting the main panel. You could also use GameMenuPanel.setGame(class).
 		GameFrame.mainGame = SinglePlayerChess.class; 
 		
-		//TODO read json: config
-		
-		
-		
+		//TODO read json: config		
 		GameFrame.width = 800; 
 		GameFrame.height = 800;
 		//frame size is set by default 500x500 

@@ -95,7 +95,7 @@ public class Marker
 	 */ //PSYCH! it's not even recursive! 
 	private int recursiveMarking(int cx, int cy, int ox, int oy, int team)
 	{
-		//System.out.println("recursive");
+		//
 		int marks = 0 ;
 		int multyplier = 2; 
 		
@@ -111,15 +111,33 @@ public class Marker
 
 			marks += (mboard.markMove(rx,ry))? 1 : 0 ; 
 			
-			multyplier++; 
-			rx = multyplier*ox + cx;
+			//multyplier++; 
+			rx = ++multyplier*ox + cx;
 			ry = multyplier*oy + cy;
 		}//end while
 		
-		if(mboard.getChessBoard().isOccupied(rx, ry))
+		//
+		
+		if(team == 0)
 		{
-			marks += (mboard.markAttack(rx, ry, team))? 1 : 0 ; 
-		}//end if isOccupied
+			if(mboard.getChessBoard().getPiece(rx, ry) == Piece.TYPE_KING)
+			{
+				marks += (mboard.markMove(rx,ry))? 1 : 0 ;
+				
+				//
+				rx = ++multyplier*ox + cx;
+				ry = multyplier*oy + cy;
+				//
+				marks += (mboard.markMove(rx,ry))? 1 : 0 ;
+				
+				
+			}
+		}
+		else
+		{
+				
+				marks += (mboard.markAttack(rx, ry, team))? 1 : 0 ; 
+		}//end else
 		
 		return marks; 
 	}
@@ -185,7 +203,7 @@ public class Marker
 				marks++; 
 				if(isCon)
 				{
-					marks += forceRecursiveMarking(x, y, move.x, move.y, ix, iy); 
+					marks += forceRecursiveMarking(x, y, move.x, move.y); 
 				}//end isContinued
 			}//end markMove
 		}//end isEmpty
@@ -195,9 +213,9 @@ public class Marker
 		return marks; 
 	}
 	
-	private int forceRecursiveMarking(int cx, int cy, int ox, int oy, int ix, int iy)
+	private int forceRecursiveMarking(int cx, int cy, int ox, int oy)
 	{
-		//System.out.println("recursive");
+		//
 		int marks = 0 ;
 		int multyplier = 2; 
 		
@@ -207,7 +225,7 @@ public class Marker
 		//System.out.printf("marked: r:%d %d  o:%d %d c:%d %d m:%d\n",rx,ry, ox,oy, cx,cy, multyplier);
 
 		
-		while(mboard.getChessBoard().isEmpty(rx, ry) || (ix==rx && iy==ry))
+		while(mboard.getChessBoard().isEmpty(rx, ry))
 		{
 			//System.out.printf("marked: r:  o:%d %d c:%d %d m:%d\n",rx,ry, ox,oy, cx,cy, multyplier);
 
@@ -218,10 +236,16 @@ public class Marker
 			ry = multyplier*oy + cy;
 		}//end while
 		
-		if(mboard.getChessBoard().isOccupied(rx, ry))
+		if(mboard.getChessBoard().getTileValue(rx, ry)==Piece.TYPE_KING)
 		{
-			marks += (mboard.markAttack(rx, ry, 0))? 1 : 0 ; 
-		}//end if isOccupied
+			marks += (mboard.markMove(rx,ry))? 1 : 0 ;
+			multyplier++; 
+			rx = multyplier*ox + cx;
+			ry = multyplier*oy + cy;
+			marks += (mboard.markMove(rx,ry))? 1 : 0 ;
+		}
+		
+		
 		
 		return marks; 
 	}

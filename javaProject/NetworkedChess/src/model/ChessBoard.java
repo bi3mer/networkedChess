@@ -45,6 +45,9 @@ public class ChessBoard extends Board
 		
 		int piece = getPiece(fromX, fromY); 
 		
+		int dyingTeam = teamAt(toX, toY); 
+		int dyingPiece = getPiece(toX, toY); 
+		
 		setTileValue(toX, toY, piece*teamAt(fromX,fromY)); 
 		setTileValue(fromX, fromY, 0);
 		
@@ -64,24 +67,42 @@ public class ChessBoard extends Board
 		}
 		
 		//TODO mark if cast,  I can't remember what this meant 
-		
-		if(piece == Piece.TYPE_ROOK && (fromY==0 || fromY==7))
+		if(piece != Piece.TYPE_ROOK && dyingPiece != Piece.TYPE_ROOK)
+			return 0; 
+			
+		if(fromY==0 || fromY==7)
 		{
-			//System.out.println("Rook moved from position");
 				if(fromX == 0)
 				{
 					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_LEFT); 
-					//System.out.println("Left Rook Moved!");
-					return teamAt(toX, toY) == 1? 5 : 3; 
+					//
+					return dyingTeam == 1? 5 : 3; 
 				}
 				else if(fromX == 7)
 				{
 					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_RIGHT); 
-					//System.out.println("Right Rook Moved!");
-					return teamAt(toX, toY) == 1? 6 : 4; 
-				}
-				
+					//
+					return dyingTeam == 1? 6 : 4; 
+				}	
 		}
+		
+		if((toY==0 || toY==7))
+		{
+				if(toX == 0)
+				{
+					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_LEFT); 
+					//
+					return dyingTeam == 1? 5 : 3; 
+				}
+				else if(toX == 7)
+				{
+					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_RIGHT); 
+					//
+					return dyingTeam == 1? 6 : 4; 
+				}	
+		}
+		
+		
 			return 0; 
 	}
 	

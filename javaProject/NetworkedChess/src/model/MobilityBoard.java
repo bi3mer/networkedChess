@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 
 /**
  * A board that highlights available moment (including attack) places on a chess board 
@@ -66,7 +65,7 @@ public class MobilityBoard extends Board
 	 */
 	public boolean markMove(int x, int y)
 	{
-		//System.out.println("move mark at: " + x + " " + y );
+		//
 		if(cboard.isEmpty(x, y))
 			return mark(MARK_MOVE, x, y);
 		
@@ -114,7 +113,6 @@ public class MobilityBoard extends Board
 	
 	public void setMoved(int index)
 	{
-		System.out.println("index moved: "+ (index+1));//TODO
 		didMove.set(index, true); 
 	}
 	
@@ -132,10 +130,10 @@ public class MobilityBoard extends Board
 	{
 		if(tag==TAG_LEFT)
 		{
-			System.out.println("left rook moved team" + team);
+			
 		}
 		else
-			System.out.println("right rook moved team" + team);
+			
 		
 		team = (team+1)/2; 
 		int index = Piece.TYPE_ROOK +(team+tag); 
@@ -155,7 +153,7 @@ public class MobilityBoard extends Board
 		if(didMove.size() <= index)
 			return false; 
 		
-		//System.out.println(piece +  " - "+ index +  " value: " + didMove.get(index));
+		//
 		
 		
 		return didMove.get(index); 

@@ -5,11 +5,11 @@ import java.awt.Graphics;
 
 import model.ChessBoard;
 import model.MobilityBoard;
-
+import KLD.cmd.Command;
 import KLD.cmd.Draw;
 import KLD.Game; 
 
-public class BoardUI extends Draw 
+public class BoardUI extends Command
 {
 	private int offsetX; 
 	private int offsetY; 
@@ -17,12 +17,11 @@ public class BoardUI extends Draw
 	private int cellWidth; 
 	private int cellHeight; 
 	
-	private ChessBoard board; 
 	private MobilityBoard mboard; 
 	private int reverse; 
 	
 	
-	public BoardUI(ChessBoard board, MobilityBoard mboard, int reverse) 
+	public BoardUI(MobilityBoard mboard, int reverse) 
 	{
 		super("BoardUI");
 		
@@ -31,8 +30,7 @@ public class BoardUI extends Draw
 		
 		cellWidth = 0; 
 		cellHeight = 0; 
-		
-		this.board = board; 
+	 
 		this.mboard = mboard; 
 		this.reverse = reverse; 
 	}
@@ -56,6 +54,8 @@ public class BoardUI extends Draw
 	{
 		Color[] tileColors = {Color.WHITE, Color.BLACK};
 		
+		ChessBoard board = mboard.getChessBoard(); 
+		
 		//board background
 		for(int i=0; i<board.getHeight(); i++)
 		{
@@ -77,12 +77,12 @@ public class BoardUI extends Draw
 			{
 				int y = Math.abs(reverse-i); 
 				
-				if(mboard.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
+				if(board.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
 				{
 					
 					Game.setFade(g, 0.8f);
 					
-					g.setColor(mobilityColor[Math.abs(mboard.getTileValue(j, i))-1]);
+					g.setColor(mobilityColor[Math.abs(board.getTileValue(j, i))-1]);
 					g.fillRect(offsetX+j*cellWidth, offsetY+y*cellHeight, cellWidth, cellHeight);
 					 
 					 Game.setFade(g, 1f);
@@ -100,7 +100,7 @@ public class BoardUI extends Draw
 				int y = Math.abs(reverse-i); 
 				
 				
-			  int pieceIndex = 2*Math.abs(board.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
+			  int pieceIndex = 2*Math.abs(mboard.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
 			  //draw tiles 
 			 
 			  
@@ -112,6 +112,13 @@ public class BoardUI extends Draw
 			  }
 			}
 		}
+	}
+
+	@Override
+	protected void action() 
+	{
+		
+		
 	}
 
 	

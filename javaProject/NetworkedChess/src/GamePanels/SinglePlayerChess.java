@@ -61,7 +61,7 @@ public class SinglePlayerChess extends Game
 	
 	
 	
-	System.out.println(board);
+	
 	
 	
 	//this will allow the board to be drawn automatically 
@@ -177,7 +177,7 @@ public class SinglePlayerChess extends Game
 	{
 		reverse = 7; 
 		boradui.setReverse(reverse);
-		//System.out.println("reserve");
+		//
 	
 	}
 	
@@ -185,7 +185,7 @@ public class SinglePlayerChess extends Game
 	{
 		//int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 			
-		int[] pieces = {0, Piece.TYPE_ROOK, 0,0, 0, Piece.TYPE_KING }; 
+		int[] pieces = {0, Piece.TYPE_ROOK, Piece.TYPE_BISHOP,0, 0, Piece.TYPE_KING }; 
 				
 	
 		for(int i=0; i<16; i++)
@@ -206,8 +206,8 @@ public class SinglePlayerChess extends Game
 		if(input.mouseIsClicked(new Rectangle(offsetX, offsetY, offsetX+tileWidth*7, offsetY+tileHeight*7)) )
 		{
 			//get co-ordenate 
-		int x = ((Input.point.x - offsetX) /tileWidth); 
-		int y = ((Input.point.y - offsetY) /tileHeight); 
+		int x = ((Input.point.x - offsetX) / tileWidth); 
+		int y = ((Input.point.y - offsetY) / tileHeight); 
 		
 		//System.out.printf("clicked %d %d\n", x, y);
 		
@@ -217,7 +217,7 @@ public class SinglePlayerChess extends Game
 		{
 				//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
 			//rook or king moved notifications 
-			int notification=	board.movePiece(selectedX, selectedY, x, y);
+			int notification =	board.movePiece(selectedX, selectedY, x, y);
 				
 			//notify mobility to adjust castling 
 			if (notification > 0)
@@ -238,7 +238,7 @@ public class SinglePlayerChess extends Game
 			}//endn if notification 
 			
 				
-			//System.out.println(board);
+			//
 				
 			mobilityBoard.reset();	
 		}//end mobility 
@@ -247,10 +247,10 @@ public class SinglePlayerChess extends Game
 			mobilityBoard.reset();	
 			
 			
-				//System.out.println("marking " + x + "-" + y);
+				//
 				int marked = marker.markPieceAt(x, y); 
 				
-				//System.out.println("Marked " + marked);
+				//
 					
 				}
 		

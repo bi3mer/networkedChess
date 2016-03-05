@@ -18,8 +18,7 @@ public class KingMovement extends PieceMovement
 	@Override
 	public int specialMarking(MobilityBoard mboard, int cx, int cy) 
 	{
-		if(isUnmarking)
-			return 0; 
+		
 		int marks = super.specialMarking(mboard, cx, cy);
 		
 		ChessBoard cboard = mboard.getChessBoard(); 
@@ -29,45 +28,12 @@ public class KingMovement extends PieceMovement
 		//casteling 
 		if(!mboard.didMove(Piece.TYPE_KING, team, 0))
 		{	
-			//special 
-			int y = 8- (9 - (team))%9;
-			
-			//rook right  
-			if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_RIGHT))
-			{
-				boolean free = true; 
-				//check empty
-				for(int i=0; i<2; i++)
-				{
-					free = free && cboard.getTileValue(i+5, y) == ChessBoard.EMPTY ;
-				}
-				
-				if(free)
-				{
-					marks += (mboard.markMove(6, y))? 1: 0; 
-				}
-				
-			}
-			
-			//rook left 
-			if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_LEFT))
-			{
-				boolean free = true; 
-				//check empty
-				for(int i=0; i<3; i++)
-				{
-					free = free && cboard.getTileValue(i+1, y) == ChessBoard.EMPTY ;
-				}
-				
-				if(free)
-				{
-					marks += (mboard.markMove(2, y))? 1 : 0; 
-				}
-				
-			}
+			marks += markCastles(mboard, team); 
 			
 		}//did not move 
 		
+		if(isUnmarking)
+			return 0; 
 		
 		//TODO "for the king" unmark threatened ares 
 		if(cboard.getPiece(cx, cy) == Piece.TYPE_KING)
@@ -90,13 +56,14 @@ public class KingMovement extends PieceMovement
 							{
 								//PieceFactory.instence().factor(piece).movement.markAvailableMovement(threat, cboard, j, i, 0); 
 								Marker threatMarker = new Marker(threat); 
-								threatMarker.forceMarkMovement(PieceFactory.instence().factor(piece).movement, j, i, cx, cy); 
+								threatMarker.markMovement(PieceFactory.instence().factor(piece).movement, j, i, 0); 
 							}		
 							//cboard.selectForMark(j, i, threat); 
 						}
 			
+				
 			//match { threat with mboard
-			//System.out.println("Mathing");
+			//
 			for(int i = 0; i < cboard.getHeight(); i++)
 				for(int j = 0; j < cboard.getWidth(); j++)
 				{
@@ -115,6 +82,50 @@ public class KingMovement extends PieceMovement
 		return marks; 
 	}
 
+	private int markCastles(MobilityBoard mboard, int team)
+	{
+		int marks =0 ; 
+		
+		ChessBoard cboard = mboard.getChessBoard(); 
+		//special 
+		int y = 8- (9 - (team))%9;
+		
+		//rook right  
+		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_RIGHT))
+		{
+			boolean free = true; 
+			//check empty
+			for(int i=0; i<2; i++)
+			{
+				free = free && cboard.getTileValue(i+5, y) == ChessBoard.EMPTY ;
+			}
+			
+			if(free)
+			{
+				marks += (mboard.markMove(6, y))? 1: 0; 
+			}
+			
+		}
+		
+		//rook left 
+		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_LEFT))
+		{
+			boolean free = true; 
+			//check empty
+			for(int i=0; i<3; i++)
+			{
+				free = free && cboard.getTileValue(i+1, y) == ChessBoard.EMPTY ;
+			}
+			
+			if(free)
+			{
+				marks += (mboard.markMove(2, y))? 1 : 0; 
+			}
+			
+		}
+		
+		return marks; 
+	}
 	
 	
 }
