@@ -66,13 +66,13 @@ public class ChessPlayerController
 	}
 	
 	
-	public JSONObject createAccount(String pass) throws JSONException, IOException, InterruptedException 
+	public JSONObject createAccount(String user, String pass) throws JSONException, IOException, InterruptedException 
 	{
 		// Create Object
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
+		request.append("user", user);
 		request.append("pass", pass);
 		
 		// Set user
@@ -82,7 +82,7 @@ public class ChessPlayerController
 		return this.requestFromServer(this.host + this.createAccount, request);
 	}
 	
-	public JSONObject login(String pass) throws JSONException, IOException, InterruptedException
+	public JSONObject login(String user, String pass) throws JSONException, IOException, InterruptedException
 	{
 		// Create Object
 		JSONObject request = new JSONObject();
