@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-
 import factory.PieceFactory;
 
 public class KingMovement extends PieceMovement 
@@ -9,18 +7,22 @@ public class KingMovement extends PieceMovement
 	/**
 	 * I hate this 
 	 */
-	private static boolean isUnmarking = false; 
+	private static boolean isUnmarking = false;
 	
-	public KingMovement() 
+	public KingMovement(MovePattern pattern) 
 	{
-		super(PieceMovement.createMove(1, 1, PieceMovement.createMove(0, 1, null) ), false);
+		super(pattern, false);
 	}
 	
 	
 	@Override
-	public int markAvailableMovement(MobilityBoard mboard, ChessBoard cboard, int cx, int cy) 
+	public int specialMarking(MobilityBoard mboard, int cx, int cy) 
 	{
-		int marks = super.markAvailableMovement(mboard, cboard, cx, cy);
+		if(isUnmarking)
+			return 0; 
+		int marks = super.specialMarking(mboard, cx, cy);
+		
+		ChessBoard cboard = mboard.getChessBoard(); 
 		
 		int team = cboard.teamAt(cx, cy);
 		
@@ -66,17 +68,17 @@ public class KingMovement extends PieceMovement
 			
 		}//did not move 
 		
+		
 		//TODO "for the king" unmark threatened ares 
-		if(cboard.getPiece(cx, cy) == Piece.TYPE_KING && !isUnmarking)
+		if(cboard.getPiece(cx, cy) == Piece.TYPE_KING)
 		{
 			isUnmarking = true; 
-			if(marks==0)
-				return 0; 
 			
 			MobilityBoard threat = new MobilityBoard(cboard); 
 			//remove threatened areas 
 			int _team = cboard.teamAt(cx, cy); 
 				
+			//loop through map and find enemy pieces 
 			for(int i=0 ; i<cboard.getHeight(); i++)
 				for(int j=0; j<cboard.getWidth(); j++)
 						if(cboard.teamAt(j, i) + _team == 0)
@@ -86,10 +88,10 @@ public class KingMovement extends PieceMovement
 							
 							if(piece > 0)
 							{
-								PieceFactory.instence().factor(piece).movement.markAvailableMovement(threat, cboard, j, i, 0); 
-								
-							}
-									
+								//PieceFactory.instence().factor(piece).movement.markAvailableMovement(threat, cboard, j, i, 0); 
+								Marker threatMarker = new Marker(threat); 
+								threatMarker.forceMarkMovement(PieceFactory.instence().factor(piece).movement, j, i, cx, cy); 
+							}		
 							//cboard.selectForMark(j, i, threat); 
 						}
 			
@@ -106,10 +108,10 @@ public class KingMovement extends PieceMovement
 					}
 				}
 					
-			isUnmarking = false; 
+			//isUnmarking = false; 
 			}//end unmarking threat ares 
 
-
+		isUnmarking = false; 
 		return marks; 
 	}
 

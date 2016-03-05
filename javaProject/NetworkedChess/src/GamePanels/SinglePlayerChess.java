@@ -9,6 +9,7 @@ import KLD.GameFrame;
 import KLD.Input;
 import model.BoardUI;
 import model.ChessBoard;
+import model.Marker;
 import model.MobilityBoard;
 import model.Piece;
 
@@ -16,6 +17,8 @@ public class SinglePlayerChess extends Game
 {
 	private ChessBoard board; 
 	private MobilityBoard mobilityBoard; 
+	private Marker marker; 
+	
 	
 	private int tileWidth;
 	private int tileHeight;
@@ -43,7 +46,7 @@ public class SinglePlayerChess extends Game
 		
 		board = new ChessBoard(); 
 		mobilityBoard= new MobilityBoard(board); 
-			
+		marker = new Marker(mobilityBoard); 
 			
 		placePieces(); 
 	
@@ -53,14 +56,19 @@ public class SinglePlayerChess extends Game
 	offsetX = GameFrame.width/2 - tileWidth*4; 
 	offsetY = GameFrame.height/2 - tileHeight*4 - 20; 
 	
-	
+	//reverse = 0; 
 	waitingTime = 0; 
-	//System.out.println(board);
+	
+	
+	
+	System.out.println(board);
 	
 	
 	//this will allow the board to be drawn automatically 
 		boradui = new BoardUI(board, mobilityBoard, reverse); 
-		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight); 
+		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight);
+		revereBoard();
+		
 		this.addDraw(boradui);
 	
 	}
@@ -175,11 +183,9 @@ public class SinglePlayerChess extends Game
 	
 	public void placePieces()
 	{
-		//int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, 
-		//Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
+		//int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 			
-		int[] pieces = {0, Piece.TYPE_ROOK, 
-			0,0, 0, Piece.TYPE_KING }; 
+		int[] pieces = {0, Piece.TYPE_ROOK, 0,0, 0, Piece.TYPE_KING }; 
 				
 	
 		for(int i=0; i<16; i++)
@@ -210,50 +216,39 @@ public class SinglePlayerChess extends Game
 		if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
 		{
 				//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
+			//rook or king moved notifications 
+			int notification=	board.movePiece(selectedX, selectedY, x, y);
 				
-				int piece = Math.abs(board.getTileValue(selectedX, selectedY)) ; 
+			//notify mobility to adjust castling 
+			if (notification > 0)
+			{
+				notification--; 
+				mobilityBoard.setMoved(notification); 
+				//int team = board.teamAt(x, y); 
 				
-				if(piece == Piece.TYPE_KING ||piece == Piece.TYPE_ROOK)
+				
+				/*if(notification/2 == 0) 
+					mobilityBoard.markKingMoved(team);
+				else
 				{
-					//System.out.println("Moving a king or rook");
-					//int tag = 0; 
-					if(piece == Piece.TYPE_ROOK && (selectedY == 0 || selectedY == 7))
-					{
-						//System.out.println("Moving rook");
-						if(selectedX == 0)
-						{
-							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_LEFT); 
-							//System.out.println("Left Rook Moved!");
-						}
-						else if(selectedX == 7)
-						{
-							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_RIGHT); 
-							//System.out.println("Right Rook Moved!");
-						}
-						
-						
-					}
-					else if(piece == Piece.TYPE_KING)
-					{
-						mobilityBoard.markKingMoved(board.teamAt(selectedX, selectedY)); 
-						//System.out.println("King Moved!");
-					}
-						
-				}
+					int side =  notification/2 -1; 
+					mobilityBoard.markRookMoved(team, side);
+				}*/
 				
+			}//endn if notification 
 			
-				board.movePiece(selectedX, selectedY, x, y);
 				
+			//System.out.println(board);
 				
-				board.deselect(mobilityBoard);	
+			mobilityBoard.reset();	
 		}//end mobility 
 		else
 		{
-			board.deselect(mobilityBoard);	
+			mobilityBoard.reset();	
 			
 			
 				//System.out.println("marking " + x + "-" + y);
-				int marked = board.selectForMark(x, y, mobilityBoard);
+				int marked = marker.markPieceAt(x, y); 
 				
 				//System.out.println("Marked " + marked);
 					
@@ -265,7 +260,7 @@ public class SinglePlayerChess extends Game
 					
 		}else if(input.mouseIsClicked())
 		{
-			board.deselect(mobilityBoard);	
+			mobilityBoard.reset();	
 		}
 		
 	}//end click 

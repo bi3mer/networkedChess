@@ -36,24 +36,53 @@ public class ChessBoard extends Board
 			pieces[i] = pissFactory.factor(i+1); 
 		}
 		
-		//set up pieces
+		//set up pieces. <-- Not my job
 	}
 	
-	public void movePiece(int fromX, int fromY, int toX, int toY)
+	public int movePiece(int fromX, int fromY, int toX, int toY)
 	{
 		lastKilled = getTileValue(toX, toY); 
 		
-		setTileValue(toX, toY, getTileValue(fromX, fromY)); 
+		int piece = getPiece(fromX, fromY); 
+		
+		setTileValue(toX, toY, piece*teamAt(fromX,fromY)); 
 		setTileValue(fromX, fromY, 0);
 		
 		//castling 
-		if(Math.abs(getTileValue(toX, toY)) == Piece.TYPE_KING && Math.abs(toX-fromX) > 1)
+		if(piece == Piece.TYPE_KING)
 		{
-			int y = 8 - (9 - (getTileValue(toX, toY)))%9;
-			int delta = toX-fromX;	
-			movePiece(((9-delta)%11), y,((delta+2)/2)+3, y);
+			if(Math.abs(toX-fromX) > 1)
+			{
+				//math for figuring out witch of four castles to move
+				//NOTE that marking will only happen if it's possible 
+				int y = 8 - (9 - (getTileValue(toX, toY)))%9;
+				int delta = toX-fromX;	
+				movePiece(((9-delta)%11), y,((delta+2)/2)+3, y);
+			}
+			//mobilityBoard.markKingMoved(teamAt(fromX, fromY)); 
+			return teamAt(toX, toY)==1? 2 : 1; 
 		}
 		
+		//TODO mark if cast,  I can't remember what this meant 
+		
+		if(piece == Piece.TYPE_ROOK && (fromY==0 || fromY==7))
+		{
+			//System.out.println("Rook moved from position");
+				if(fromX == 0)
+				{
+					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_LEFT); 
+					//System.out.println("Left Rook Moved!");
+					return teamAt(toX, toY) == 1? 5 : 3; 
+				}
+				else if(fromX == 7)
+				{
+					//mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_RIGHT); 
+					//System.out.println("Right Rook Moved!");
+					return teamAt(toX, toY) == 1? 6 : 4; 
+				}
+				
+		}
+			return 0; 
 	}
 	
 	/**
@@ -101,25 +130,19 @@ public class ChessBoard extends Board
 	 * @param y coordinate
 	 * @param mboard markable board 
 	 */
-	public int selectForMark(int x, int y, MobilityBoard mboard)
+	public int selectForMark(int x, int y, Marker marker)
 	{
-		int pieceValue = getPiece(x, y); 
+		//int pieceValue = getPiece(x, y); 
 		
-		if(pieceValue != Board.EMPTY)
-			return pieces[pieceValue-1].movement.markAvailableMovement(mboard, this, x, y); 
+		if(isOccupied(x, y))
+		{
+			int marks = marker.markPieceAt(x, y); 
+			return marks; 
+		}
 		
 		return 0; 
 	}
-	
-	/**
-	 * Resets mobility board, but not call it directly from itself? Get a life 
-	 * @param mboard 
-	 */
-	public void deselect(MobilityBoard mboard)
-	{
-		mboard.reset(); 
-	}
-	
+		
 	/**
 	 * return piece values 
 	 * @param x x co-ord 
@@ -133,4 +156,10 @@ public class ChessBoard extends Board
 		return Math.abs(getTileValue(x, y));
 	}
 
+	public PieceMovement getPieceMovementAt(int x, int y)
+	{
+		if(getPiece(x,y) == 0)
+			return null; 
+		return pieces[getPiece(x,y)-1].movement; 
+	}
 }

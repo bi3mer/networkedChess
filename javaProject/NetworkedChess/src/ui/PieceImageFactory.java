@@ -18,7 +18,7 @@ public class PieceImageFactory implements ChessFactory<Image>
 		pieceImages = new ArrayList<Image>();
 		loader = new Loader(); 
 		
-		loader.setFolder("kchess\\");
+		loader.setFolder("kchess/");
 		loader.setExtention(".png");
 		loader.setAlpha(new Color(255, 174, 201));
 	}

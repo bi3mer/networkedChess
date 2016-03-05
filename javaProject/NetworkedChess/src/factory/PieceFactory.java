@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import intf.ChessFactory;
 import model.KingMovement;
+import model.MovePattern;
 import model.PawnMovement;
 import model.Piece;
 import model.PieceMovement;
@@ -70,7 +71,13 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorKing() 
 	{
-		PieceMovement m = new KingMovement();//new PieceMovement(PieceMovement.createMove(1, 1, PieceMovement.createMove(0, 1, null) ), false); 
+		MovePattern rookLike = PieceMovement.createMove(1, 0); 
+		MovePattern bishipLike = PieceMovement.createMove(1, 1); 
+	
+		//attach
+		rookLike.next.next.next.next = bishipLike; 
+		
+		PieceMovement m = new KingMovement(rookLike);
 		Piece noobking = new Piece(Piece.TYPE_KING, m);
 	
 		return noobking;
@@ -79,7 +86,14 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorQueen() 
 	{
-		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 1, PieceMovement.createMove(0, 1, null) ), true); 
+		MovePattern rookLike = PieceMovement.createMove(1, 0); 
+		MovePattern bishipLike = PieceMovement.createMove(1, 1); 
+	
+		//attach
+		rookLike.next.next.next.next = bishipLike; 
+	
+		
+		PieceMovement m = new PieceMovement(rookLike, true); 
 		Piece queen = new Piece(Piece.TYPE_QUEEN, m);
 	
 		return queen; 
@@ -88,7 +102,8 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorRook() 
 	{
-		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 0, null ), true); 
+		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 0), true); 
+	
 		Piece rockSolid = new Piece(Piece.TYPE_ROOK, m);
 	
 		return rockSolid; 
@@ -97,7 +112,7 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorBishop() 
 	{
-		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 1, null), true); 
+		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 1), true); 
 		Piece satan = new Piece(Piece.TYPE_BISHOP, m);
 	
 		return satan; 
@@ -106,7 +121,14 @@ public class PieceFactory implements ChessFactory<Piece>
 	@Override
 	public Piece factorKnight()
 	{
-		PieceMovement m = new PieceMovement(PieceMovement.createMove(2, 1, PieceMovement.createMove(2, -1, null) ), false); 
+		MovePattern horse1 = PieceMovement.createMove(1, 2); 
+		MovePattern horse2 = PieceMovement.createMove(1, -2); 
+	
+		//attach
+		horse1.next.next.next.next = horse2; 
+			
+				
+		PieceMovement m = new PieceMovement(horse1, false); 
 		Piece DoNotAssumeIAmAManYouSexist = new Piece(Piece.TYPE_KNIGHT, m);
 	
 		return DoNotAssumeIAmAManYouSexist; 

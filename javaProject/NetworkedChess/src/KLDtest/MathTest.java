@@ -35,7 +35,7 @@ public class MathTest {
 		
 		int i=0; 
 		int sum=0;
-		int[] should = {0,0,1,1,2,3,4,5};
+		int[] should = {0,0,1,1,4,5,2,3};
 		
 		//boolean no = false; 
 		
@@ -45,7 +45,7 @@ public class MathTest {
 			for(int team=1; team>-2; team-=2)//0 left, 1 right 
 			{
 				//1 king, 3 rook 
-				for(int tag=0; tag<2; tag++)
+				for(int tag=0; tag<2; tag++) //0 left, 1 right 
 				{
 					int index =(team+piece+(tag%piece))/(1+(piece%3));
 					System.out.printf("index: %d->%d, team:%2d, tag: %d, piece: %d\n",index,should[i++],team,tag,piece);

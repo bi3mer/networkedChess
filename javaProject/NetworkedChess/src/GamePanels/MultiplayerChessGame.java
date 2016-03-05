@@ -16,13 +16,15 @@ import intf.MovementTracker;
 import model.BoardUI;
 import model.ChessBoard;
 import model.ChessPlayerController;
+import model.Marker;
 import model.MobilityBoard;
 import model.Piece;
 
 public class MultiplayerChessGame extends Game
 {
-	private ChessBoard board; 
-	private MobilityBoard mobilityBoard; 
+	private ChessBoard cboard; 
+	private MobilityBoard mboard; 
+	private Marker marker; 
 	
 	private int tileWidth;
 	private int tileHeight;
@@ -56,8 +58,10 @@ public class MultiplayerChessGame extends Game
 		ChessPlayerController.getInstance().setBoard(this);
 		
 		// Create board
-		board = new ChessBoard(); 
-		mobilityBoard= new MobilityBoard(board); 
+		cboard = new ChessBoard(); 
+		mboard = new MobilityBoard(cboard); 
+		
+		marker = new Marker(mboard); 
 				
 		int[] pieces = {0, Piece.TYPE_ROOK, 
 				Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
@@ -68,10 +72,10 @@ public class MultiplayerChessGame extends Game
 			int piece = pieces[(i/8)*(  (i-7)+((i/13)*(3-((2*i)%13)))  )%6]; 
 			
 			//positive bottom
-			board.setTileValue(i%8, 1-i/8, piece); 
+			cboard.setTileValue(i%8, 1-i/8, piece); 
 		
 			//negative top 
-			board.setTileValue(i%8, 6+i/8, -piece); 	
+			cboard.setTileValue(i%8, 6+i/8, -piece); 	
 		}
 		
 		tileWidth = GameFrame.width/10; 
@@ -85,7 +89,7 @@ public class MultiplayerChessGame extends Game
 		reverse = player.getTeam(); 
 		
 		//this will allow the board to be drawn automatically 
-		boradui = new BoardUI(board, mobilityBoard, reverse); 
+		boradui = new BoardUI(cboard, mboard, reverse); 
 		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight); 
 		this.addDraw(boradui);
 	}
@@ -147,7 +151,7 @@ public class MultiplayerChessGame extends Game
 					JSONObject to   = (JSONObject) update.get("to");
 					
 					// Add move to board
-					board.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+					cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
 				}
 				else if(update.has("undoRequest")) 
 				{
@@ -190,10 +194,10 @@ public class MultiplayerChessGame extends Game
 		turnReady = true; 
 	}
 	
-	// TODO: is this needed?
+	// TODO: is this needed? 
 	public boolean recieveMovement(int fromX, int fromY, int toX, int toY)
 	{
-		board.movePiece(fromX, fromY, toX, toY);
+		cboard.movePiece(fromX, fromY, toX, toY);
 		
 		return true;
 	}
@@ -222,41 +226,31 @@ public class MultiplayerChessGame extends Game
 			
 			y = Math.abs(reverse-y); 
 			
-			if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
+			if(mboard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
 			{
-				int piece = Math.abs(board.getTileValue(selectedX, selectedY)) ; 
-				
-				if(piece == Piece.TYPE_KING ||piece == Piece.TYPE_ROOK)
-				{
-					//System.out.println("Moving a king or rook");
-					//int tag = 0; 
-					if(piece == Piece.TYPE_ROOK && (selectedY == 0 || selectedY == 7))
-					{
-						//System.out.println("Moving rook");
-						if(selectedX == 0)
-						{
-							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_LEFT); 
-							//System.out.println("Left Rook Moved!");
-						}
-						else if(selectedX == 7)
-						{
-							mobilityBoard.markRookMoved(board.teamAt(selectedX, selectedY),MobilityBoard.TAG_RIGHT); 
-							//System.out.println("Right Rook Moved!");
-						}
-						
-						
-					}
-					else if(piece == Piece.TYPE_KING)
-					{
-						mobilityBoard.markKingMoved(board.teamAt(selectedX, selectedY)); 
-						//System.out.println("King Moved!");
-					}
-						
-				}
 				
 				// Update board
 				turnReady = false; 
-				board.movePiece(selectedX, selectedY, x, y);
+				
+				//rook or king moved notifications 
+				int notification = cboard.movePiece(selectedX, selectedY, x, y);
+				
+				//notify mobility to adjust castling 
+				if (notification > 0)
+				{
+					notification--; 
+					
+					mboard.setMoved(notification); 
+					
+					/*if(notification/2 == 0) 
+						mboard.markKingMoved(player.getTeam());
+					else
+					{
+						int side =  notification/2 -1; 
+						mboard.markRookMoved(player.getTeam(), side);
+					}*/
+					
+				}//endn if notification 
 				
 				// Update tracker
 				traker.sendMovment(selectedX, selectedY, x, y);
@@ -283,16 +277,16 @@ public class MultiplayerChessGame extends Game
 					System.out.println("Error pushing to server");
 				}
 				
-				board.deselect(mobilityBoard);	
+				mboard.reset();	
 			}//end mobility 
 			else
 			{
-				board.deselect(mobilityBoard);	
+				mboard.reset();	
 				
-				if(board.teamAt(x, y) == player.getTeam())
+				if(cboard.teamAt(x, y) == player.getTeam())
 				{
 					System.out.println("marking " + x + "-" + y);
-					int marked = board.selectForMark(x, y, mobilityBoard);
+					int marked = marker.markPieceAt(x, y); 
 					
 					System.out.println("Marked " + marked);
 				}
@@ -304,7 +298,7 @@ public class MultiplayerChessGame extends Game
 		}
 		else if(input.mouseIsClicked())
 		{
-			board.deselect(mobilityBoard);	
+			mboard.reset();	
 		}
 	}	
 }

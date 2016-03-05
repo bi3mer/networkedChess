@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
 /**
  * A board that highlights available moment (including attack) places on a chess board 
  * 
@@ -16,14 +18,9 @@ public class MobilityBoard extends Board
 	public final static int TAG_LEFT = 0; 
 	public final static int TAG_RIGHT = 1; 
 	
-	public final static int THREAT_COOL = 0; 
-	public final static int THREAT_CKECK = 1; 
-	public final static int THREAT_CKECKMATE = 2; 
-	
 	
 	private ArrayList<Boolean> didMove; 
 	
-
 	/**
 	 * Dependency 
 	 */
@@ -38,6 +35,11 @@ public class MobilityBoard extends Board
 		super(cboard.getWidth(), cboard.getHeight(), MARK_INVISIBLE); 
 		this.cboard = cboard; 
 		didMove = new ArrayList<Boolean>(); 
+		
+		for(int i=0; i<6; i++)
+		{
+			didMove.add(false); 
+		}
 	}
 
 	/**
@@ -110,7 +112,13 @@ public class MobilityBoard extends Board
 	}
 	
 	
-	public void markKingMoved(int team)
+	public void setMoved(int index)
+	{
+		System.out.println("index moved: "+ (index+1));//TODO
+		didMove.set(index, true); 
+	}
+	
+	/*public void markKingMoved(int team)
 	{
 		//convert -1 and 1 >> into >> 0 and 1 
 		team = (team+1)/2; 
@@ -118,10 +126,17 @@ public class MobilityBoard extends Board
 			didMove.add(false); 
 		
 		didMove.set(team, true); 
-	}
+	}*/
 	
-	public void markRookMoved(int team, int tag)
+	/*public void markRookMoved(int team, int tag)
 	{
+		if(tag==TAG_LEFT)
+		{
+			System.out.println("left rook moved team" + team);
+		}
+		else
+			System.out.println("right rook moved team" + team);
+		
 		team = (team+1)/2; 
 		int index = Piece.TYPE_ROOK +(team+tag); 
 		
@@ -129,19 +144,30 @@ public class MobilityBoard extends Board
 			didMove.add(false); 
 		
 		didMove.set(index, true); 
-	}
+	}*/
 	
 	public boolean didMove(int piece, int team, int tag)
 	{
 		//convert -1 and 1 >> into >> 0 and 1 
-		team = (team+1)/2; 
-		int index =(team+piece+(tag%piece))/(1+(piece%3));
+		//team = (team+1)/2; 
+		int index = (team+piece+(tag%piece))/(1+(piece%3));
 		
 		if(didMove.size() <= index)
 			return false; 
+		
+		//System.out.println(piece +  " - "+ index +  " value: " + didMove.get(index));
 		
 		
 		return didMove.get(index); 
 	}
 
+	/**
+	 * @return ChessBoard connected to this
+	 */
+	public ChessBoard getChessBoard()
+	{
+		return this.cboard; 
+	}
+	
+	
 }

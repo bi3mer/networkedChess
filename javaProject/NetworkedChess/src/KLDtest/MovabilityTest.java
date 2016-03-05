@@ -40,7 +40,7 @@ public class MovabilityTest //mobility*
 		System.out.println("Mobility: Free Space\n"+mboard);
 		
 		//select out piece 
-		chess.selectForMark(selectedPieceX, selectedPieceY, mboard);
+		//chess.selectForMark(selectedPieceX, selectedPieceY, mboard); // removed - KLD
 		
 		//selecting piece for movement 
 		System.out.println("Mobility: Marking Available Movement (with 1)\n"+mboard);
@@ -53,7 +53,7 @@ public class MovabilityTest //mobility*
 		chess.placePiece(friendlyPieceX, friendlyPieceY, Piece.TYPE_PAWN); //positive type is friendly 
 		
 		System.out.println("Seleting our previous for movement");
-		chess.selectForMark(selectedPieceX, selectedPieceY, mboard);
+		//chess.selectForMark(selectedPieceX, selectedPieceY, mboard); removed -KLD
 		
 		System.out.println("Mobility: friendly block\n"+mboard);
 		
@@ -65,7 +65,7 @@ public class MovabilityTest //mobility*
 		chess.placePiece(enemyPieceX, enemyPieceY, -Piece.TYPE_PAWN); //negative type is enemy with corresponding positive type 
 				
 		System.out.println("Seleting our initial piece for movement");
-		chess.selectForMark(selectedPieceX, selectedPieceY, mboard);
+		//chess.selectForMark(selectedPieceX, selectedPieceY, mboard); removed -KLD
 				
 		System.out.println("Mobility: Marking Attack (2 means move & destry) \n"+mboard);
 		System.out.println("ChessBoard With all pieces (negative means enemy)\n"+chess);
