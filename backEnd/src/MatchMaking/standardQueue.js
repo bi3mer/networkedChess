@@ -52,6 +52,24 @@
 		},
 
 		/**
+		 * @param {String} user
+		 * @param {function} callback
+		 * @Retrun {Boolean | Boolean} - error and if in queue or not
+		 */
+		isInMatchMaking: function(user, callback) {
+			console.log(fileName, 'isInMatchMaking(...)');
+
+			// check if user is in array for queue or not
+			if(queue.indexOf(user) === -1) {
+				console.log(fileName, 'user not in queue');
+				callback(false, false);
+			} else {
+				console.log(fileName, 'user in queue');
+				callback(false, true);
+			}
+		},
+
+		/**
 		 * @param {String} user       - user id
 		 * @param {Function} callback 
 		 * @Return {String}           - Return id of player or null

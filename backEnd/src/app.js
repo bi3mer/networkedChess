@@ -283,15 +283,15 @@
 
 			// Get current game id for user
 			PlayersDB.getGameID(user, function gameID(err, id) {
-				if(!err && id) {
+				if(!err) {
 					// If the user is playing
 					if(isPlaying) {
 						console.log(fileName, 'getUpdate: valid game id: ' + id);
 
 						// Go to games database and check for updates
-						GamesDB.getUpdate(id, user, function(err, updates, shouldUpdateIsPlaying) {
+						GamesDB.getUpdate(id, user, function(gameErr, updates, shouldUpdateIsPlaying) {
 							// Check for error
-							if(!err) {
+							if(!gameErr) {
 								console.log(fileName, 'getUpdate: valid game id sending updates: ' + JSON.stringify(updates));
 
 								// Format the updates
@@ -315,27 +315,40 @@
 					} else if(id) {
 						console.log(fileName, 'getUpdate: found game id for player');
 
-						// Get initial info
-						GamesDB.getInitialInfo(id, user, function getInitInfoFromGamesDB(err, resp){
-							if(!err && resp) {
-								console.log(fileName, 'getUpdate: found game info for player');
+						// Check if user is in queue still
+						MatchMaking.isInMatchMaking(user, function checkIfInMatchamking(matchErr, inQueue) {
+							// CHeck if no error and not in queue
+							if(!matchErr && !inQueue) {
+								// user has found game, send info
+								GamesDB.getInitialInfo(id, user, function getInitInfoFromGamesDB(err, resp){
+									if(!err && resp) {
+										console.log(fileName, 'getUpdate: found game info for player');
 
-								// Player has found a match and will be notified
-								callback(global.config.server.httpStatusCodes.success, resp);
+										// Player has found a match and will be notified
+										callback(global.config.server.httpStatusCodes.success, resp);
+									} else {
+										console.log(fileName, 'getUpdate: error geting game info for player');
+
+										// Return error
+										callback(global.config.server.httpStatusCodes.error, createError('Unable to find requested game info'));
+									}
+								});
+							} else if(!matchErr) {
+								console.log(fileName, 'getUpdate: no match has been found');
+
+								// Player hasn't found a match yet
+								callback(global.config.server.httpStatusCodes.notModified, createSuccess('getUpdate: ID, ' + id + ' no match found yet'));
 							} else {
-								console.log(fileName, 'getUpdate: error geting game info for player');
-
-								// Return error
-								callback(global.config.server.httpStatusCodes.error, createError('Unable to find requested game info'));
+								// Error getting queue
+								console.log(fileName, 'getUpdate: error getting queue');
+								callback(global.config.server.httpStatusCodes.validationError, createError('getUpdate: Error, ' + matchErr));
 							}
 						});
-
-						
 					} else {
 						console.log(fileName, 'getUpdate: no match has been found');
 
 						// Player hasn't found a match yet
-						callback(global.config.server.httpStatusCodes.notModified, createError('getUpdate: ID, ' + id + ' no match found yet'));
+						callback(global.config.server.httpStatusCodes.notModified, createSuccess('getUpdate: ID, ' + id + ' no match found yet'));
 					}
 				} else {
 					console.log(fileName, 'getUpdate: error getting id');

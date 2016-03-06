@@ -28,6 +28,16 @@
 		},
 
 		/**
+		 * @param {String} user
+		 * @param {function} callback
+		 * @Retrun {Boolean | Boolean} - error and if in queue or not
+		 */
+		isInMatchMaking: function(user, callback) {
+			console.log(fileName, 'isInMatchMaking: dispatching to correct queue ');
+			MatchMaking.isInMatchMaking(user, callback);
+		},
+
+		/**
 		 * @param {String} user       - user id
 		 * @param {Function} callback 
 		 * @Return {String}           - Return id of player or null
