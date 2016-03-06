@@ -89,7 +89,12 @@ public class PieceMovement
 		return this.isContinued; 
 	}
 	
-	public int specialMarking(MobilityBoard mboard, int cx, int cy)
+	public int specialMarking(MobilityBoard mboard, int cx, int cy, int team)
+	{
+		return 0; 
+	}
+	
+	public int specialAttackMark(Board b, int mark, int cx, int cy, int team)
 	{
 		return 0; 
 	}

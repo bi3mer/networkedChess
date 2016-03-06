@@ -1,5 +1,7 @@
 package model;
 
+import javax.imageio.plugins.bmp.BMPImageWriteParam;
+
 import factory.PieceFactory;
 
 public class KingMovement extends PieceMovement 
@@ -16,14 +18,13 @@ public class KingMovement extends PieceMovement
 	
 	
 	@Override
-	public int specialMarking(MobilityBoard mboard, int cx, int cy) 
+	public int specialMarking(MobilityBoard mboard, int cx, int cy, int team) 
 	{
-		
-		int marks = super.specialMarking(mboard, cx, cy);
+		int marks = super.specialMarking(mboard, cx, cy, team);
 		
 		ChessBoard cboard = mboard.getChessBoard(); 
 		
-		int team = cboard.teamAt(cx, cy);
+		//int team = cboard.teamAt(cx, cy);
 		
 		//casteling 
 		if(!mboard.didMove(Piece.TYPE_KING, team, 0))
@@ -56,12 +57,11 @@ public class KingMovement extends PieceMovement
 							{
 								//PieceFactory.instence().factor(piece).movement.markAvailableMovement(threat, cboard, j, i, 0); 
 								Marker threatMarker = new Marker(threat); 
-								threatMarker.markMovement(PieceFactory.instence().factor(piece).movement, j, i, 0); 
+								threatMarker.markMovement(cboard.getPieceMovementAt(j, i), j, i, 0); 
 							}		
 							//cboard.selectForMark(j, i, threat); 
 						}
 			
-				
 			//match { threat with mboard
 			//
 			for(int i = 0; i < cboard.getHeight(); i++)
@@ -70,8 +70,8 @@ public class KingMovement extends PieceMovement
 					if(mboard.getTileValue(j, i) > MobilityBoard.MARK_INVISIBLE && threat.getTileValue(j, i) > MobilityBoard.MARK_INVISIBLE)
 					{
 						//System.out.printf("unmarking unit %s %s\n", j, i);
-						mboard.unMark(j, i); 
-						marks--; 
+						marks -= (mboard.unMark(j, i))? 1 : 0; 
+						
 					}
 				}
 					
@@ -91,7 +91,7 @@ public class KingMovement extends PieceMovement
 		int y = 8- (9 - (team))%9;
 		
 		//rook right  
-		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_RIGHT))
+		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_RIGHT) && mboard.getChessBoard().teamAt(7, y)==team)
 		{
 			boolean free = true; 
 			//check empty
@@ -108,7 +108,7 @@ public class KingMovement extends PieceMovement
 		}
 		
 		//rook left 
-		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_LEFT))
+		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_LEFT) && mboard.getChessBoard().teamAt(0, y)==team)
 		{
 			boolean free = true; 
 			//check empty

@@ -1,5 +1,7 @@
 package model;
 
+import javax.imageio.plugins.bmp.BMPImageWriteParam;
+
 /**
  * Special needs 
  * 
@@ -12,16 +14,22 @@ public class PawnMovement extends PieceMovement
 	 */
 	public PawnMovement() 
 	{
-		super(0, 0, false);
+		super(null, false);
 	}
 	
 	@Override
-	public int specialMarking(MobilityBoard mboard, int cx, int cy) 
+	public int specialMarking(MobilityBoard mboard, int cx, int cy, int team) 
 	{
 		int marks = 0; 
+		
+		if(team == 0)
+		{
+			int pieceTeam = mboard.getChessBoard().teamAt(cx, cy);
+			return specialAttackMark(mboard, 2, cx, cy, pieceTeam); 
+		}
 	
 		//either 1 or -1
-		int team = mboard.getChessBoard().teamAt(cx, cy); 
+		//int team = mboard.getChessBoard().teamAt(cx, cy); 
 				
 		marks += (mboard.markMove(cx, cy + team))? 1 : 0; 
 		
@@ -38,5 +46,13 @@ public class PawnMovement extends PieceMovement
 				
 		return marks; 
 	}
-
+	
+	public int specialAttackMark(Board b, int mark, int cx, int cy, int team)
+	{
+		int marks = 0; ; 
+		marks += (b.setTileValue(cx+1, cy+team, mark))? 1 : 0; 
+		marks += (b.setTileValue(cx-1, cy+team, mark))? 1 : 0; 
+		return marks; 
+	}
+	
 }

@@ -142,6 +142,48 @@ public class Board
 	}
 	
 	/**
+	 * Fills the board with a number 
+	 * @param fill filler 
+	 */
+	public void fill(int fill)
+	{
+		for(int i = 0; i < height; i++)
+			for(int j = 0; j < width; j++)
+				board[i][j] = fill; 	
+	}
+	
+	/**
+	 * adds the passed board value to it's value with corresponding position 
+	 * @param b
+	 */
+	public void add(Board b)
+	{
+		for(int i = 0; i < height; i++)
+			for(int j = 0; j < width; j++)
+				board[i][j] += b.board[i][j]; 	
+	}
+	
+	/**
+	 * multiply the passed board value to it's value with corresponding position 
+	 * @param b
+	 * @retrurn number of changed values 
+	 */
+	public int multiply(Board b)
+	{
+		int changes = 0; 
+		for(int i = 0; i < height; i++)
+			for(int j = 0; j < width; j++)
+			{
+				int previous = board[i][j]; 
+				board[i][j] *= b.board[i][j]; 	
+				
+				if(board[i][j]!=previous)
+					changes++; 
+			}
+		return changes; 
+	}
+	
+	/**
 	 * @return a string image of the board with integer values
 	 * center point being like in real life 
 	 */
@@ -159,6 +201,20 @@ public class Board
 		}
 		
 		return build; 
+	}
+	
+	/**
+	 * Return a cloned object 
+	 */
+	public Board clone()
+	{
+		Board clone = new Board(width, height); 
+		
+		for(int i=0; i<height; i++)
+			for(int j=0; j<width; j++)
+				clone.board[i][j] = board[i][j]; 
+ 		
+		return clone; 
 	}
 
 }

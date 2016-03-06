@@ -17,7 +17,7 @@ public class SinglePlayerChess extends Game
 {
 	private ChessBoard board; 
 	private MobilityBoard mobilityBoard; 
-	private Marker marker; 
+	private Marker marker;  
 	
 	
 	private int tileWidth;
@@ -30,6 +30,12 @@ public class SinglePlayerChess extends Game
 	
 	private int waitingTime; 
 	
+	boolean whiteDead; 
+	boolean blackDead; 
+	
+	String whiteMessage; 
+	String blackMessage; 
+	
 	// 0 false, 7 true 
 	/**
 	 * Reversing board for player two 
@@ -39,32 +45,34 @@ public class SinglePlayerChess extends Game
 	
 	BoardUI boradui; 
 	
+	
 	@Override
 	protected void init() 
 	{
 		name = "SinglePlayerChess"; //not needed 
+		whiteMessage = ""; 
+		blackMessage = ""; 
 		
 		board = new ChessBoard(); 
 		mobilityBoard= new MobilityBoard(board); 
 		marker = new Marker(mobilityBoard); 
-			
+		
+		whiteDead = false; 
+		blackDead = false; 
+		
 		placePieces(); 
 	
-	tileWidth = GameFrame.width/10; 
-	tileHeight = GameFrame.height/10; 
+		tileWidth = GameFrame.width/10; 
+		tileHeight = GameFrame.height/10; 
+		
+		offsetX = GameFrame.width/2 - tileWidth*4; 
+		offsetY = GameFrame.height/2 - tileHeight*4 - 20; 
+		
+		//reverse = 0; 
+		waitingTime = 0; 
+		
 	
-	offsetX = GameFrame.width/2 - tileWidth*4; 
-	offsetY = GameFrame.height/2 - tileHeight*4 - 20; 
-	
-	//reverse = 0; 
-	waitingTime = 0; 
-	
-	
-	
-	
-	
-	
-	//this will allow the board to be drawn automatically 
+		//this will allow the board to be drawn automatically 
 		boradui = new BoardUI(board, mobilityBoard, reverse); 
 		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight);
 		revereBoard();
@@ -76,69 +84,24 @@ public class SinglePlayerChess extends Game
 	@Override
 	protected void draw(Graphics g) 
 	{
-		//g.drawRect(50, 59, 100, 100);
-	
-	
-	/*Color[] tileColors = {Color.WHITE, Color.BLACK};
 		
-	//board background
-	for(int i=0; i<board.getHeight(); i++)
-	{
-		for(int j=0; j<board.getWidth(); j++)
-		{
-			int y = Math.abs(reverse-i); 
-			
-			g.setColor(tileColors[(j%2+i%2)%2]); 
-			g.fillRect(offsetX+j*tileWidth, offsetY+y*tileHeight, tileWidth, tileHeight);
-		  //draw tiles 
-		}
-	}
-	
-	//drawing mobility 
-	Color[] mobilityColor ={Color.CYAN, Color.RED};
-	for(int i=0; i<board.getHeight(); i++)
-	{
-		for(int j=0; j<board.getWidth(); j++)
-		{
-			int y = Math.abs(reverse-i); 
-			
-			if(mobilityBoard.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
-			{
-				
-				Game.setFade(g, 0.8f);
-				
-				g.setColor(mobilityColor[Math.abs(mobilityBoard.getTileValue(j, i))-1]);
-				g.fillRect(offsetX+j*tileWidth, offsetY+y*tileHeight, tileWidth, tileHeight);
-				 
-				Game.setFade(g, 1f);
-				
-			}
-		}
-	}
-	
-	
-		//draw pieces 
-	for(int i=0; i<board.getHeight(); i++)
-	{
-		for(int j=0; j<board.getWidth(); j++)
-		{
-			int y = Math.abs(reverse-i); 
-			
-			
-		  int pieceIndex = 2*Math.abs(board.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
-		  //draw tiles 
-		 
-		  
-		  if(pieceIndex > 0)
-		  {
-			  g.drawImage(PieceImageFactory.Instnece().factor(pieceIndex), offsetX+j*tileWidth, offsetY+y*tileHeight,tileWidth, tileHeight, null); 
-			  //g.setColor(Color.red);
-			  //g.drawString(""+pieceIndex, offsetX+j*tileWidth, offsetY+y*tileHeight);
-		  }
-		}
-	}
-	*/
-	
+		
+		g.setColor(Color.black);
+		
+		//Threat threat = new Threat(marker); 
+		
+		String s = (whiteDead)? "White team is under threat"  : "White safe"; 
+		
+		g.drawString(s, 20, 20);
+		
+		String b = (blackDead)? "Black team is under threat"  : "Black safe"; 
+		
+		g.drawString(b, 20, 40);
+		
+		g.drawString(whiteMessage, 200, 20);
+		g.drawString(blackMessage, 200, 40);
+
+		
 		
 	}//end color 
 	
@@ -183,9 +146,9 @@ public class SinglePlayerChess extends Game
 	
 	public void placePieces()
 	{
-		//int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
+		int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; 
 			
-		int[] pieces = {0, Piece.TYPE_ROOK, Piece.TYPE_BISHOP,0, 0, Piece.TYPE_KING }; 
+		//int[] pieces = {0, Piece.TYPE_ROOK, 0,0, 0, Piece.TYPE_KING }; 
 				
 	
 		for(int i=0; i<16; i++)
@@ -198,6 +161,13 @@ public class SinglePlayerChess extends Game
 			//negative top 
 			board.setTileValue(i%8, 6+i/8, -piece); 	
 		}
+		
+		//board.setTileValue(4, 4, Piece.TYPE_PAWN);
+		
+		//board.setTileValue(4, 2, -Piece.TYPE_PAWN);
+		
+		
+		
 	
 	}//end place 
 	
@@ -205,67 +175,131 @@ public class SinglePlayerChess extends Game
 	{
 		if(input.mouseIsClicked(new Rectangle(offsetX, offsetY, offsetX+tileWidth*7, offsetY+tileHeight*7)) )
 		{
-			//get co-ordenate 
-		int x = ((Input.point.x - offsetX) / tileWidth); 
-		int y = ((Input.point.y - offsetY) / tileHeight); 
-		
-		//System.out.printf("clicked %d %d\n", x, y);
-		
-		y = Math.abs(reverse-y); 
-		
-		if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
-		{
-				//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
-			//rook or king moved notifications 
-			int notification =	board.movePiece(selectedX, selectedY, x, y);
-				
-			//notify mobility to adjust castling 
-			if (notification > 0)
+			//System.out.println(board);
+			//System.out.println("in");
+				//get co-ordenate 
+			int x = ((Input.point.x - offsetX) / tileWidth); 
+			int y = ((Input.point.y - offsetY) / tileHeight); 
+			
+			//System.out.printf("clicked %d %d\n", x, y);
+			
+			y = Math.abs(reverse-y); 
+			
+			if(mobilityBoard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
 			{
-				notification--; 
-				mobilityBoard.setMoved(notification); 
-				//int team = board.teamAt(x, y); 
+					//System.out.printf("movin %d %d to %d %d\n", selectedX, selectedY, x, y);
+				//rook or king moved notifications 
+				int notification =	board.movePiece(selectedX, selectedY, x, y);
+					
+			
+				//notify mobility to adjust castling 
+				if (notification > 0)
+				{
+					notification--; 
+					mobilityBoard.setMoved(notification); 
+				
+				}//end if notification 
 				
 				
-				/*if(notification/2 == 0) 
-					mobilityBoard.markKingMoved(team);
+				//marker.calebrate(1); 
+				//whiteDead = threat.isUnderTHreat(); 
+				//marker.calebrate(-1); 
+				//blackDead = threat.isUnderTHreat(); 
+				
+				//calibrate the other team 
+				int team = board.teamAt(x, y); 
+				
+				marker.calebrate(1);
+				
+				//update check and check mate 
+				if((whiteDead = marker.isThreatened()))
+				{
+					if(marker.isCheckMate(1))
+						blackMessage = "Checkmate!";
+					else
+						blackMessage = "Check.."; 
+				}
 				else
 				{
-					int side =  notification/2 -1; 
-					mobilityBoard.markRookMoved(team, side);
-				}*/
-				
-			}//endn if notification 
-			
-				
-			//
-				
-			mobilityBoard.reset();	
-		}//end mobility 
-		else
-		{
-			mobilityBoard.reset();	
-			
-			
-				//
-				int marked = marker.markPieceAt(x, y); 
-				
-				//
-					
+					blackMessage = ""; 
 				}
-		
-	
-			selectedX = x; 
-			selectedY = y; 
+				
+				marker.calebrate(-1);
+				
+				if((blackDead = marker.isThreatened()))
+				{
+					if(marker.isCheckMate(-1))
+						whiteMessage = "Checkmate!";
+					else 
+						whiteMessage = "Check.."; 
+				}
+				else
+				{
+					whiteMessage = ""; 
+				}
+				
+				
+				
+				if(marker.didLose(team))
+				{
+					if(team==1)
+					{
+						whiteMessage = "Lost!"; 
+						blackMessage = "Won!";
+					}	
+					else
+					{
+						whiteMessage = "Won!"; 
+						blackMessage = "Lost!";
+					}
+				}
+				
 					
-		}else if(input.mouseIsClicked())
-		{
-			mobilityBoard.reset();	
-		}
+				//
+					
+				mobilityBoard.reset();	
+			}//end mobility 
+			else
+			{
+				mobilityBoard.reset();	
+				
+				
+					int team = board.teamAt(x, y); 
+					
+					if((team==1 && whiteDead) || (team==-1 && blackDead))
+					{
+						//threat.calebrate(team); //extra cuz in this mode both teams are the same 
+						//threat.markPieceAt(x, y); 
+					}
+					else 
+					{
+						//marker.markPieceAt(x, y); 
+					}
+					
+					/*if(team == 1)
+						marker.calebrate(1); 
+					else
+						marker.calebrate(-1); 
+					*/
+					int marks = marker.markPieceAt(x, y); 
+					
+					//System.out.println("marked " + marks + " at " + x +"-"+ y);
+					//
+						
+					}
+			
 		
+				selectedX = x; 
+				selectedY = y; 
+						
+			}else if(input.mouseIsClicked())
+			{
+				mobilityBoard.reset();	
+			}
+			
 	}//end click 
 	
-
+	
 
 
 }//end class

@@ -14,9 +14,13 @@ public class MobilityBoard extends Board
 	public final static int MARK_MOVE = 1; 
 	public final static int MARK_ATTACK = 2; 
 	
+	private int invisibleMark; 
+	private int moveMark; 
+	private int attackMark; 
+	
+	
 	public final static int TAG_LEFT = 0; 
 	public final static int TAG_RIGHT = 1; 
-	
 	
 	private ArrayList<Boolean> didMove; 
 	
@@ -32,8 +36,13 @@ public class MobilityBoard extends Board
 	public MobilityBoard(ChessBoard cboard)
 	{
 		super(cboard.getWidth(), cboard.getHeight(), MARK_INVISIBLE); 
+		
 		this.cboard = cboard; 
 		didMove = new ArrayList<Boolean>(); 
+	
+		invisibleMark = MARK_INVISIBLE; 
+		moveMark = MARK_MOVE; 
+		attackMark = MARK_ATTACK; 
 		
 		for(int i=0; i<6; i++)
 		{
@@ -50,9 +59,9 @@ public class MobilityBoard extends Board
 	 * 
 	 * @see Board#setTileValue
 	 */
-	public boolean mark(int markType, int x, int y)
+	public boolean mark(int mark, int x, int y)
 	{
-		return setTileValue(x, y, markType);
+		return setTileValue(x, y, mark);
 	}
 
 	/**
@@ -67,7 +76,7 @@ public class MobilityBoard extends Board
 	{
 		//
 		if(cboard.isEmpty(x, y))
-			return mark(MARK_MOVE, x, y);
+			return mark(moveMark, x, y);
 		
 		return false; 
 	}
@@ -83,7 +92,7 @@ public class MobilityBoard extends Board
 	public boolean markAttack(int x, int y, int team)
 	{
 		if(cboard.isOccupied(x, y) && cboard.teamAt(x,y) != team)
-			return mark(MARK_ATTACK, x,y);
+			return mark(attackMark, x,y);
 		return false; 
 	}
 	
@@ -97,7 +106,7 @@ public class MobilityBoard extends Board
 	 */
 	public boolean unMark(int x, int y)
 	{
-		return mark(MARK_INVISIBLE, x, y);
+		return mark(invisibleMark, x, y);
 	}
 
 	/**
@@ -166,6 +175,9 @@ public class MobilityBoard extends Board
 	{
 		return this.cboard; 
 	}
+	
+	
+	
 	
 	
 }

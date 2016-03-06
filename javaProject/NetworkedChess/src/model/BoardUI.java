@@ -75,7 +75,7 @@ public class BoardUI extends Draw
 			{
 				int y = Math.abs(reverse-i); 
 				
-				if(mboard.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
+				if(mboard.getTileValue(j, i) > MobilityBoard.MARK_INVISIBLE)
 				{
 					
 					Game.setFade(g, 0.8f);
