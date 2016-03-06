@@ -76,6 +76,7 @@
 		if(isValidReq(req) && global.utility.checking.isString(req.body.user) && global.utility.checking.isString(req.body.pass)) {	
 			serverApp.login(req.body.user, req.body.pass, function loginGetResponse(status, message) {
 				console.log(fileName, 'Logging in: sending to user');
+				console.log(JSON.stringify(message));
 				sendMessageToUser(res, status, message);
 			});
 		} else {
@@ -171,7 +172,7 @@
 	});
 
 	// Listen to path to get users updates for the game
-	app.post(global.config.server.paths.getMatch, function getUpdate(req, res) {
+	app.post(global.config.server.paths.getMatch, function getMatchCallback(req, res) {
 		console.log(fileName, 'getting match for user or adding to queue');
 
 		if(isValidReq(req) && global.utility.checking.isString(req.body.user)) {
@@ -185,7 +186,7 @@
 	});
 
 	// Listen to path to see the queue, NOTE: for debugging
-	app.post(global.config.server.paths.getMatchMaking, function getUpdate(req, res) {
+	app.post(global.config.server.paths.getMatchMaking, function getMatchmakingCallback(req, res) {
 		console.log(fileName, 'getting queue for user, NOTE: for debugging');
 
 		if(isValidReq(req)) {

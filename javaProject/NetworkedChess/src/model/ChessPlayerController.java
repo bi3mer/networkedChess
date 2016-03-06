@@ -1,6 +1,7 @@
 package model;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +19,7 @@ public class ChessPlayerController
 	
 	private int playerTeam; 
 	
-	private String host = "localhost:3000";
+	private String host = "http://localhost:3000";
 	
 	// TODO: use config file for these in the future
 	private String createAccount = "/createAccount";
@@ -38,13 +39,36 @@ public class ChessPlayerController
 	//create an object of SingleObject
 	private static ChessPlayerController instance = null;
 
-   public static ChessPlayerController getInstance() {
-      if(instance == null) {
+   public static ChessPlayerController getInstance() 
+   {
+      if(instance == null) 
+      {
          instance = new ChessPlayerController();
       }
       
       return instance;
    }
+
+   /**
+    * Used to for developer acceptance tests
+    * @param args
+    */
+   public static void main(String[] args) 
+   {
+	   try 
+	   {
+		   JSONObject test  = ChessPlayerController.getInstance().login("Colan", "Rulez");
+		   JSONObject test2 = ChessPlayerController.getInstance().ratings();
+		   System.out.println(test.toString());
+		   System.out.println(test2.toString());
+	   } 
+	   catch (JSONException | IOException | InterruptedException e) 
+	   {
+		   // TODO Auto-generated catch block
+		   e.printStackTrace();
+	   }
+   }		
+   
 	
 	public void setBoard(MultiplayerChessGame board)
 	{
@@ -58,7 +82,7 @@ public class ChessPlayerController
 	
 	private Boolean inRange(int status, int min, int max)
 	{
-		if(status > min && status < max)
+		if(status >= min && status <= max)
 		{
 			return true;
 		}
@@ -71,12 +95,12 @@ public class ChessPlayerController
 		// Create Object
 		JSONObject request = new JSONObject();
 		
-		// Add user name and password to object
-		request.append("user", user);
-		request.append("pass", pass);
-		
 		// Set user
 		this.user = user;
+		
+		// Add user name and password to object
+		request.put("user", user);
+		request.put("pass", pass);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.createAccount, request);
@@ -86,13 +110,13 @@ public class ChessPlayerController
 	{
 		// Create Object
 		JSONObject request = new JSONObject();
-		
-		// Add user name and password to object
-		request.append("user", this.user);
-		request.append("pass", pass);
-		
+
 		// Set user
 		this.user = user;
+		
+		// Add user name and password to object
+		request.put("user", this.user);
+		request.put("pass", pass);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.login, request);
@@ -105,12 +129,12 @@ public class ChessPlayerController
 		
 		// Create move object
 		JSONObject move = new JSONObject();
-		move.append("from", from);
-		move.append("to", to);
+		move.put("from", from);
+		move.put("to", to);
 		
 		// add move and user to request
-		request.append("move", move);
-		request.append("user", this.user);
+		request.put("move", move);
+		request.put("user", this.user);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.addMove, request);
@@ -122,7 +146,7 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
+		request.put("user", this.user);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.requestUndo, request);
@@ -134,8 +158,8 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
-		request.append("acceptUndo", acceptUndo);
+		request.put("user", this.user);
+		request.put("acceptUndo", acceptUndo);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.acceptOrDenyUndo, request);
@@ -147,8 +171,8 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
-		request.append("isPlaying", true);
+		request.put("user", this.user);
+		request.put("isPlaying", true);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.forfeit, request);
@@ -160,7 +184,7 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
+		request.put("user", this.user);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.ratings, request);
@@ -172,8 +196,9 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
-		request.append("isPlaying", isPlaying);
+		System.out.println("user: " + this.user);
+		request.put("user", this.user);
+		request.put("isPlaying", isPlaying);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.update, request);
@@ -185,7 +210,7 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
+		request.put("user", this.user);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.getMatch, request);
@@ -197,7 +222,7 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		request.append("user", this.user);
+		request.put("user", this.user);
 		
 		// Request information from server
 		return this.requestFromServer(this.host + this.cancelQueue, request);
@@ -231,7 +256,7 @@ public class ChessPlayerController
 		
 		// Input stream to read in response
 		InputStream in;
-		
+
 		// Check if status is in (200,300]
 		if(this.inRange(request.getResponseCode(),HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_BAD_REQUEST))
 		{
@@ -242,24 +267,26 @@ public class ChessPlayerController
 			in = request.getErrorStream();
 		}
 		
+		// Create input stream
 		InputStreamReader input = new InputStreamReader(in);
-		
+        
+		// read in response
 		input.read(response);
 		
+		// create json object
 		JSONObject json;
 		try 
 		{
 			json = new JSONObject(new String(response));
-			System.out.println(json.toString());
 		} 
 		catch (JSONException e) 
 		{	
-			// Invalid response, return empty
-			json = (JSONObject) JSONObject.NULL;
+			// String is empty
+			json = new JSONObject();
 		}
 		
 		// add status to object
-		json.append("status", request.getResponseCode());
+		json.put("status", request.getResponseCode());
 		
 		// diconnect connection
 		request.disconnect();

@@ -33,13 +33,19 @@ public class Menus {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try 
+				{
 					Menus window = new Menus();
 					window.frame.setVisible(true);
-				} catch (Exception e) {
+				}
+				catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 			}
@@ -49,17 +55,20 @@ public class Menus {
 	/**
 	 * Create the application.
 	 */
-	public Menus() {
+	public Menus() 
+	{
 		initialize();
 	}					//this starts the whole app
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void JsonComp(JSONObject obj,String message,ChessPlayerController player)
+	private void JsonComp(JSONObject obj, String message, ChessPlayerController player)
 	{
-		try {
-			if(obj.getInt("status") < 300)	// on successful login/account create go to the MainMenu frame
+		try 
+		{
+			// on successful login/account create go to the MainMenu frame
+			if(obj.getInt("status") < 300)	
 			{
 				frame.dispose();
 				MainMenu menu = new MainMenu(player);
@@ -69,31 +78,44 @@ public class Menus {
 			{
 				JOptionPane.showMessageDialog(null, message);
 			}
-		} catch (HeadlessException e) {
+		} 
+		catch (HeadlessException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JSONException e) {
+		} 
+		catch (JSONException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}	// server return checking for login/createaccount
 	
-	private void initialize() {
-		ChessPlayerController player = new ChessPlayerController(); //the JFrame App instantiates the controller
+	private void initialize() 
+	{
+		//the JFrame App instantiates the controller
+		ChessPlayerController player = new ChessPlayerController(); 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().setLayout(null);
 		
-		JButton btnLogin = new JButton("Login");	// Login button
-		btnLogin.addActionListener(new ActionListener() {	// on button listener
-			public void actionPerformed(ActionEvent e) {
-				try{
+		// Login button instantiation
+		JButton btnLogin = new JButton("Login");	
+		
+		// on button listener
+		btnLogin.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try
+				{
 					String username = textField.getText();
 					String password = passwordField.getText();
 					JSONObject returnObj = player.login(username, password);
 					JsonComp(returnObj,"Incorrect Password or Non-Existent Account",player); // Object check/error ret
-					}
-				catch(Exception e1){
+				}
+				catch(Exception e1)
+				{
 					JOptionPane.showMessageDialog(null, "Login Error"); // function error
 				}
 			}
@@ -105,16 +127,24 @@ public class Menus {
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);					//Username field
 		
+		// Create account button
 		JButton btnCreateAccount = new JButton("Create Account");
-		btnCreateAccount.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try{
+		
+		// add button listener
+		btnCreateAccount.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try
+				{
 					String username = textField.getText();
 					String password = passwordField.getText();
 					JSONObject returnObj = player.createAccount(username, password);
 					JsonComp(returnObj,"This Username is taken",player);
 				}
-				catch(Exception e1){
+				catch(Exception e1)
+				{
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Account Creation Error");
 				}
 			}

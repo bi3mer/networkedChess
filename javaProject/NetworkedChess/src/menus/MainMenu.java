@@ -24,14 +24,20 @@ public class MainMenu extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try 
+				{
 					ChessPlayerController player = new ChessPlayerController();
 					MainMenu frame = new MainMenu(player);
 					frame.setVisible(true);
-				} catch (Exception e) {
+				}
+				catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 			}
@@ -49,20 +55,25 @@ public class MainMenu extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);	//frame definitions
 		
+		// play button
 		JButton btnPlay = new JButton("Play");
 		btnPlay.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnPlay.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {	//play button
-				try{
+		btnPlay.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try
+				{
 					contentPane.setVisible(false);
 					dispose();
+					
+					// Create queue window
 					Queue que = new Queue(player);
 					que.setVisible(true);
-					//this would bring us to the Queue window, idk if you want to do the queue
-					//some initial queue checking here, but all the code is in Queue for now
-					}
+				}
 				catch(Exception e1)
 				{
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Queueing Error"); // function error
 				}
 			}
