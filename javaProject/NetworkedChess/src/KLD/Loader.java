@@ -61,6 +61,7 @@ public class Loader {
 	public Loader(){
 		folder = "";
 		ex= "";
+		alpha = Color.WHITE; 
 	
 	}
 	
@@ -118,7 +119,7 @@ public class Loader {
 		    
 		} 
 		catch (Exception e ) {
-			System.out.println("Cannot find "+folder+path+ex);
+			System.out.println("Cannot find "+folder+fileName+ex);
 			e.printStackTrace();
 		}
 	
@@ -139,7 +140,7 @@ public class Loader {
 		    
 		} 
 		catch (Exception e ) {
-			System.out.println("Cannot find "+folder+path+ex);
+			System.out.println("Cannot find "+folder+fileName+ex);
 			e.printStackTrace();
 		}
 	

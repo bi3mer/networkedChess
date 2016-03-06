@@ -16,7 +16,7 @@ public class GameFrameTest {
 	public void Frametest() {
 		GameFrame fram = new GameFrame();
 		try {
-			fram.main(null);
+			//fram.(null); changed 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

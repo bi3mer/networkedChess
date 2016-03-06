@@ -77,12 +77,12 @@ public class BoardUI extends Command
 			{
 				int y = Math.abs(reverse-i); 
 				
-				if(board.getTileValue(j, i) != MobilityBoard.MARK_INVISIBLE)
+				if(mboard.getTileValue(j, i) > MobilityBoard.MARK_INVISIBLE)
 				{
 					
 					Game.setFade(g, 0.8f);
 					
-					g.setColor(mobilityColor[Math.abs(board.getTileValue(j, i))-1]);
+					g.setColor(mobilityColor[Math.abs(mboard.getTileValue(j, i))-1]);
 					g.fillRect(offsetX+j*cellWidth, offsetY+y*cellHeight, cellWidth, cellHeight);
 					 
 					 Game.setFade(g, 1f);
@@ -100,7 +100,7 @@ public class BoardUI extends Command
 				int y = Math.abs(reverse-i); 
 				
 				
-			  int pieceIndex = 2*Math.abs(mboard.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
+			  int pieceIndex = 2*Math.abs(board.getTileValue(j, i)) - (board.getTileValue(j, i) > 0? 0 : 1); 
 			  //draw tiles 
 			 
 			  
@@ -117,7 +117,6 @@ public class BoardUI extends Command
 	@Override
 	protected void action() 
 	{
-		
 		
 	}
 

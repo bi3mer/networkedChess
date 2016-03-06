@@ -29,9 +29,10 @@ public class Launcher
 		//TODO read json: config		
 		GameFrame.width = 800; 
 		GameFrame.height = 800;
+		
 		//frame size is set by default 500x500 
 		//adding a title to the game frame. 
-		GameFrame.setTitle("default lame title!!");
+		GameFrame.setTitle("Chess Game");
 		GameFrame.setResizable(false);
 		GameFrame.FPS = 30; 
 		

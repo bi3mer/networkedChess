@@ -340,6 +340,11 @@ public class Input implements KeyListener, MouseListener, MouseMotionListener {
 		return false;
 	}
 	
+	public boolean isIn(Shape s)
+	{
+		return (s.contains(point)); 
+	}
+	
 	
 	
 	

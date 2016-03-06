@@ -22,7 +22,11 @@ public class GameFrame {
 	
 	private static Console conole;
 	
-	public static void main(String[] args) throws Exception 
+	/**
+	 * Launches game calling launcher 
+	 * @throws Exception
+	 */
+	public static void launch() throws Exception 
 	{
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,9 +71,6 @@ public class GameFrame {
 		conole.run();
 		
 		frame.setVisible(true);
-		
-		
-
 	}
 
 	
