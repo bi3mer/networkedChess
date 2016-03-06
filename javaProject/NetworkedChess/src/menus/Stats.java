@@ -28,14 +28,20 @@ public class Stats extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			public void run() 
+			{
+				try 
+				{
 					ChessPlayerController player = new ChessPlayerController();
 					Stats frame = new Stats(player);
 					frame.setVisible(true);
-				} catch (Exception e) {
+				} 
+				catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 			}
@@ -45,7 +51,9 @@ public class Stats extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Stats(ChessPlayerController player) {		//Stats frame
+	public Stats(ChessPlayerController player) 
+	{
+		// Stats Frame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 547, 400);
 		contentPane = new JPanel();
@@ -53,7 +61,8 @@ public class Stats extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnReturn = new JButton("Return");	//return button
+		//return button
+		JButton btnReturn = new JButton("Return");	
 		btnReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try{
@@ -88,18 +97,25 @@ public class Stats extends JFrame {
 		label.setBounds(0, 0, 529, 353);
 		contentPane.add(label);			//background info
 		
+		// Create default stats
 		int w = 0;
 		int l = 0;
-		int d = 0;	//init stat vars
-		try {
+		int d = 0;	
+		try 
+		{
+			// Get status
 			JSONObject rats = player.ratings();
 			w = rats.getInt("win");
 			l = rats.getInt("loss");
 			d = rats.getInt("draw");	//retrieve our stats
-		} catch (JSONException | IOException | InterruptedException e1) {
+		} 
+		catch (JSONException | IOException | InterruptedException e1) 
+		{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		// add stats to player
 		lblNewLabel.setText(Integer.toString(d));
 		lblNewLabel_1.setText(Integer.toString(l));
 		lblNewLabel_2.setText(Integer.toString(w));	//set the stat fields 
