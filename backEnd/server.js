@@ -213,7 +213,7 @@
 	});
 
 	// Open server up to calls on the configurations port
-	app.listen(global.config.server.port, function serverListen() {
+	app.listen(process.env.PORT || global.config.server.port, function serverListen() {
 		console.log(fileName, 'Listening on port: ', global.config.server.port);
 	});
 }());
