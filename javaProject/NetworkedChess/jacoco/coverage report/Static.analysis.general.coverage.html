@@ -1,0 +1,1091 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- saved from url=(0063)http://localhost:9000/dashboard/index/org.group1.networkedChess -->
+<html class="dashboard-page"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="gwt:property" content="locale=en_US">
+  <link rel="shortcut icon" type="image/x-icon" href="http://localhost:9000/images/favicon.ico?1455030079">
+  
+  <title>SonarQube - networkedChess</title>
+
+  <link href="./Static analysis & general coverage_files/sonar.css" rel="stylesheet" media="all">
+  
+  <script>
+    var pageLang = 'en_US';
+    
+    window.SS = typeof window.SS === 'object' ? window.SS : {};
+    window.SS.hoursInDay = 8;
+  </script>
+  <script src="./Static analysis & general coverage_files/sonar.js"></script>
+  <script>
+    var baseUrl = '';
+    var $j = jQuery.noConflict();
+    $j(document).ready(function () {$j('.open-modal').modal()});
+  </script>
+  </head>
+<body>
+
+
+  
+<div id="container">
+    <div id="hd">
+    <div id="nav-left">
+      <ul>
+        <li>
+          <a href="http://localhost:9000/" class="selected">Dashboards</a>
+        </li>
+        <script>
+  if (supportsHTML5Storage()) {
+    var sonarRecentHistory = new Sonar.RecentHistory();
+  }
+</script>
+
+<li>
+  <a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" class="with-icon" onclick="if (sonarRecentHistory) { sonarRecentHistory.populateRecentHistoryPanel(); }; showDropdownMenu(&#39;projects-menu&#39;); return false;">
+    <span>Projects</span>
+    <i class="icon-dropdown"></i>
+  </a>
+
+  <div id="projects-menu" class="dropdown-menu" style="max-width: none; display: none;">
+    <div id="recent-history" style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+      <h2>Recent Projects</h2>
+      <ul id="recent-history-list">
+      </ul>
+    </div>
+
+    <div>
+      <ul>
+        
+          <li><a href="http://localhost:9000/all_projects?qualifier=TRK">All Projects</a></li>
+        
+      </ul>
+    </div>
+  </div>
+
+</li>
+
+<script>
+  if (sonarRecentHistory == null) {
+    $j('#recent-history').detach();
+  }
+
+  
+  else {
+    sonarRecentHistory.add('org.group1.networkedChess',
+                           'networkedChess',
+                           'trk');
+  }
+  
+
+</script>
+        <li>
+          <a href="http://localhost:9000/measures/search?qualifiers[]=TRK" class="">Measures</a>
+        </li>
+        <li>
+          <a href="http://localhost:9000/issues/index" class="">Issues</a>
+        </li>
+        <li>
+          <a href="http://localhost:9000/coding_rules" class="">Rules</a>
+        </li>
+        <li>
+          <a href="http://localhost:9000/profiles" class="">Quality Profiles</a>
+        </li>
+        <li>
+          <a href="http://localhost:9000/quality_gates" class="">Quality Gates</a>
+        </li>
+      </ul>
+    </div>
+    <div id="nav">
+      <ul>
+        <li>
+          <input type="text" size="15" name="search" id="searchInput" value="Search">
+          <img src="./Static analysis & general coverage_files/loading-small.gif" id="searchingResources" style="display:none">
+        </li>
+        
+          <li><a id="login-link" href="http://localhost:9000/sessions/new?return_to=%2Fdashboard%2Findex%2Forg.group1.networkedChess">Log in</a></li>
+        
+        
+      </ul>
+    </div>
+    <div id="searchResourcesResults" class="autocomplete" style="display:none" data-results="results" data-no-results="No results"></div>
+  </div>
+  
+
+
+
+  <div id="crumbs">
+    <ul id="crumbs-ops">
+      
+        <li>
+                  </li>
+        
+      
+    </ul>
+    <ul id="bc">
+      
+        
+          <li>
+            <i class="icon-qualifier-trk"></i>            &nbsp;
+            <a href="http://localhost:9000/dashboard/index?id=org.group1.networkedChess">networkedChess</a>          </li>
+        
+    </ul>
+  </div>
+
+
+  <div id="body">
+    
+      <div id="sidebar">
+        <ul class="sidebar blue-sidebar">
+          
+            
+              <li class="active">
+                <a href="http://localhost:9000/dashboard/index/73?did=1">Dashboard</a>
+              </li>
+            
+              <li class="">
+                <a href="http://localhost:9000/dashboard/index/73?did=2">Issues</a>
+              </li>
+            
+              <li class="">
+                <a href="http://localhost:9000/dashboard/index/73?did=3">Time Machine</a>
+              </li>
+            
+
+            
+              <li class="spacer"></li>
+              <li class="sidebar-title">Tools</li>
+              <li class="">
+                <a href="http://localhost:9000/components/index/73">Components</a>
+              </li>
+              <li class="">
+                <a href="http://localhost:9000/drilldown/issues/73">Issues Drilldown</a>
+              </li>
+              
+              <li class="">
+                <a href="http://localhost:9000/design/index/org.group1.networkedChess">Design</a>
+              </li>
+              <li class="">
+                <a href="http://localhost:9000/libraries/index/org.group1.networkedChess">Libraries</a>
+              </li>
+              
+              <li class="">
+                <a href="http://localhost:9000/comparison/index?resource=org.group1.networkedChess">Compare</a>
+              </li>
+              
+            
+
+          
+
+          
+
+          <li id="logo">
+            <center><a href="http://www.sonarqube.org/" target="SonarSource"><img alt="Embrace Quality" height="24" src="./Static analysis & general coverage_files/logo.png" title="Embrace Quality" width="100"></a></center>
+          </li>
+        </ul>
+      </div>
+    
+    
+    <div id="content" class="with_sidebar">
+      
+        <div class="print"><h2>networkedChess</h2></div>
+      
+      <div class="error" id="error" style="display:none">
+        <span id="errormsg"></span> &nbsp;&nbsp;[<a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="javascript:$j(&#39;#error&#39;).hide();return false;">hide</a>]
+      </div>
+      <div class="notice" id="info" style="display:none">
+        <span id="infomsg"></span> &nbsp;&nbsp;[<a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="javascript:$j(&#39;#info&#39;).hide();return false;">hide</a>]
+      </div>
+      <div class="warning" id="warning" style="display:none">
+        <span id="warningmsg"></span> &nbsp;&nbsp;[<a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="javascript:$j(&#39;#warning&#39;).hide();return false;">hide</a>]
+      </div>
+      <div id="dashboard">
+    <span class="hidden" id="is-project-dashboard">&nbsp;</span>
+    
+<div class="line-block">
+
+  
+
+  
+    <div id="snapshot_title" class="page_title">
+      <h4>
+        Version 1.0 - Mar 07 2016 16:42        
+          
+          
+            <form method="GET" action="http://localhost:9000/dashboard/index/73" style="display: inline" class="spacer-left">
+              <input type="hidden" name="did" value="1">
+              <div class="select2-container" id="s2id_select-comparison" style="width: 250px">    <a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="return false;" class="select2-choice">   <span>Time changes...</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><select id="select-comparison" name="period" onchange="submit()" style="display: none;"><option selected="" value="0" class="small">Time changes...</option><option value="1" class="small">Δ since previous analysis (Mar 07 2016)</option><option value="2" class="small">Δ over 30 days (Feb 10 2016)</option></select><script>$j(document).ready(function() {$j('#select-comparison').select2({minimumResultsForSearch:230,allowClear:false,placeholder:'',width:'250px'});});</script>            </form>
+          
+        
+      </h4>
+    </div>
+  
+</div>
+
+
+  <div style="width: 100%;display: block; float: none">
+    
+      <!-- the right margin with 1px is a trick for IE. See SONAR-2637 -->
+      <div class="dashboard-column-wrapper" style="width: 50%;margin: 0 -1px 0 0;">
+        <div class="dashboard-column" id="dashboard-column-1" style="margin: 0 5px 0 0px;">
+          
+              
+
+
+  <div class="block" id="block_1">
+    
+
+    <div class="size" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row widget-row-x">
+<div class="widget-span widget-span-3-5">
+<div class="widget-measure-container">
+
+<p class="widget-measure widget-measure-main">
+<span class="widget-label">Lines of code</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=ncloc" class="widget-link " rel="" title=""><span id="m_ncloc">6,628</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+
+
+<table class="data widget-barchar" id="size-widget-language-dist">
+
+<tbody><tr>
+<td>
+Java</td>
+<td class="thin right nowrap">
+5,689
+</td>
+</tr>
+
+<tr>
+<td>
+JavaScript</td>
+<td class="thin right nowrap">
+939
+</td>
+</tr>
+
+</tbody></table>
+<script>
+jQuery(function () {
+var chart = jQuery('#size-widget-language-dist'),
+count = chart.find('tr').length;
+if (count > 3) {
+chart.find('tr:gt(2)').hide();
+var moreLinkBox = jQuery('<div></div>').addClass('widget-barchart-more').insertAfter(chart),
+moreLink = jQuery('<a>More</a>').appendTo(moreLinkBox).on('click', function () {
+jQuery(this).hide();
+chart.find('tr').show();
+});
+}
+});
+</script>
+
+
+
+</div>
+</div>
+<div class="widget-span widget-span-3-5">
+<div class="widget-measure-container">
+<p class="widget-measure widget-measure-main">
+<span class="widget-label">Files</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=files" class="widget-link " rel="" title=""><span id="m_files">90</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+<p class="widget-measure">
+<span class="widget-label">Directories</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=directories" class="widget-link " rel="" title=""><span id="m_directories">16</span></a>
+</span>
+</p>
+
+<p class="widget-measure">
+<span class="widget-label">Lines</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=lines" class="widget-link " rel="" title=""><span id="m_lines">11,769</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+
+</div>
+</div>
+<div class="widget-span widget-span-5">
+<div class="widget-measure-container">
+
+<p class="widget-measure widget-measure-main">
+<span class="widget-label">Functions</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=functions" class="widget-link " rel="" title=""><span id="m_functions">671</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+
+<p class="widget-measure">
+<span class="widget-label">Classes</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=classes" class="widget-link " rel="" title=""><span id="m_classes">81</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+
+<p class="widget-measure">
+<span class="widget-label">Statements</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=statements" class="widget-link " rel="" title=""><span id="m_statements">3,052</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</p>
+
+
+<p class="widget-measure">
+<span class="widget-label">Accessors</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=accessors" class="widget-link " rel="" title=""><span id="m_accessors">18</span></a>
+<i class="icon-trend-1 icon-black"></i></span>
+</p>
+
+</div>
+</div>
+</div>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_2">
+    
+
+    <div class="duplications" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row">
+<div class="widget-span widget-span-12">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Duplications</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?highlight=duplicated_lines_density&amp;metric=duplicated_lines" class="widget-link " rel="" title=""><span id="m_duplicated_lines_density">4.7%</span></a>
+<i class="icon-trend-2 icon-red"></i></span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> lines</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=duplicated_lines" class="widget-link " rel="" title=""><span id="m_duplicated_lines">548</span></a>
+<i class="icon-trend-2 icon-red"></i></span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> blocks</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=duplicated_blocks" class="widget-link " rel="" title=""><span id="m_duplicated_blocks">21</span></a>
+<i class="icon-trend-2 icon-red"></i></span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> files</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=duplicated_files" class="widget-link " rel="" title=""><span id="m_duplicated_files">3</span></a>
+<i class="icon-trend-1 icon-red"></i></span>
+</div>
+</div>
+</div>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_3">
+    
+
+    <div class="complexity" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row">
+<div class="widget-span widget-span-5">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Complexity</span>
+
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=function_complexity" class="widget-link " rel="" title=""><span id="m_function_complexity">2.8</span></a>
+<span class="small"> /function</span>
+</span>
+
+
+<br>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=class_complexity" class="widget-link " rel="" title=""><span id="m_class_complexity">14.8</span></a>
+<i class="icon-trend-1 icon-red"></i><span class="small"> /class</span>
+</span>
+
+
+<br>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=file_complexity" class="widget-link " rel="" title=""><span id="m_file_complexity">16.0</span></a>
+<i class="icon-trend-1 icon-red"></i><span class="small"> /file</span>
+</span>
+
+
+<br>
+<span class="nowrap">
+Total: <a href="http://localhost:9000/drilldown/measures/73?metric=complexity" class="widget-link " rel="" title=""><span id="m_complexity">1,438</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+
+</div>
+</div>
+</div>
+<div class="widget-span widget-span-7">
+
+<div class="dashbox" id="cmp_charts">
+<script type="text/javascript">
+//<![CDATA[
+function selectComplexity(metric) {
+$j('#cmp_charts .chart').hide();
+$j('#chart_' + metric).show();
+}
+</script>
+<style>
+#cmp_charts form {
+font-size: 93%; padding-left: 30px;
+}
+#cmp_charts form label {
+padding-right: 5px;
+}
+</style>
+
+
+  <div id="chart_file_complexity_distribution" class="chart" style="display: block">
+    <img alt="Files distribution /complexity" id="chart_img_file_complexity_distribution" src="./Static analysis & general coverage_files/chart" title="Files distribution /complexity">  </div>
+
+
+<form>
+
+<input type="radio" name="cmp_dist" value="file_complexity_distribution" id="cmp_dist_file_complexity_distribution" onclick="selectComplexity(&#39;file_complexity_distribution&#39;);" checked="">
+<label for="cmp_dist_file_complexity_distribution">Files</label>
+
+</form>
+</div>
+
+</div>
+</div>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_4">
+    
+
+    <div class="events" style="height:100%;">
+      
+        <div class="widget">
+          
+<script type="text/javascript">
+function changeCategory(categoryId, widgetId) {
+var eventTableMaxSize = 8;
+$j('#events_' + widgetId + ' tr.event').hide();
+var elements;
+if (categoryId=='all') {
+elements = $j('#events_' + widgetId + ' tr.event');
+} else {
+elements = $j('#events_' + widgetId + ' tr.cat_' + categoryId);
+}
+var elementsToDisplay = elements.slice(0,eventTableMaxSize);
+if (elementsToDisplay.size()==0) {
+$j('#events_' + widgetId).hide();
+$j('#show_more_events_' + widgetId).hide();
+$j('#no_event_message_' + widgetId).show();
+} else {
+$j('#events_' + widgetId).show();
+$j('#no_event_message_' + widgetId).hide();
+elementsToDisplay.show();
+if (elements.size() > eventTableMaxSize) {
+$j('#show_more_events_' + widgetId).show();
+} else {
+$j('#show_more_events_' + widgetId).hide();
+}
+}
+}
+function showAllEvents(widgetId) {
+var selectedCategory = $j('#select_category_' + widgetId).val();
+if (selectedCategory=='all') {
+$j('#events_' + widgetId + ' tr.event').show();
+} else {
+$j('#events_' + widgetId + ' tr.cat_' + selectedCategory).show();
+}
+$j('#show_more_events_' + widgetId).hide();
+}
+</script>
+<h3>Events &nbsp;&nbsp;
+<div class="select2-container small" id="s2id_select_category_4" style="width: 150px">    <a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="return false;" class="select2-choice">   <span>All</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><select class="small" id="select_category_4" onchange="changeCategory(this.value, 4);" style="display: none;">
+<option value="all">All</option>
+
+<option value="alert">Quality Gate</option>
+
+<option value="other">Other</option>
+
+<option value="profile">Quality Profile</option>
+
+<option value="version">Version</option>
+
+</select>
+<script>
+$j(function() {
+$j('#select_category_4').select2({ width: '150px' });
+});
+</script>
+</h3>
+<table id="events_4" class="spaced data">
+<thead>
+<tr>
+<th colspan="4"></th>
+</tr>
+</thead>
+<tbody>
+
+<tr class="even event cat_version" style="display: table-row;">
+<td x="Mon Mar 07 16:42:49 -0500 2016">Mar 07 2016</td>
+<td>Version</td>
+<td>
+1.0</td>
+<td>
+
+</td>
+</tr>
+
+<tr class="odd event cat_profile" style="display: table-row;">
+<td x="Wed Feb 10 19:52:19 -0500 2016">Feb 10 2016</td>
+<td>Quality Profile</td>
+<td>
+Use 'Sonar way' (JavaScript)</td>
+<td>
+
+</td>
+</tr>
+
+</tbody>
+</table>
+<div id="no_event_message_4" style="margin: 5px; display: none;">
+<span class="empty_widget">No event</span>
+</div>
+<a href="http://localhost:9000/dashboard/index/org.group1.networkedChess#" onclick="showAllEvents(4);" id="show_more_events_4" class="action" style="display: none;">Show more</a>
+<script type="text/javascript">
+changeCategory('all', 4);
+</script>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_5">
+    
+
+    <div class="description" style="height:100%;">
+      
+        <div class="widget">
+<h3 class="description-widget-project">
+<i class="icon-qualifier-trk"></i>
+networkedChess</h3>
+<span class="description-widget-key">org.group1.networkedChess</span>
+
+
+<p class="description-widget-description">
+Profiles:
+
+<span class="nowrap">
+<span id="resource_profile">
+<a href="http://localhost:9000/profiles/show?key=java-sonar-way-75961" class="widget-link" id="java_profile_link">Sonar way</a></span>
+<span class="subtitle">
+(Java)
+</span>
+,
+</span>
+
+<span class="nowrap">
+<span id="resource_profile">
+<a href="http://localhost:9000/profiles/show?key=js-sonar-way-38391" class="widget-link" id="js_profile_link">Sonar way</a></span>
+<span class="subtitle">
+(JavaScript)
+</span>
+
+</span>
+
+</p>
+
+
+
+</div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+        </div>
+      </div>
+    
+      <!-- the right margin with 1px is a trick for IE. See SONAR-2637 -->
+      <div class="dashboard-column-wrapper" style="width: 50%;margin: 0 -1px 0 0;">
+        <div class="dashboard-column" id="dashboard-column-2" style="margin: 0 0px 0 5px;">
+          
+              
+
+
+  <div class="block" id="block_6">
+    
+
+    <div class="debt_overview" style="height:100%;">
+      
+        <div class="widget">
+          
+
+<div class="widget-row">
+<div class="widget-span widget-span-6">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">SQALE Rating</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=sqale_rating" class="widget-link " rel="" title=""><span id="m_sqale_rating" class="rating rating-B">B</span></a>
+
+
+</span>
+</div>
+</div>
+</div>
+
+
+<div class="widget-span widget-span-6">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Technical Debt Ratio</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=sqale_debt_ratio" class="widget-link " rel="" title=""><span id="m_sqale_debt_ratio">13.5%</span></a>
+<i class="icon-trend-1 icon-red"></i></span>
+</div>
+</div>
+</div>
+</div>
+
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_7">
+    
+
+    <div class="rules" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row">
+
+<div class="widget-span widget-span-3">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Technical Debt</span>
+<a href="http://localhost:9000/drilldown/measures/73?metric=sqale_index" class="widget-link link-rules-debt">
+<span id="m_sqale_index">55d</span></a>
+<i class="icon-trend-2 icon-red"></i></div>
+<div class="widget-measure-delta">
+
+</div>
+</div>
+</div>
+
+<div class="widget-span widget-span-3">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Issues</span>
+<span class="nowrap">
+<span class="link-rules-issues">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess" class="widget-link " rel="" title=""><span id="m_violations">2,504</span></a></span>
+<i class="icon-trend-2 icon-red"></i></span>
+</div>
+<div class="widget-measure-delta">
+
+</div>
+</div>
+</div>
+<div class="widget-span widget-span-6">
+
+<table class="data widget-barchar">
+<tbody><tr>
+<td class="nowrap">
+<i class="icon-severity-blocker"></i>
+Blocker</td>
+<td class="thin right nowrap">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess&amp;severity=BLOCKER" class="widget-link drilldown_BLOCKER"><span id="m_blocker_violations">1</span></a></td>
+<td class="thin">
+<i class="icon-trend-0"></i></td>
+<td class="nowrap">
+
+
+<div class="barchart" style="width: 70px" title=""><div style="width: 0%;background-color:#236a97;"></div></div>
+
+
+</td>
+</tr>
+<tr>
+<td class="nowrap">
+<i class="icon-severity-critical"></i>
+Critical</td>
+<td class="thin right nowrap">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess&amp;severity=CRITICAL" class="widget-link drilldown_CRITICAL"><span id="m_critical_violations">40</span></a></td>
+<td class="thin">
+<i class="icon-trend-2 icon-red"></i></td>
+<td class="nowrap">
+
+
+<div class="barchart" style="width: 70px" title=""><div style="width: 2%;background-color:#236a97;"></div></div>
+
+
+</td>
+</tr>
+<tr>
+<td class="nowrap">
+<i class="icon-severity-major"></i>
+Major</td>
+<td class="thin right nowrap">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess&amp;severity=MAJOR" class="widget-link drilldown_MAJOR"><span id="m_major_violations">1,466</span></a></td>
+<td class="thin">
+<i class="icon-trend-2 icon-red"></i></td>
+<td class="nowrap">
+
+
+<div class="barchart" style="width: 70px" title=""><div style="width: 100%;background-color:#236a97;"></div></div>
+
+
+</td>
+</tr>
+<tr>
+<td class="nowrap">
+<i class="icon-severity-minor"></i>
+Minor</td>
+<td class="thin right nowrap">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess&amp;severity=MINOR" class="widget-link drilldown_MINOR"><span id="m_minor_violations">893</span></a></td>
+<td class="thin">
+<i class="icon-trend-2 icon-red"></i></td>
+<td class="nowrap">
+
+
+<div class="barchart" style="width: 70px" title=""><div style="width: 60%;background-color:#236a97;"></div></div>
+
+
+</td>
+</tr>
+<tr>
+<td class="nowrap">
+<i class="icon-severity-info"></i>
+Info</td>
+<td class="thin right nowrap">
+<a href="http://localhost:9000/drilldown/issues?id=org.group1.networkedChess&amp;severity=INFO" class="widget-link drilldown_INFO"><span id="m_info_violations">104</span></a></td>
+<td class="thin">
+<i class="icon-trend-2 icon-red"></i></td>
+<td class="nowrap">
+
+
+<div class="barchart" style="width: 70px" title=""><div style="width: 7%;background-color:#236a97;"></div></div>
+
+
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_9">
+    
+
+    <div class="file_design" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row">
+<div class="widget-span widget-span-5">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Directory tangle index</span>
+<span class="nowrap">
+<a href="http://localhost:9000/design/index/org.group1.networkedChess" class="widget-link " rel="" title=""><span id="m_package_tangle_index">0.0%</span></a>
+</span>
+</div>
+
+<div class="widget-measure">
+<span class="widget-label"> cycles</span>
+<span class="nowrap">
+<span class="widget-medium">&gt;</span>
+<a href="http://localhost:9000/design/index/org.group1.networkedChess" class="widget-link " rel="" title=""><span id="m_package_cycles">0</span></a>
+</span>
+</div>
+
+</div>
+</div>
+<div class="widget-span widget-span-5">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Dependencies to cut</span>
+</div>
+
+<div class="widget-measure">
+<span class="widget-label"> between directories</span>
+<span class="nowrap">
+<a href="http://localhost:9000/design/index/org.group1.networkedChess" class="widget-link " rel="" title=""><span id="m_package_feedback_edges">0</span></a>
+</span>
+</div>
+
+
+<div class="widget-measure">
+<span class="widget-label"> between files</span>
+<span class="nowrap">
+<a href="http://localhost:9000/design/index/org.group1.networkedChess" class="widget-link " rel="" title=""><span id="m_package_tangles">0</span></a>
+</span>
+</div>
+
+</div>
+</div>
+</div>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+              
+
+
+  <div class="block" id="block_10">
+    
+
+    <div class="code_coverage" style="height:100%;">
+      
+        <div class="widget">
+          
+<div class="widget-row">
+<div class="widget-span widget-span-6">
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Unit Tests Coverage</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=coverage" class="widget-link " rel="" title=""><span id="m_coverage">39.1%</span></a>
+<i class="icon-trend-2 icon-green"></i></span>
+</div>
+
+<div class="widget-measure">
+<span class="widget-label"> line coverage</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?highlight=line_coverage&amp;metric=uncovered_lines" class="widget-link " rel="" title=""><span id="m_line_coverage">42.3%</span></a>
+<i class="icon-trend-2 icon-green"></i></span>
+</div>
+
+
+<div class="widget-measure">
+<span class="widget-label"> condition coverage</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?highlight=branch_coverage&amp;metric=uncovered_conditions" class="widget-link " rel="" title=""><span id="m_branch_coverage">29.6%</span></a>
+<i class="icon-trend-2 icon-green"></i></span>
+</div>
+
+
+</div>
+</div>
+<div class="widget-span widget-span-6">
+
+<div class="widget-measure-container">
+<div class="widget-measure widget-measure-main">
+<span class="widget-label">Unit test success</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=test_success_density" class="widget-link " rel="" title=""><span id="m_test_success_density">100.0%</span></a>
+</span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> failures</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=test_failures" class="widget-link " rel="" title=""><span id="m_test_failures">0</span></a>
+</span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> errors</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=test_errors" class="widget-link " rel="" title=""><span id="m_test_errors">0</span></a>
+</span>
+</div>
+<div class="widget-measure">
+<span class="widget-label"> tests</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=tests" class="widget-link " rel="" title=""><span id="m_tests">15</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</div>
+
+<div class="widget-measure">
+<span class="widget-label">Execution Time</span>
+<span class="nowrap">
+<a href="http://localhost:9000/drilldown/measures/73?metric=test_execution_time" class="widget-link " rel="" title=""><span id="m_test_execution_time">1.3 sec</span></a>
+<i class="icon-trend-2 icon-black"></i></span>
+</div>
+</div>
+
+</div>
+</div>
+
+          <div class="clear"></div>
+        </div>
+      
+
+      <div style="clear: both;"></div>
+    </div>
+  </div>
+
+
+
+
+          
+        </div>
+      </div>
+    
+  </div>
+  <div style="clear: both;"></div>
+</div>
+
+<script>
+  jQuery('html').addClass('dashboard-page');
+</script>
+
+    </div>
+  </div>
+</div>
+
+
+  
+  <div id="footer">
+    
+    <div id="ftlinks">
+      <div>SonarQube™ technology is powered by <a href="http://www.sonarsource.com/" target="SonarSource SA">SonarSource SA</a></div>
+      <div>
+        Version 4.5.6 -
+        <a href="http://www.gnu.org/licenses/lgpl-3.0.txt" target="lgpl_v3">LGPL v3</a> -
+        <a href="http://www.sonarqube.org/" target="sonar">Community</a> -
+        <a href="http://www.sonarqube.org/documentation" target="sonar_doc">Documentation</a> -
+        <a href="http://www.sonarqube.org/support" target="support">Get Support</a> -
+        <a href="http://sonar-plugins.codehaus.org/" target="plugins">Plugins</a> -
+        <a href="http://localhost:9000/api_documentation">Web Service API</a>
+        
+          <br><br><span class="error big" id="evaluation_warning">Embedded database should be used for evaluation purpose only</span>
+          <br><br><span class="error">The embedded database will not scale, it will not support upgrading to newer versions of SonarQube, and there is no support for migrating your data out of it into a different database engine.</span>
+        
+      </div>
+      <!--[if lte IE 8 ]><br/><span class="ie-warn">IE 8 is not supported. Some widgets may not be properly displayed. Please switch to a <a target="_blank" href="http://redirect.sonarsource.com/doc/requirements.html">supported version or another supported browser</a>.</span><!--<![endif]-->
+    </div>
+  </div>
+
+
+
+<!--[if lte IE 7 ]>
+<div style="position:fixed;z-index:99999;top:0;bottom:0;left:0;right:0;background:#fff;">
+  <div style="margin-top:150px;text-align:center;line-height:1.4;color:#333;">
+    The web interface cannot be displayed because your browser is not supported.<br>
+    Please switch to a <a target="_blank"
+                          href="http://redirect.sonarsource.com/doc/requirements.html">supported version or another supported browser</a>.
+  </div>
+</div>
+<!--<![endif]-->
+
+
+<script>
+
+
+
+</script>
+
+</body></html>
