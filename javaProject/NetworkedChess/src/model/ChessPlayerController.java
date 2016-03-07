@@ -19,7 +19,7 @@ public class ChessPlayerController
 	
 	private int playerTeam; 
 	
-	private String host = "https://serene-stream-56878.herokuapp.com/";
+	private String host = "http://serene-stream-56878.herokuapp.com";
 	
 	// TODO: use config file for these in the future
 	private String createAccount = "/createAccount";
@@ -56,7 +56,7 @@ public class ChessPlayerController
 		ChessPlayerController.getInstance().user = "Colan";
 		try 
 		{
-			System.out.println(ChessPlayerController.getInstance().forfeit().toString());
+			System.out.println(ChessPlayerController.getInstance().createAccount("test", "test").toString());
 		} 
 		catch (JSONException | IOException | InterruptedException e)
 		{
