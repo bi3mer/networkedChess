@@ -1,5 +1,7 @@
 package KLD.obj;
 
+import java.awt.Graphics;
+
 public class IdObject {
 	
 	/**
@@ -29,6 +31,9 @@ public class IdObject {
 		this();
 		name = s+id; 
 	}
+
+
+
 	
 	
 	

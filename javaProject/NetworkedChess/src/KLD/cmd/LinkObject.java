@@ -1,5 +1,7 @@
 package KLD.cmd;
 
+import java.awt.Graphics;
+
 import KLD.obj.IdObject;
 
 public abstract class LinkObject extends IdObject {
@@ -23,7 +25,9 @@ public abstract class LinkObject extends IdObject {
 		if(owner!=null)
 			owner.removeLinkObject(id);
 	}
-	
+
+
+
 	
 	
 }

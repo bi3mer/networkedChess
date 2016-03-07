@@ -2,6 +2,10 @@ package model;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import GamePanels.MultiplayerChessGame;
@@ -11,21 +15,76 @@ public class PlayerControllerTest {
 
 	@Test
 	public void PlayerControllerTest() {
-		MultiplayerChessGame shefy = new MultiplayerChessGame();
-		/*ChessPlayerController cont = new ChessPlayerController(shefy);
-		cont.connect();
+		
+		ChessPlayerController conti = new ChessPlayerController();
+		conti.main(null); // main exception test
+		conti.getTeam();
 		try {
-			cont.play();
-		} catch (Exception e) {
+			JSONObject obj = conti.createAccount("Dude", "where's my car");
+		} catch (JSONException | IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
-		//Multiplayer game generation test
-		//constructor for Graphics?
-		//unitClicking cannot be tested by a unit test unless broken down to components (click checks
-		//can only be asserted on live
-		//update requires live connection, which a unit test can't be expected to instantiate
+		}
 		
+		//test worked the first time, once an account exists, a new account needs a different name
+		//this tes will always fail on the second coverage run
+		
+		try {
+			JSONObject obj = conti.login("Dude", "where's my car");
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//login test for an existing account
+		
+		try {
+			conti.requestUndo();
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			conti.acceptOrDenyUndo(true);
+		} catch (JSONException | IOException | InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			conti.acceptOrDenyUndo(false);
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//undo server call tests
+		
+		try {
+			conti.forfeit();
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//forfeit server call test
+		
+		try {
+			conti.leaveQueue();
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Queue resolve test
+		
+		JSONObject from = new JSONObject();
+		JSONObject to = new JSONObject();
+		
+		try {
+			conti.addMove(from, to);
+		} catch (JSONException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Movement tracking to server test
 	}
 
 }

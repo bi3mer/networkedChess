@@ -13,6 +13,7 @@ public class ControllerTest {
 		ruler.isMoveValid(0, 0, 1, 1);
 		ruler.sentTurn(0, 0, 1, 1);
 		ruler.recieveTurn(0, 0, 1, 1); //Board Controller functionality tests
+		
 	}
 
 }

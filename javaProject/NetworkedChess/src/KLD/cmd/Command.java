@@ -47,7 +47,6 @@ public abstract class Command extends LinkObject{
 	protected abstract void draw(Graphics g); 
 	
 	
-	
 	public void callAction(){
 		
 		if(enabled && active)
@@ -127,4 +126,9 @@ public abstract class Command extends LinkObject{
 	public void stop(){
 		disable();
 	}
+
+	protected void action(Graphics g) {
+		
+	}
+
 }
