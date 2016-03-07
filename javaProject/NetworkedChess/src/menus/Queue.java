@@ -10,6 +10,9 @@ import javax.swing.border.EmptyBorder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import GamePanels.Launcher;
+import GamePanels.SinglePlayerChess;
+import KLD.GameFrame;
 import KLD.util.BackgroundQueue;
 import model.ChessPlayerController;
 
@@ -37,8 +40,7 @@ public class Queue extends JFrame {
 			{
 				try 
 				{
-					ChessPlayerController player = new ChessPlayerController();
-					Queue frame = new Queue(player);
+					Queue frame = new Queue();
 					frame.setVisible(true);
 				} 
 				catch (Exception e) {
@@ -52,8 +54,8 @@ public class Queue extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Queue(ChessPlayerController player)
-	{
+	public Queue()
+	{	
 		//Queue Frame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 318, 155);
@@ -75,7 +77,7 @@ public class Queue extends JFrame {
 					// Load main menu
 					contentPane.setVisible(false);
 					dispose();
-					MainMenu main = new MainMenu(player);
+					MainMenu main = new MainMenu();
 					main.setVisible(true);				//just brings us back to main menu if pressed
 				}
 				catch(Exception e1)
@@ -97,10 +99,10 @@ public class Queue extends JFrame {
 		try 
 		{
 			// Add self to matchmaking
-			player.getMatchMaking();
+			ChessPlayerController.getInstance().getMatchMaking();
 			
 			// Start bg queue
-			this.bgQueue = new BackgroundQueue(this, player);
+			this.bgQueue = new BackgroundQueue(this);
 			this.bgQueue.start();
 		}
 		catch (JSONException | IOException | InterruptedException e1) 
@@ -117,7 +119,22 @@ public class Queue extends JFrame {
 	 */
 	public void enterGame(String otherUser, Boolean isWhite)
 	{
-		System.out.println("Enemy: " + otherUser);
-		System.out.println("White: " + isWhite);
+		// Kill Queue frame
+		this.dispose();
+		
+		// Add vars to controller
+		ChessPlayerController.getInstance().isWhite = isWhite;
+		ChessPlayerController.getInstance().otherPlayer = otherUser;
+		
+		// Launch Game
+		try 
+		{
+			GameFrame.launch();
+		}
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

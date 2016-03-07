@@ -114,6 +114,11 @@ public  class Console extends JPanel {
 		this(null, FPS);
 	}
 	
+	public void destroyTimer()
+	{
+		this.timer.stop();
+	}
+	
 	
 	@Override
 	public void paintComponent(Graphics g){

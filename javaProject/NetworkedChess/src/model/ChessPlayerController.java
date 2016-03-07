@@ -19,7 +19,7 @@ public class ChessPlayerController
 	
 	private int playerTeam; 
 	
-	private String host = "http://localhost:3000";
+	private String host = "https://serene-stream-56878.herokuapp.com/";
 	
 	// TODO: use config file for these in the future
 	private String createAccount = "/createAccount";
@@ -34,45 +34,35 @@ public class ChessPlayerController
 	private String cancelQueue = "/cancelQueue";
 	private String user;
 
-	private MultiplayerChessGame board; 
+	public Boolean isWhite;
+	public String otherPlayer;
 	
 	//create an object of SingleObject
 	private static ChessPlayerController instance = null;
 
-   public static ChessPlayerController getInstance() 
-   {
-      if(instance == null) 
-      {
-         instance = new ChessPlayerController();
-      }
-      
-      return instance;
-   }
-
-   /**
-    * Used to for developer acceptance tests
-    * @param args
-    */
-   public static void main(String[] args) 
-   {
-	   try 
-	   {
-		   JSONObject test  = ChessPlayerController.getInstance().login("Colan", "Rulez");
-		   JSONObject test2 = ChessPlayerController.getInstance().ratings();
-		   System.out.println(test.toString());
-		   System.out.println(test2.toString());
-	   } 
-	   catch (JSONException | IOException | InterruptedException e) 
-	   {
-		   // TODO Auto-generated catch block
-		   e.printStackTrace();
-	   }
-   }		
-   
-	
-	public void setBoard(MultiplayerChessGame board)
+	public static ChessPlayerController getInstance() 
 	{
-		this.board = board; 
+		if(instance == null) 
+		{
+			instance = new ChessPlayerController();
+		}
+      
+		return instance;
+   }
+	
+	public static void main(String[] args)
+	{
+		// Use to test
+		ChessPlayerController.getInstance().user = "Colan";
+		try 
+		{
+			System.out.println(ChessPlayerController.getInstance().forfeit().toString());
+		} 
+		catch (JSONException | IOException | InterruptedException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int getTeam()
@@ -165,7 +155,7 @@ public class ChessPlayerController
 		return this.requestFromServer(this.host + this.acceptOrDenyUndo, request);
 	}
 	
-	public JSONObject forfeit(Boolean acceptUndo) throws JSONException, IOException, InterruptedException
+	public JSONObject forfeit() throws JSONException, IOException, InterruptedException
 	{
 		// Create Object
 		JSONObject request = new JSONObject();
@@ -173,7 +163,7 @@ public class ChessPlayerController
 		// Add user name and password to object
 		request.put("user", this.user);
 		request.put("isPlaying", true);
-		
+
 		// Request information from server
 		return this.requestFromServer(this.host + this.forfeit, request);
 	}
@@ -196,7 +186,6 @@ public class ChessPlayerController
 		JSONObject request = new JSONObject();
 		
 		// Add user name and password to object
-		System.out.println("user: " + this.user);
 		request.put("user", this.user);
 		request.put("isPlaying", isPlaying);
 		

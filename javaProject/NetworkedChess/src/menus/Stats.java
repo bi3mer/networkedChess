@@ -36,8 +36,7 @@ public class Stats extends JFrame {
 			{
 				try 
 				{
-					ChessPlayerController player = new ChessPlayerController();
-					Stats frame = new Stats(player);
+					Stats frame = new Stats();
 					frame.setVisible(true);
 				} 
 				catch (Exception e) 
@@ -51,7 +50,7 @@ public class Stats extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Stats(ChessPlayerController player) 
+	public Stats() 
 	{
 		// Stats Frame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -68,7 +67,7 @@ public class Stats extends JFrame {
 				try{
 					contentPane.setVisible(false);
 					dispose();
-					MainMenu menu = new MainMenu(player);
+					MainMenu menu = new MainMenu();
 					menu.setVisible(true);
 					}
 				catch(Exception e1)
@@ -104,7 +103,7 @@ public class Stats extends JFrame {
 		try 
 		{
 			// Get status
-			JSONObject rats = player.ratings();
+			JSONObject rats = ChessPlayerController.getInstance().ratings();
 			w = rats.getInt("win");
 			l = rats.getInt("loss");
 			d = rats.getInt("draw");	//retrieve our stats

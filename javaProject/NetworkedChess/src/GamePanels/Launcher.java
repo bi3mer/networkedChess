@@ -20,11 +20,24 @@ import KLD.util.ShapeMaker;
  */
 public class Launcher 
 {
+	public static void main(String[] args)
+	{
+		try 
+		{
+			GameFrame.launch();
+		} 
+		catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public Launcher()
 	{
 		//setting the main panel. You could also use GameMenuPanel.setGame(class).
-		GameFrame.mainGame = SinglePlayerChess.class; 
+//		GameFrame.mainGame = SinglePlayerChess.class; 
+		GameFrame.mainGame = MultiplayerChessGame.class; 
 		
 		//TODO read json: config		
 		GameFrame.width = 800; 
@@ -35,6 +48,5 @@ public class Launcher
 		GameFrame.setTitle("Chess Game");
 		GameFrame.setResizable(false);
 		GameFrame.FPS = 30; 
-		
 	}
 }

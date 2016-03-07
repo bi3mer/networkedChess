@@ -102,6 +102,8 @@ public class GameFrame {
 			return; 
 		frame.setVisible(false); //you can't see me!
 		frame.dispose();
-	}
-	
+		
+		// Destroy the timer for the update loop
+		GameFrame.conole.destroyTimer();
+	}	
 }

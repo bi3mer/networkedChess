@@ -19,10 +19,9 @@ public class BackgroundQueue extends Thread
 	 * initialize thread
 	 * @param queue
 	 */
-	public BackgroundQueue(Queue _queue, ChessPlayerController _player)
+	public BackgroundQueue(Queue _queue)
 	{
 		this.queue = _queue;
-		this.player = _player;
 	}
 	
 	/**
@@ -40,7 +39,7 @@ public class BackgroundQueue extends Thread
         {
             try {
             	// Get update
-				JSONObject update = this.player.getUpdate(false);
+				JSONObject update = ChessPlayerController.getInstance().getUpdate(false);
 				
 				// Test if update has valid info
 				if(update.getInt("status") <= HttpURLConnection.HTTP_ACCEPTED && update.has("otherPlayer") && update.has("whitePlayer"))
@@ -49,7 +48,7 @@ public class BackgroundQueue extends Thread
 					this.running = false;
 					
 					// return info to queue
-					this.queue.enterGame(update.getString("otherPlayer"), update.has("whitePlayer"));
+					this.queue.enterGame(update.getString("otherPlayer"), update.getBoolean("whitePlayer"));
 					
 					// End thread
 					return;

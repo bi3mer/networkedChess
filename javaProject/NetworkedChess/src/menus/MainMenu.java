@@ -32,8 +32,7 @@ public class MainMenu extends JFrame {
 			{
 				try 
 				{
-					ChessPlayerController player = new ChessPlayerController();
-					MainMenu frame = new MainMenu(player);
+					MainMenu frame = new MainMenu();
 					frame.setVisible(true);
 				}
 				catch (Exception e) 
@@ -47,7 +46,7 @@ public class MainMenu extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainMenu(ChessPlayerController player) {	//main menu frame, pass player as arg
+	public MainMenu() {	//main menu frame, pass player as arg
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 565, 447);
 		contentPane = new JPanel();
@@ -68,7 +67,8 @@ public class MainMenu extends JFrame {
 					dispose();
 					
 					// Create queue window
-					Queue que = new Queue(player);
+//					Queue que = new Queue(player);
+					Queue que = new Queue();
 					que.setVisible(true);
 				}
 				catch(Exception e1)
@@ -87,7 +87,8 @@ public class MainMenu extends JFrame {
 				try{
 					contentPane.setVisible(false);
 					dispose();
-					Stats stat = new Stats(player);
+//					Stats stat = new Stats(player);
+					Stats stat = new Stats();
 					stat.setVisible(true);		//this takes us to the stats frame
 				}
 				catch(Exception e1)

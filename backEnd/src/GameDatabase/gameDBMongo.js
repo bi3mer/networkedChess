@@ -17,7 +17,8 @@
 			to: moveStructure
 		},
 		undoRequest: Boolean,
-		undo: Boolean
+		undo: Boolean,
+		forfeit: Boolean
 	};
 
 	// Structure for database
@@ -26,8 +27,8 @@
 		whitePlayer: String,
 		gameOver: Boolean,
 		moves: [{
-			from: String,
-			to: String
+			from: moveStructure,
+			to: moveStructure
 		}],
 		blackPlayerUpdates: [updateStructure],
 		whitePlayerUpdates: [updateStructure],
@@ -149,6 +150,9 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		getUpdate: function(id, user, callback) {
+			/*
+								Update time end game
+			*/
 			console.log(fileName, 'getUpdate: entered function with id: ' + id);
 
 			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
@@ -233,11 +237,7 @@
 					game.moves.push(move);
 
 					// Create new move
-					var newMove = updateStructure;
-					newMove.move.from = move.from;
-					newMove.move.to = move.to;
-					newMove.undoRequest = false;
-					newMove.undo = false;
+					var newMove = {move: move};
 
 					// Add to updates
 					if(game.blackPlayer === user) {

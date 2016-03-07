@@ -295,7 +295,7 @@
 								console.log(fileName, 'getUpdate: valid game id sending updates: ' + JSON.stringify(updates));
 
 								// Format the updates
-								formattedUpdates = {
+								var formattedUpdates = {
 									updates: updates
 								};
 

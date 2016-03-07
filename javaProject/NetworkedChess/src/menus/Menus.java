@@ -63,7 +63,7 @@ public class Menus {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void JsonComp(JSONObject obj, String message, ChessPlayerController player)
+	private void JsonComp(JSONObject obj, String message)
 	{
 		try 
 		{
@@ -71,7 +71,7 @@ public class Menus {
 			if(obj.getInt("status") < 300)	
 			{
 				frame.dispose();
-				MainMenu menu = new MainMenu(player);
+				MainMenu menu = new MainMenu();
 				menu.setVisible(true);
 			}
 			else
@@ -94,7 +94,6 @@ public class Menus {
 	private void initialize() 
 	{
 		//the JFrame App instantiates the controller
-		ChessPlayerController player = new ChessPlayerController(); 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().setLayout(null);
@@ -111,8 +110,8 @@ public class Menus {
 				{
 					String username = textField.getText();
 					String password = passwordField.getText();
-					JSONObject returnObj = player.login(username, password);
-					JsonComp(returnObj,"Incorrect Password or Non-Existent Account",player); // Object check/error ret
+					JSONObject returnObj = ChessPlayerController.getInstance().login(username, password);
+					JsonComp(returnObj,"Incorrect Password or Non-Existent Account"); // Object check/error ret
 				}
 				catch(Exception e1)
 				{
@@ -139,8 +138,8 @@ public class Menus {
 				{
 					String username = textField.getText();
 					String password = passwordField.getText();
-					JSONObject returnObj = player.createAccount(username, password);
-					JsonComp(returnObj,"This Username is taken",player);
+					JSONObject returnObj = ChessPlayerController.getInstance().createAccount(username, password);
+					JsonComp(returnObj,"This Username is taken");
 				}
 				catch(Exception e1)
 				{
