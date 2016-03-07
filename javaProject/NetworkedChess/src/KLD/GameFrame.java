@@ -71,6 +71,9 @@ public class GameFrame {
 		conole.run();
 		
 		frame.setVisible(true);
+		
+		
+		
 	}
 
 	
@@ -91,6 +94,14 @@ public class GameFrame {
 	
 	public static void setTitle(String s){
 		frame.setTitle(s);
+	}
+	
+	public static void destroy()
+	{
+		if(frame==null)
+			return; 
+		frame.setVisible(false); //you can't see me!
+		frame.dispose();
 	}
 	
 }
