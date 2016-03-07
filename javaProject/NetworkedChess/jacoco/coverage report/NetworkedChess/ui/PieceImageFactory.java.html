@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PieceImageFactory.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">ui</a> &gt; <span class="el_source">PieceImageFactory.java</span></div><h1>PieceImageFactory.java</h1><pre class="source lang-java linenums">package ui;
+
+import java.awt.Color;
+import java.awt.Image;
+import java.util.ArrayList;
+
+import KLD.Loader;
+import intf.ChessFactory;
+
+public class PieceImageFactory implements ChessFactory&lt;Image&gt;
+{
+	private static PieceImageFactory instence;
+	private ArrayList&lt;Image&gt; pieceImages; 
+	private Loader loader; 
+	
+	private PieceImageFactory()
+<span class="nc" id="L17">	{</span>
+<span class="nc" id="L18">		pieceImages = new ArrayList&lt;Image&gt;();</span>
+<span class="nc" id="L19">		loader = new Loader(); </span>
+		
+<span class="nc" id="L21">		loader.setFolder(&quot;kchess/&quot;);</span>
+<span class="nc" id="L22">		loader.setExtention(&quot;.png&quot;);</span>
+<span class="nc" id="L23">		loader.setAlpha(new Color(255, 174, 201));</span>
+<span class="nc" id="L24">	}</span>
+	
+	public static PieceImageFactory Instnece()
+	{
+<span class="nc bnc" id="L28" title="All 2 branches missed.">		if(instence==null)</span>
+<span class="nc" id="L29">			instence = new PieceImageFactory(); </span>
+		
+<span class="nc" id="L31">		return instence; </span>
+	}
+	
+	public Image factor(int index) 
+	{
+<span class="nc bnc" id="L36" title="All 2 branches missed.">		while(pieceImages.size() &lt;= index )</span>
+<span class="nc" id="L37">			pieceImages.add(null); </span>
+		
+<span class="nc bnc" id="L39" title="All 2 branches missed.">		if(pieceImages.get(index) == null)</span>
+<span class="nc" id="L40">			initlize(index); </span>
+	
+<span class="nc" id="L42">		return pieceImages.get(index);</span>
+	}
+	
+	private void initlize(int index) 
+	{
+<span class="nc bnc" id="L47" title="All 2 branches missed.">		if(pieceImages.get(index) == null)</span>
+		{
+<span class="nc" id="L49">			pieceImages.set(index, loader.loadImage( (&quot;c&quot;+index) ) ); </span>
+		}
+		
+		
+		/*if(index == Piece.TYPE_BISHOP)
+			pieceImages.set(index, factorBishop()); 
+		else if(index == Piece.TYPE_KING)
+			pieceImages.set(index, factorKing()); 
+		else if (index == Piece.TYPE_KNIGHT)
+			pieceImages.set(index, factorKnight()); 
+		else if (index == Piece.TYPE_QUEEN)
+			pieceImages.set(index, factorQueen()); 
+		else if (index == Piece.TYPE_PAWN)
+			pieceImages.set(index, factorPawn()); 
+		else if (index == Piece.TYPE_ROOK)
+			pieceImages.set(index, factorRook()); 
+		*/
+<span class="nc" id="L66">	}</span>
+
+	@Override
+	public Image factorKing() 
+	{
+		
+		//pieceImages.set(Piece., factorBishop()); 
+		//return black 
+<span class="nc" id="L74">		return null;</span>
+	}
+
+	@Override
+	public Image factorQueen() 
+	{
+		// TODO Auto-generated method stub
+<span class="nc" id="L81">		return null;</span>
+	}
+
+	@Override
+	public Image factorRook() 
+	{
+		// TODO Auto-generated method stub
+<span class="nc" id="L88">		return null;</span>
+	}
+
+	@Override
+	public Image factorBishop() 
+	{
+		// TODO Auto-generated method stub
+<span class="nc" id="L95">		return null;</span>
+	}
+
+	@Override
+	public Image factorKnight() 
+	{
+		// TODO Auto-generated method stub
+<span class="nc" id="L102">		return null;</span>
+	}
+
+	@Override
+	public Image factorPawn() 
+	{
+		// TODO Auto-generated method stub
+<span class="nc" id="L109">		return null;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

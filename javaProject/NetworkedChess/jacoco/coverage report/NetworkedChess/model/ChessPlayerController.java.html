@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ChessPlayerController.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">ChessPlayerController.java</span></div><h1>ChessPlayerController.java</h1><pre class="source lang-java linenums">package model;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import GamePanels.MultiplayerChessGame;
+
+<span class="fc" id="L17">public class ChessPlayerController</span>
+{
+	
+	private int playerTeam; 
+	
+<span class="fc" id="L22">	private String host = &quot;http://serene-stream-56878.herokuapp.com&quot;;</span>
+	
+	// TODO: use config file for these in the future
+<span class="fc" id="L25">	private String createAccount = &quot;/createAccount&quot;;</span>
+<span class="fc" id="L26">	private String login = &quot;/login&quot;;</span>
+<span class="fc" id="L27">	private String addMove = &quot;/addMove&quot;;</span>
+<span class="fc" id="L28">	private String requestUndo = &quot;/requestUndo&quot;;</span>
+<span class="fc" id="L29">	private String acceptOrDenyUndo = &quot;/acceptOrDenyUndo&quot;;</span>
+<span class="fc" id="L30">	private String forfeit = &quot;/forfeit&quot;;</span>
+<span class="fc" id="L31">	private String ratings = &quot;/ratings&quot;;</span>
+<span class="fc" id="L32">	private String update = &quot;/getUpdate&quot;;</span>
+<span class="fc" id="L33">	private String getMatch = &quot;/getMatch&quot;;</span>
+<span class="fc" id="L34">	private String cancelQueue = &quot;/cancelQueue&quot;;</span>
+	private String user;
+
+	public Boolean isWhite;
+	public String otherPlayer;
+	
+	//create an object of SingleObject
+<span class="fc" id="L41">	private static ChessPlayerController instance = null;</span>
+
+	public static ChessPlayerController getInstance() 
+	{
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if(instance == null) </span>
+		{
+<span class="fc" id="L47">			instance = new ChessPlayerController();</span>
+		}
+      
+<span class="fc" id="L50">		return instance;</span>
+   }
+	
+	public static void main(String[] args)
+	{
+		// Use to test
+<span class="fc" id="L56">		ChessPlayerController.getInstance().user = &quot;Colan&quot;;</span>
+		try 
+		{
+<span class="nc" id="L59">			System.out.println(ChessPlayerController.getInstance().createAccount(&quot;test&quot;, &quot;test&quot;).toString());</span>
+		} 
+<span class="fc" id="L61">		catch (JSONException | IOException | InterruptedException e)</span>
+		{
+			// TODO Auto-generated catch block
+<span class="fc" id="L64">			e.printStackTrace();</span>
+<span class="nc" id="L65">		}</span>
+<span class="fc" id="L66">	}</span>
+	
+	public int getTeam()
+	{
+<span class="fc" id="L70">		return playerTeam; </span>
+	}
+	
+	private Boolean inRange(int status, int min, int max)
+	{
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">		if(status &gt;= min &amp;&amp; status &lt;= max)</span>
+		{
+<span class="fc" id="L77">			return true;</span>
+		}
+<span class="fc" id="L79">		return false;</span>
+	}
+	
+	
+	public JSONObject createAccount(String user, String pass) throws JSONException, IOException, InterruptedException 
+	{
+		// Create Object
+<span class="nc" id="L86">		JSONObject request = new JSONObject();</span>
+		
+		// Set user
+<span class="nc" id="L89">		this.user = user;</span>
+		
+		// Add user name and password to object
+<span class="nc" id="L92">		request.put(&quot;user&quot;, user);</span>
+<span class="nc" id="L93">		request.put(&quot;pass&quot;, pass);</span>
+		
+		// Request information from server
+<span class="nc" id="L96">		return this.requestFromServer(this.host + this.createAccount, request);</span>
+	}
+	
+	public JSONObject login(String user, String pass) throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L102">		JSONObject request = new JSONObject();</span>
+
+		// Set user
+<span class="fc" id="L105">		this.user = user;</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L108">		request.put(&quot;user&quot;, this.user);</span>
+<span class="fc" id="L109">		request.put(&quot;pass&quot;, pass);</span>
+		
+		// Request information from server
+<span class="fc" id="L112">		return this.requestFromServer(this.host + this.login, request);</span>
+	}
+	
+	public JSONObject addMove(JSONObject from, JSONObject to) throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L118">		JSONObject request = new JSONObject();</span>
+		
+		// Create move object
+<span class="fc" id="L121">		JSONObject move = new JSONObject();</span>
+<span class="fc" id="L122">		move.put(&quot;from&quot;, from);</span>
+<span class="fc" id="L123">		move.put(&quot;to&quot;, to);</span>
+		
+		// add move and user to request
+<span class="fc" id="L126">		request.put(&quot;move&quot;, move);</span>
+<span class="fc" id="L127">		request.put(&quot;user&quot;, this.user);</span>
+		
+		// Request information from server
+<span class="fc" id="L130">		return this.requestFromServer(this.host + this.addMove, request);</span>
+	}
+	
+	public JSONObject requestUndo() throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L136">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L139">		request.put(&quot;user&quot;, this.user);</span>
+		
+		// Request information from server
+<span class="fc" id="L142">		return this.requestFromServer(this.host + this.requestUndo, request);</span>
+	}
+	
+	public JSONObject acceptOrDenyUndo(Boolean acceptUndo) throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L148">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L151">		request.put(&quot;user&quot;, this.user);</span>
+<span class="fc" id="L152">		request.put(&quot;acceptUndo&quot;, acceptUndo);</span>
+		
+		// Request information from server
+<span class="fc" id="L155">		return this.requestFromServer(this.host + this.acceptOrDenyUndo, request);</span>
+	}
+	
+	public JSONObject forfeit() throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L161">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L164">		request.put(&quot;user&quot;, this.user);</span>
+<span class="fc" id="L165">		request.put(&quot;isPlaying&quot;, true);</span>
+
+		// Request information from server
+<span class="fc" id="L168">		return this.requestFromServer(this.host + this.forfeit, request);</span>
+	}
+	
+	public JSONObject ratings() throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L174">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L177">		request.put(&quot;user&quot;, this.user);</span>
+		
+		// Request information from server
+<span class="fc" id="L180">		return this.requestFromServer(this.host + this.ratings, request);</span>
+	}
+	
+	public JSONObject getUpdate(Boolean isPlaying) throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L186">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L189">		request.put(&quot;user&quot;, this.user);</span>
+<span class="fc" id="L190">		request.put(&quot;isPlaying&quot;, isPlaying);</span>
+		
+		// Request information from server
+<span class="fc" id="L193">		return this.requestFromServer(this.host + this.update, request);</span>
+	}
+	
+	public JSONObject getMatchMaking() throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L199">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L202">		request.put(&quot;user&quot;, this.user);</span>
+		
+		// Request information from server
+<span class="fc" id="L205">		return this.requestFromServer(this.host + this.getMatch, request);</span>
+	}
+	
+	public JSONObject leaveQueue() throws JSONException, IOException, InterruptedException
+	{
+		// Create Object
+<span class="fc" id="L211">		JSONObject request = new JSONObject();</span>
+		
+		// Add user name and password to object
+<span class="fc" id="L214">		request.put(&quot;user&quot;, this.user);</span>
+		
+		// Request information from server
+<span class="fc" id="L217">		return this.requestFromServer(this.host + this.cancelQueue, request);</span>
+	}
+	
+	private JSONObject requestFromServer(String requestURL, JSONObject requestObj) throws IOException, InterruptedException, JSONException
+	{
+		// Create URL
+<span class="fc" id="L223">		URL url = new URL(requestURL);</span>
+		
+		// Open connection with URL
+<span class="fc" id="L226">		HttpURLConnection request = (HttpURLConnection) url.openConnection();</span>
+		
+		// Set method to POST
+<span class="fc" id="L229">		request.setRequestMethod(&quot;POST&quot;);</span>
+		
+		// Set content type to JSON
+<span class="fc" id="L232">		request.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+		
+		// Send over JSON object in req.body as string
+<span class="fc" id="L235">		request.setDoOutput(true);</span>
+<span class="fc" id="L236">		OutputStream out = new BufferedOutputStream(request.getOutputStream());</span>
+<span class="fc" id="L237">		out.write(requestObj.toString().getBytes());</span>
+<span class="fc" id="L238">		out.flush();</span>
+		
+		// Connect to server
+<span class="fc" id="L241">		request.connect();</span>
+		
+		// Character array to store response string
+<span class="fc" id="L244">		char[] response = new char[10000];</span>
+		
+		// Input stream to read in response
+		InputStream in;
+
+		// Check if status is in (200,300]
+<span class="fc bfc" id="L250" title="All 2 branches covered.">		if(this.inRange(request.getResponseCode(),HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_BAD_REQUEST))</span>
+		{
+<span class="fc" id="L252">			 in = request.getInputStream();</span>
+		}
+		else 
+		{
+<span class="fc" id="L256">			in = request.getErrorStream();</span>
+		}
+		
+		// Create input stream
+<span class="fc" id="L260">		InputStreamReader input = new InputStreamReader(in);</span>
+        
+		// read in response
+<span class="fc" id="L263">		input.read(response);</span>
+		
+		// create json object
+		JSONObject json;
+		try 
+		{
+<span class="fc" id="L269">			json = new JSONObject(new String(response));</span>
+		} 
+<span class="fc" id="L271">		catch (JSONException e) </span>
+		{	
+			// String is empty
+<span class="fc" id="L274">			json = new JSONObject();</span>
+<span class="fc" id="L275">		}</span>
+		
+		// add status to object
+<span class="fc" id="L278">		json.put(&quot;status&quot;, request.getResponseCode());</span>
+		
+		// diconnect connection
+<span class="fc" id="L281">		request.disconnect();</span>
+		
+		// Return Json Object
+<span class="fc" id="L284">		return json;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

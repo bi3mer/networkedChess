@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Queue.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">menus</a> &gt; <span class="el_source">Queue.java</span></div><h1>Queue.java</h1><pre class="source lang-java linenums">package menus;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import GamePanels.Launcher;
+import GamePanels.SinglePlayerChess;
+import KLD.GameFrame;
+import KLD.util.BackgroundQueue;
+import model.ChessPlayerController;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
+
+public class Queue extends JFrame {
+
+	private JPanel contentPane;
+	private BackgroundQueue bgQueue;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args)
+	{
+<span class="fc" id="L37">		EventQueue.invokeLater(new Runnable() </span>
+<span class="fc" id="L38">		{</span>
+			public void run() 
+			{
+				try 
+				{
+<span class="fc" id="L43">					Queue frame = new Queue();</span>
+<span class="fc" id="L44">					frame.setVisible(true);</span>
+				} 
+<span class="nc" id="L46">				catch (Exception e) {</span>
+					
+<span class="nc" id="L48">					e.printStackTrace();</span>
+<span class="fc" id="L49">				}</span>
+<span class="fc" id="L50">			}</span>
+		});
+<span class="fc" id="L52">	}</span>
+	
+	/**
+	 * Create the frame.
+	 */
+	public Queue()
+<span class="fc" id="L58">	{	</span>
+		//Queue Frame
+<span class="fc" id="L60">		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="fc" id="L61">		setBounds(0, 0, 318, 155);</span>
+<span class="fc" id="L62">		contentPane = new JPanel();</span>
+<span class="fc" id="L63">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="fc" id="L64">		setContentPane(contentPane);</span>
+<span class="fc" id="L65">		contentPane.setLayout(null);</span>
+		
+<span class="fc" id="L67">		JButton btnCancel = new JButton(&quot;Cancel&quot;);		//Queue Cancel button</span>
+<span class="fc" id="L68">		btnCancel.addActionListener(new ActionListener() </span>
+<span class="fc" id="L69">		{</span>
+			public void actionPerformed(ActionEvent e) 
+			{
+				try
+				{
+					// Destroy thread
+<span class="nc" id="L75">					bgQueue.terminateThread();</span>
+					
+					// Load main menu
+<span class="nc" id="L78">					contentPane.setVisible(false);</span>
+<span class="nc" id="L79">					dispose();</span>
+<span class="nc" id="L80">					MainMenu main = new MainMenu();</span>
+<span class="nc" id="L81">					main.setVisible(true);				//just brings us back to main menu if pressed</span>
+				}
+<span class="nc" id="L83">				catch(Exception e1)</span>
+				{
+<span class="nc" id="L85">					JOptionPane.showMessageDialog(null, &quot;Queue Cancel Error&quot;); // function error</span>
+<span class="nc" id="L86">				}</span>
+<span class="nc" id="L87">			}</span>
+		});
+		
+		
+<span class="fc" id="L91">		btnCancel.setBounds(100, 70, 97, 25);</span>
+<span class="fc" id="L92">		contentPane.add(btnCancel);</span>
+		
+<span class="fc" id="L94">		JLabel label = new JLabel(&quot;&quot;);</span>
+<span class="fc" id="L95">		label.setIcon(new ImageIcon(Queue.class.getResource(&quot;/graphics/Queue.png&quot;)));</span>
+<span class="fc" id="L96">		label.setBounds(0, 0, 299, 108);</span>
+<span class="fc" id="L97">		contentPane.add(label);		//background</span>
+		
+		try 
+		{
+			// Add self to matchmaking
+<span class="fc" id="L102">			ChessPlayerController.getInstance().getMatchMaking();</span>
+			
+			// Start bg queue
+<span class="fc" id="L105">			this.bgQueue = new BackgroundQueue(this);</span>
+<span class="fc" id="L106">			this.bgQueue.start();</span>
+		}
+<span class="nc" id="L108">		catch (JSONException | IOException | InterruptedException e1) </span>
+		{
+			// TODO Auto-generated catch block
+<span class="nc" id="L111">			e1.printStackTrace();</span>
+<span class="fc" id="L112">		}</span>
+<span class="fc" id="L113">	}</span>
+	
+	/**
+	 * Enter the game
+	 * @param otherUser
+	 * @param isWhite
+	 */
+	public void enterGame(String otherUser, Boolean isWhite)
+	{
+		// Kill Queue frame
+<span class="nc" id="L123">		this.dispose();</span>
+		
+		// Add vars to controller
+<span class="nc" id="L126">		ChessPlayerController.getInstance().isWhite = isWhite;</span>
+<span class="nc" id="L127">		ChessPlayerController.getInstance().otherPlayer = otherUser;</span>
+		
+		// Launch Game
+		try 
+		{
+<span class="nc" id="L132">			GameFrame.launch();</span>
+		}
+<span class="nc" id="L134">		catch (Exception e) </span>
+		{
+			// TODO Auto-generated catch block
+<span class="nc" id="L137">			e.printStackTrace();</span>
+<span class="nc" id="L138">		}</span>
+<span class="nc" id="L139">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

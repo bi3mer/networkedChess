@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>KingMovement.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">KingMovement.java</span></div><h1>KingMovement.java</h1><pre class="source lang-java linenums">package model;
+
+import javax.imageio.plugins.bmp.BMPImageWriteParam;
+
+import factory.PieceFactory;
+
+public class KingMovement extends PieceMovement 
+{
+	/**
+	 * I hate this 
+	 */
+<span class="fc" id="L12">	private static boolean isUnmarking = false;</span>
+	
+	public KingMovement(MovePattern pattern) 
+	{
+<span class="fc" id="L16">		super(pattern, false);</span>
+<span class="fc" id="L17">	}</span>
+	
+	
+	@Override
+	public int specialMarking(MobilityBoard mboard, int cx, int cy, int team) 
+	{
+<span class="fc" id="L23">		int marks = super.specialMarking(mboard, cx, cy, team);</span>
+		
+<span class="fc" id="L25">		ChessBoard cboard = mboard.getChessBoard(); </span>
+		
+		//int team = cboard.teamAt(cx, cy);
+		
+		//casteling 
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">		if(!mboard.didMove(Piece.TYPE_KING, team, 0))</span>
+		{	
+<span class="fc" id="L32">			marks += markCastles(mboard, team); </span>
+			
+		}//did not move 
+		
+<span class="fc bfc" id="L36" title="All 2 branches covered.">		if(isUnmarking)</span>
+<span class="fc" id="L37">			return 0; </span>
+		
+		//TODO &quot;for the king&quot; unmark threatened ares 
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">		if(cboard.getPiece(cx, cy) == Piece.TYPE_KING)</span>
+		{
+<span class="fc" id="L42">			isUnmarking = true; </span>
+			
+<span class="fc" id="L44">			MobilityBoard threat = new MobilityBoard(cboard); </span>
+			//remove threatened areas 
+<span class="fc" id="L46">			int _team = cboard.teamAt(cx, cy); </span>
+				
+			//loop through map and find enemy pieces 
+<span class="fc bfc" id="L49" title="All 2 branches covered.">			for(int i=0 ; i&lt;cboard.getHeight(); i++)</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">				for(int j=0; j&lt;cboard.getWidth(); j++)</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">						if(cboard.teamAt(j, i) + _team == 0)</span>
+						{
+							//System.out.printf(&quot;enemy unit %s %s\n&quot;, j, i);
+<span class="fc" id="L54">							int piece = cboard.getPiece(j, i); </span>
+							
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">							if(piece &gt; 0)</span>
+							{
+								//PieceFactory.instence().factor(piece).movement.markAvailableMovement(threat, cboard, j, i, 0); 
+<span class="fc" id="L59">								Marker threatMarker = new Marker(threat); </span>
+<span class="fc" id="L60">								threatMarker.markMovement(cboard.getPieceMovementAt(j, i), j, i, 0); </span>
+							}		
+							//cboard.selectForMark(j, i, threat); 
+						}
+			
+			//match { threat with mboard
+			//
+<span class="fc bfc" id="L67" title="All 2 branches covered.">			for(int i = 0; i &lt; cboard.getHeight(); i++)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">				for(int j = 0; j &lt; cboard.getWidth(); j++)</span>
+				{
+<span class="pc bpc" id="L70" title="1 of 4 branches missed.">					if(mboard.getTileValue(j, i) &gt; MobilityBoard.MARK_INVISIBLE &amp;&amp; threat.getTileValue(j, i) &gt; MobilityBoard.MARK_INVISIBLE)</span>
+					{
+						//System.out.printf(&quot;unmarking unit %s %s\n&quot;, j, i);
+<span class="nc bnc" id="L73" title="All 2 branches missed.">						marks -= (mboard.unMark(j, i))? 1 : 0; </span>
+						
+					}
+				}
+					
+			//isUnmarking = false; 
+			}//end unmarking threat ares 
+
+<span class="fc" id="L81">		isUnmarking = false; </span>
+<span class="fc" id="L82">		return marks; </span>
+	}
+
+	private int markCastles(MobilityBoard mboard, int team)
+	{
+<span class="fc" id="L87">		int marks =0 ; </span>
+		
+<span class="fc" id="L89">		ChessBoard cboard = mboard.getChessBoard(); </span>
+		//special 
+<span class="fc" id="L91">		int y = 8- (9 - (team))%9;</span>
+		
+		//rook right  
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_RIGHT) &amp;&amp; mboard.getChessBoard().teamAt(7, y)==team)</span>
+		{
+<span class="fc" id="L96">			boolean free = true; </span>
+			//check empty
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			for(int i=0; i&lt;2; i++)</span>
+			{
+<span class="fc bfc" id="L100" title="All 4 branches covered.">				free = free &amp;&amp; cboard.getTileValue(i+5, y) == ChessBoard.EMPTY ;</span>
+			}
+			
+<span class="fc bfc" id="L103" title="All 2 branches covered.">			if(free)</span>
+			{
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">				marks += (mboard.markMove(6, y))? 1: 0; </span>
+			}
+			
+		}
+		
+		//rook left 
+<span class="pc bpc" id="L111" title="1 of 4 branches missed.">		if(!mboard.didMove(Piece.TYPE_ROOK, team, MobilityBoard.TAG_LEFT) &amp;&amp; mboard.getChessBoard().teamAt(0, y)==team)</span>
+		{
+<span class="fc" id="L113">			boolean free = true; </span>
+			//check empty
+<span class="fc bfc" id="L115" title="All 2 branches covered.">			for(int i=0; i&lt;3; i++)</span>
+			{
+<span class="pc bpc" id="L117" title="2 of 4 branches missed.">				free = free &amp;&amp; cboard.getTileValue(i+1, y) == ChessBoard.EMPTY ;</span>
+			}
+			
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">			if(free)</span>
+			{
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">				marks += (mboard.markMove(2, y))? 1 : 0; </span>
+			}
+			
+		}
+		
+<span class="fc" id="L127">		return marks; </span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

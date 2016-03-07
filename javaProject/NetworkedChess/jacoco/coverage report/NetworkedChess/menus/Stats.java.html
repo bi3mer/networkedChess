@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Stats.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">menus</a> &gt; <span class="el_source">Stats.java</span></div><h1>Stats.java</h1><pre class="source lang-java linenums">package menus;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import model.ChessPlayerController;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
+import javax.swing.JFormattedTextField;
+
+public class Stats extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) 
+	{
+<span class="fc" id="L33">		EventQueue.invokeLater(new Runnable() </span>
+<span class="fc" id="L34">		{</span>
+			public void run() 
+			{
+				try 
+				{
+<span class="fc" id="L39">					Stats frame = new Stats();</span>
+<span class="fc" id="L40">					frame.setVisible(true);</span>
+				} 
+<span class="nc" id="L42">				catch (Exception e) </span>
+				{
+<span class="nc" id="L44">					e.printStackTrace();</span>
+<span class="fc" id="L45">				}</span>
+<span class="fc" id="L46">			}</span>
+		});
+<span class="fc" id="L48">	}</span>
+	//default initiator for each frame
+	/**
+	 * Create the frame.
+	 */
+	public Stats() 
+<span class="fc" id="L54">	{</span>
+		// Stats Frame
+<span class="fc" id="L56">		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="fc" id="L57">		setBounds(0, 0, 547, 400);</span>
+<span class="fc" id="L58">		contentPane = new JPanel();</span>
+<span class="fc" id="L59">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="fc" id="L60">		setContentPane(contentPane);</span>
+<span class="fc" id="L61">		contentPane.setLayout(null);</span>
+		
+		//return button
+<span class="fc" id="L64">		JButton btnReturn = new JButton(&quot;Return&quot;);	</span>
+<span class="fc" id="L65">		btnReturn.addActionListener(new ActionListener() {</span>
+			public void actionPerformed(ActionEvent e) {
+				try{
+<span class="nc" id="L68">					contentPane.setVisible(false);</span>
+<span class="nc" id="L69">					dispose();</span>
+<span class="nc" id="L70">					MainMenu menu = new MainMenu();</span>
+<span class="nc" id="L71">					menu.setVisible(true);</span>
+					}
+<span class="nc" id="L73">				catch(Exception e1)</span>
+				{
+<span class="nc" id="L75">					JOptionPane.showMessageDialog(null, &quot;Return to Main error&quot;);</span>
+<span class="nc" id="L76">				}</span>
+<span class="nc" id="L77">			}</span>
+		});
+<span class="fc" id="L79">		btnReturn.setBounds(401, 304, 97, 25);</span>
+<span class="fc" id="L80">		contentPane.add(btnReturn);</span>
+		
+<span class="fc" id="L82">		JLabel lblNewLabel_2 = new JLabel(&quot;&quot;);</span>
+<span class="fc" id="L83">		lblNewLabel_2.setBounds(261, 169, 56, 16);</span>
+<span class="fc" id="L84">		contentPane.add(lblNewLabel_2);	//win text field for input</span>
+		
+<span class="fc" id="L86">		JLabel lblNewLabel = new JLabel(&quot;&quot;);</span>
+<span class="fc" id="L87">		lblNewLabel.setBounds(261, 219, 56, 16);</span>
+<span class="fc" id="L88">		contentPane.add(lblNewLabel);	//draw text field for input</span>
+		
+<span class="fc" id="L90">		JLabel lblNewLabel_1 = new JLabel(&quot;&quot;);</span>
+<span class="fc" id="L91">		lblNewLabel_1.setBounds(261, 270, 56, 16);</span>
+<span class="fc" id="L92">		contentPane.add(lblNewLabel_1);	//loss text field for input</span>
+		
+<span class="fc" id="L94">		JLabel label = new JLabel(&quot;&quot;);</span>
+<span class="fc" id="L95">		label.setIcon(new ImageIcon(Stats.class.getResource(&quot;/graphics/CGO.stat.screen.png&quot;)));</span>
+<span class="fc" id="L96">		label.setBounds(0, 0, 529, 353);</span>
+<span class="fc" id="L97">		contentPane.add(label);			//background info</span>
+		
+		// Create default stats
+<span class="fc" id="L100">		int w = 0;</span>
+<span class="fc" id="L101">		int l = 0;</span>
+<span class="fc" id="L102">		int d = 0;	</span>
+		try 
+		{
+			// Get status
+<span class="nc" id="L106">			JSONObject rats = ChessPlayerController.getInstance().ratings();</span>
+<span class="nc" id="L107">			w = rats.getInt(&quot;win&quot;);</span>
+<span class="nc" id="L108">			l = rats.getInt(&quot;loss&quot;);</span>
+<span class="nc" id="L109">			d = rats.getInt(&quot;draw&quot;);	//retrieve our stats</span>
+		} 
+<span class="fc" id="L111">		catch (JSONException | IOException | InterruptedException e1) </span>
+		{
+			// TODO Auto-generated catch block
+<span class="fc" id="L114">			e1.printStackTrace();</span>
+<span class="nc" id="L115">		}</span>
+		
+		// add stats to player
+<span class="fc" id="L118">		lblNewLabel.setText(Integer.toString(d));</span>
+<span class="fc" id="L119">		lblNewLabel_1.setText(Integer.toString(l));</span>
+<span class="fc" id="L120">		lblNewLabel_2.setText(Integer.toString(w));	//set the stat fields </span>
+<span class="fc" id="L121">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

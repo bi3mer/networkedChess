@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ShapeMaker.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.util</a> &gt; <span class="el_source">ShapeMaker.java</span></div><h1>ShapeMaker.java</h1><pre class="source lang-java linenums">package KLD.util;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.GeneralPath;
+
+import KLD.Console;
+import KLD.Game;
+import KLD.GameFrame;
+import KLD.Input;
+import KLD.cmd.ButtonCommand;
+import KLD.cmd.Command;
+
+<span class="fc" id="L17">public class ShapeMaker extends Game {</span>
+
+	GeneralPath gp ;
+	
+<span class="fc" id="L21">	boolean showMouseLine = false; </span>
+	
+	ButtonCommand newButton; 
+	ButtonCommand saveButton; 
+	ButtonCommand undoButton; 
+	ButtonCommand lineButton; 
+	ButtonCommand curvButton; 
+	ButtonCommand rectButton; 
+	ButtonCommand ovalButton; 
+	
+	
+	@Override
+	public void init() {
+<span class="fc" id="L34">		name = &quot;ShapeMaker&quot;;</span>
+<span class="fc" id="L35">		GameFrame.setTitle(&quot;ShapeMaker&quot;);</span>
+		
+<span class="fc" id="L37">		gp = new GeneralPath();</span>
+		
+		//this is the command bar menu for new, save, and stuff
+<span class="fc" id="L40">		Command menu = new Command(&quot;Menu&quot;) {</span>
+
+			@Override
+			public void init(){
+			
+				
+<span class="fc" id="L46">			}//end init menu command</span>
+			
+			
+			
+			@Override
+			public void draw(Graphics g) {
+				
+<span class="nc" id="L53">				g.setColor(Color.BLACK);</span>
+<span class="nc" id="L54">				g.drawRect(0, 0, Console.maxWidth, 16);</span>
+<span class="nc" id="L55">				g.setColor(Color.GRAY.brighter());</span>
+<span class="nc" id="L56">				g.fillRect(0, 0, Console.maxWidth, 16);</span>
+				
+				
+				     
+<span class="nc" id="L60">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">				if(Input.point.y &gt;16){</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">					if(input.mouseIsClicked()){</span>
+<span class="nc bnc" id="L66" title="All 4 branches missed.">						if(Input.point.x &gt;=2 &amp;&amp; Input.point.x &lt;=18)</span>
+<span class="nc" id="L67">							gp = new GeneralPath();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">						else if(input.mouseIsClicked(new Rectangle(42, 2, 36, 16))){</span>
+							//save the 
+						}
+<span class="nc bnc" id="L71" title="All 2 branches missed.">						else if(input.mouseIsClicked(new Rectangle(82, 2, 36, 16))){</span>
+							//undo the last step
+						}
+					
+				}
+				}//end big if y&lt;16
+				
+				
+				
+<span class="nc" id="L80">			}</span>
+		};
+		
+<span class="fc" id="L83">		addCommand(menu);</span>
+		
+		
+<span class="fc" id="L86">		newButton = new ButtonCommand(&quot;New&quot;,0,0) {</span>
+			@Override
+			public void init(){
+<span class="fc" id="L89">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L90">				setNextToAnother = true; </span>
+				
+<span class="fc" id="L92">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L96">				System.out.println(&quot;YO MAMA&quot;);</span>
+<span class="nc" id="L97">			}</span>
+		};
+		
+<span class="fc" id="L100">		saveButton = new ButtonCommand(&quot;Save&quot;,20, 0) {</span>
+			@Override
+			public void init(){
+<span class="fc" id="L103">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L104">				setNextToAnother = true; </span>
+<span class="fc" id="L105">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L109">				System.out.println(&quot;YO OTHA MAMA&quot;);</span>
+<span class="nc" id="L110">			}</span>
+		};
+		
+<span class="fc" id="L113">		undoButton = new ButtonCommand(&quot;Undo&quot;,20, 0) {</span>
+			@Override
+			public void init(){
+<span class="fc" id="L116">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L117">				setNextToAnother = true; </span>
+<span class="fc" id="L118">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L122">				System.out.println(&quot;UNDO YO MAMA&quot;);</span>
+<span class="nc" id="L123">			}</span>
+		};
+		
+<span class="fc" id="L126">		curvButton  = new ButtonCommand(&quot;Curve&quot;,20, 0) {</span>
+			
+		
+			
+			@Override
+			public void init(){
+<span class="fc" id="L132">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L133">				setNextToAnother = true; </span>
+<span class="fc" id="L134">				isFocused = false; //TODO</span>
+<span class="fc" id="L135">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L139">				System.out.println(&quot;CURVE YO MAMA&quot;);</span>
+<span class="nc" id="L140">			}</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L144">				super.draw(g);</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">				if(isFocused){</span>
+<span class="nc" id="L146">					setFade(g, .2f);</span>
+<span class="nc" id="L147">					g.setColor(Color.black);</span>
+<span class="nc" id="L148">					g.fillRect(x, y, width, height);</span>
+<span class="nc" id="L149">					setFade(g, 1f);</span>
+				}
+<span class="nc" id="L151">			}</span>
+		};
+<span class="fc" id="L153">		lineButton  = new ButtonCommand(&quot;Line&quot;,20, 0) {</span>
+			
+			@Override
+			public void init(){
+<span class="fc" id="L157">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L158">				setNextToAnother = true; </span>
+<span class="fc" id="L159">				isFocused = true;//TODO </span>
+<span class="fc" id="L160">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L164">				System.out.println(&quot;CURVE YO MAMA&quot;);</span>
+<span class="nc" id="L165">			}</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L169">				super.draw(g);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">				if(isFocused){</span>
+<span class="nc" id="L171">					setFade(g, .2f);</span>
+<span class="nc" id="L172">					g.setColor(Color.black);</span>
+<span class="nc" id="L173">					g.fillRect(x, y, width, height);</span>
+<span class="nc" id="L174">					setFade(g, 1f);</span>
+				}
+<span class="nc" id="L176">			}</span>
+		};
+		
+<span class="fc" id="L179">		rectButton  = new ButtonCommand(&quot;Rect&quot;,20, 0) {</span>
+<span class="fc" id="L180">			public boolean isChoosen = false; </span>
+			@Override
+			public void init(){
+<span class="fc" id="L183">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L184">				setNextToAnother = true; </span>
+<span class="fc" id="L185">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L189">				System.out.println(&quot;CURVE YO MAMA&quot;);</span>
+<span class="nc" id="L190">			}</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L194">				super.draw(g);</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">				if(isChoosen){</span>
+<span class="nc" id="L196">					setFade(g, .2f);</span>
+<span class="nc" id="L197">					g.setColor(Color.black);</span>
+<span class="nc" id="L198">					g.fillRect(x, y, width, height);</span>
+<span class="nc" id="L199">					setFade(g, 1f);</span>
+				}
+<span class="nc" id="L201">			}</span>
+		};
+		
+<span class="fc" id="L204">		ovalButton  = new ButtonCommand(&quot;Oval&quot;,20, 0) {</span>
+			 
+			@Override
+			public void init(){
+<span class="fc" id="L208">				setButtonColor(Color.WHITE);</span>
+<span class="fc" id="L209">				setNextToAnother = true; </span>
+<span class="fc" id="L210">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L214">				System.out.println(&quot;CURVE YO MAMA&quot;);</span>
+<span class="nc" id="L215">			}</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L219">				super.draw(g);</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">				if(isFocused){</span>
+<span class="nc" id="L221">					setFade(g, .2f);</span>
+<span class="nc" id="L222">					g.setColor(Color.black);</span>
+<span class="nc" id="L223">					g.fillRect(x, y, width, height);</span>
+<span class="nc" id="L224">					setFade(g, 1f);</span>
+				}
+<span class="nc" id="L226">			}</span>
+		};
+		
+		
+		
+<span class="fc" id="L231">		addCommand(newButton);</span>
+<span class="fc" id="L232">		addCommand(saveButton);</span>
+<span class="fc" id="L233">		addCommand(undoButton);</span>
+<span class="fc" id="L234">		addCommand(lineButton);</span>
+<span class="fc" id="L235">		addCommand(curvButton);</span>
+<span class="fc" id="L236">		addCommand(rectButton);</span>
+<span class="fc" id="L237">		addCommand(ovalButton);</span>
+		
+		
+<span class="fc" id="L240">	}</span>
+
+	@Override
+	public void draw(Graphics g) {
+<span class="nc" id="L244">	Graphics2D g2 = (Graphics2D)g;</span>
+	
+<span class="nc bnc" id="L246" title="All 4 branches missed.">	if(showMouseLine &amp;&amp; gp.getCurrentPoint() != null){</span>
+		
+<span class="nc" id="L248">		int x = (int)gp.getCurrentPoint().getX();</span>
+<span class="nc" id="L249">		int y = (int)gp.getCurrentPoint().getY();</span>
+<span class="nc" id="L250">		int px = Input.point.x; </span>
+<span class="nc" id="L251">		int py = Input.point.y;</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">		if(lineButton.isFocused)</span>
+<span class="nc" id="L253">		g2.drawLine(x, y, px, py);</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		else if(curvButton.isFocused){//TODO</span>
+<span class="nc" id="L255">			Point p = new Point((int)gp.getCurrentPoint().getX(), (int)gp.getCurrentPoint().getY());</span>
+<span class="nc" id="L256">			curveFromTopTo(g2, p,  Input.point, 180);</span>
+			//g2.drawArc(x- Math.abs(x-px), y - Math.abs(y-py)/2, Math.abs(x-px), Math.abs(y-py), 0, 90);
+			//g2.drawRect(x, y, Math.abs(x-px), Math.abs(y-py));
+			
+		}
+	
+	
+	}
+	
+<span class="nc" id="L265">	g2.draw(gp);</span>
+	
+	
+<span class="nc" id="L268">	}</span>
+
+	@Override
+	public void update() {
+<span class="nc bnc" id="L272" title="All 2 branches missed.">		if(input.keyIsClicked(Input.S))</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">			showMouseLine  =  !showMouseLine;</span>
+		
+<span class="nc bnc" id="L275" title="All 2 branches missed.">		if(input.keyIsClicked(Input.SPACE))</span>
+<span class="nc" id="L276">			gp.closePath();</span>
+		
+		
+<span class="nc bnc" id="L279" title="All 2 branches missed.">		if(Input.point.y &gt; 20){</span>
+			
+			
+<span class="nc bnc" id="L282" title="All 2 branches missed.">		 if(input.mouseIsClicked()){</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">			 if(gp.getCurrentPoint()==null)</span>
+<span class="nc" id="L284">				 gp.moveTo(Input.point.x, Input.point.y);</span>
+			  else 
+<span class="nc" id="L286">				 gp.lineTo(Input.point.x, Input.point.y);</span>
+			 }
+<span class="nc bnc" id="L288" title="All 2 branches missed.">		if(input.keyIsClicked(Input.SHIFT)){</span>
+			//remove the last step
+		}
+			 
+		}
+		
+<span class="nc" id="L294">	}//end big if</span>
+	
+	
+	private void curveFromTopTo(Graphics2D g, Point start, Point end, double arcAngel){
+		//curveTo( g,  start,  end,  arcAngel/2, arcAngel/50);	
+		
+		
+		
+		
+<span class="nc" id="L303">		double dy = end.y-start.y; </span>
+<span class="nc" id="L304">		double dx = end.x-start.x; </span>
+<span class="nc" id="L305">		double theta = Math.atan(Math.abs(dy/dx));</span>
+<span class="nc" id="L306">		theta *= (180/Math.PI);</span>
+<span class="nc" id="L307">		double base = Math.sqrt((dy*dy)+(dx*dx));</span>
+<span class="nc" id="L308">		double a = ((base*Math.PI));</span>
+		
+		//if(dy&gt;0.000000)
+		//	theta = -theta;
+		
+<span class="nc" id="L313">		g.drawArc((int) (start.x), (int)(start.y- dy/2) , (int)(dx), (int)(dy),180, (int)(180-theta));</span>
+<span class="nc" id="L314">		g.drawRect(start.x, start.y, (int)dx, (int)dy);</span>
+		
+		//g.drawArc(x, y, width, height, startAngle, arcAngle)
+		
+<span class="nc" id="L318">	}</span>
+	
+	
+	private void curveTo(Graphics2D g, Point start, Point end, double arcAngel, double dec){
+<span class="nc" id="L322">		double dy = end.y-start.y; </span>
+<span class="nc" id="L323">		double dx = end.x-start.x; </span>
+<span class="nc" id="L324">		double theta = Math.atan(Math.abs(dy/dx));</span>
+		
+<span class="nc" id="L326">		double base = Math.sqrt((dy*dy)+(dx*dx));</span>
+		
+		
+<span class="nc" id="L329">		double a = ((base*Math.PI)/50);</span>
+		
+<span class="nc bnc" id="L331" title="All 2 branches missed.">		if(arcAngel&lt;0.0000000){</span>
+<span class="nc" id="L332">			return;</span>
+			//g.drawLine(start.x, start.y, end.x, end.y);
+		}
+		else {
+<span class="nc" id="L336">			Point nxt = new Point();</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">			if(dy&gt;0.000000)</span>
+<span class="nc" id="L338">				theta = -theta;</span>
+<span class="nc" id="L339">			nxt.setLocation(start.x+a*Math.sin(arcAngel+theta),start.y+a*Math.cos(arcAngel+theta));</span>
+			
+<span class="nc" id="L341">			g.drawLine(start.x, start.y, nxt.x, nxt.y);</span>
+			
+<span class="nc" id="L343">			curveTo(g, nxt, end, arcAngel-dec, dec);</span>
+		}
+<span class="nc" id="L345">	}</span>
+
+}//end class
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Marker.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Marker.java</span></div><h1>Marker.java</h1><pre class="source lang-java linenums">package model;
+
+import java.util.ArrayList;
+
+/**
+ * Marks a mobility board using PieceMovement patterns 
+ * @author KLD
+ *
+ */
+public class Marker 
+{
+	private MobilityBoard mboard; 
+	
+	private ArrayList&lt;Integer&gt; killers; 
+	
+	public Marker(MobilityBoard mboard)
+<span class="fc" id="L17">	{</span>
+<span class="fc" id="L18">		this.mboard = mboard;</span>
+<span class="fc" id="L19">		killers = new ArrayList&lt;&gt;(); </span>
+<span class="fc" id="L20"> 	}</span>
+	
+	public int markPieceAt(int x, int y)
+	{
+<span class="fc" id="L24">		PieceMovement mv = mboard.getChessBoard().getPieceMovementAt(x, y);</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">		if(mv==null)</span>
+<span class="fc" id="L26">			return 0; </span>
+		
+<span class="fc" id="L28">		int team = mboard.getChessBoard().teamAt(x, y); </span>
+	
+<span class="fc" id="L30">		calebrate(team); </span>
+		
+<span class="fc" id="L32">		int marks = markMovement(mv,x,y,team);</span>
+		
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">		if(getMobilityBoard().getChessBoard().getPiece(x, y) == Piece.TYPE_KING)</span>
+<span class="nc" id="L35">			return marks; </span>
+		
+		//test if each move is safe 
+<span class="fc bfc" id="L38" title="All 2 branches covered.">		for(int i=0; i&lt;getMobilityBoard().getHeight(); i++)</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">			for(int j=0; j&lt;getMobilityBoard().getWidth(); j++)</span>
+			{
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">				if(getMobilityBoard().getTileValue(j, i) &gt; MobilityBoard.MARK_INVISIBLE)</span>
+				{
+<span class="nc bnc" id="L43" title="All 2 branches missed.">					if(!isSafeToMove(x, y, j, i, getMobilityBoard().getChessBoard(), team))</span>
+					{
+						//if(getMobilityBoard().getTileValue(j,i) &gt; )
+<span class="nc" id="L46">						marks--; </span>
+<span class="nc" id="L47">						getMobilityBoard().setTileValue(j, i, MobilityBoard.MARK_INVISIBLE); </span>
+						
+					}
+					else
+					{
+						//System.out.printf(&quot;Moving from %d %d to %d %d is SAFEe\n&quot;, x,y,j,i);
+					}
+				}
+			}
+		
+<span class="fc" id="L57">		return marks; </span>
+	}
+	
+	//duh
+	public MobilityBoard getMobilityBoard()
+	{
+<span class="fc" id="L63">		return mboard; </span>
+	}
+	
+	/**
+	 * Marks a mobility board with possible moves and attacks using all possible move patterns 
+	 * 
+	 * @param pieceMove movement to be marked 
+	 * @param cx center x if piece 
+	 * @param cy center y of piece 
+	 * @param team relative team
+	 * 
+	 * @return number of marks 
+	 * 
+	 * @see #markAvailableMove
+	 */
+	public int markMovement(PieceMovement pieceMove, int cx, int cy, int team)
+	{
+<span class="fc" id="L80">		int marks = 0; </span>
+<span class="fc" id="L81">		MovePattern pointer = pieceMove.getMovePattern(); </span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		while(pointer != null)</span>
+		{
+<span class="fc" id="L85">			marks +=  markMove(pointer, pieceMove.isContinued(),cx, cy, team);</span>
+			
+<span class="fc" id="L87">			pointer = pointer.next; </span>
+		}
+		
+<span class="fc" id="L90">		marks += pieceMove.specialMarking(mboard, cx, cy, team); </span>
+		
+<span class="fc" id="L92">		return marks; </span>
+	}
+	
+	/**
+	 * @param move
+	 * @param cx
+	 * @param cy
+	 * @param team
+	 * @return
+	 */
+	public int markMove(MovePattern move, boolean isCon, int cx, int cy, int team)
+	{
+<span class="fc" id="L104">		int marks = 0;  </span>
+		
+<span class="fc" id="L106">		int px = move.x + cx; </span>
+<span class="fc" id="L107">		int py = move.y + cy; </span>
+		
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		if(mboard.markMove(px , py))</span>
+		{
+<span class="fc" id="L111">				marks++; </span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">				if(isCon)</span>
+<span class="nc" id="L113">					marks += recursiveMarking(cx, cy, move.x, move.y, team); </span>
+				
+		}//end markMove
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		else if (mboard.markAttack(px, py, team))</span>
+<span class="fc" id="L117">			marks++; </span>
+		
+<span class="fc" id="L119">		return marks; </span>
+	}
+	
+	/**
+	 * Repeatedly marks movable areas and marks attack when appropriate. 
+	 * @param cx center x 
+	 * @param cy center y 
+	 * @param ox offset x 
+	 * @param oy offset y 
+	 * @param team team 
+	 * @return number of marked (including attack) 
+	 */ //PSYCH! it's not even recursive! 
+	private int recursiveMarking(int cx, int cy, int ox, int oy, int team)
+	{
+		//
+<span class="nc" id="L134">		int marks = 0 ;</span>
+<span class="nc" id="L135">		int multyplier = 2; </span>
+		
+		//recursive x, y 
+<span class="nc" id="L138">		int rx = multyplier*ox + cx;</span>
+<span class="nc" id="L139">		int ry = multyplier*oy + cy;</span>
+		//System.out.printf(&quot;marked: r:%d %d  o:%d %d c:%d %d m:%d\n&quot;,rx,ry, ox,oy, cx,cy, multyplier);
+
+		
+<span class="nc bnc" id="L143" title="All 2 branches missed.">		while(mboard.getChessBoard().isEmpty(rx, ry))</span>
+		{
+<span class="nc bnc" id="L145" title="All 2 branches missed.">			marks += (mboard.markMove(rx,ry))? 1 : 0 ; </span>
+			 
+<span class="nc" id="L147">			rx = ++multyplier*ox + cx;</span>
+<span class="nc" id="L148">			ry =   multyplier*oy + cy;</span>
+		}//end while
+		
+<span class="nc bnc" id="L151" title="All 2 branches missed.">		marks += (mboard.markAttack(rx, ry, team))? 1 : 0 ; </span>
+		
+<span class="nc bnc" id="L153" title="All 2 branches missed.">		if(team == 0)</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">			if(mboard.getChessBoard().getPiece(rx, ry) == Piece.TYPE_KING)</span>
+			{
+<span class="nc" id="L156">				rx = ++multyplier*ox + cx;</span>
+<span class="nc" id="L157">				ry = multyplier*oy + cy;</span>
+				//
+<span class="nc bnc" id="L159" title="All 2 branches missed.">				marks += (mboard.markMove(rx,ry))? 1 : 0 ;</span>
+			}
+		
+<span class="nc" id="L162">		return marks; </span>
+	}
+	
+	
+	private boolean isSafeToMove(int fromX, int fromY, int toX, int toY, ChessBoard cboard, int team)
+	{
+<span class="nc" id="L168">		int pieceFrom = cboard.getTileValue(fromX, fromY); </span>
+<span class="nc" id="L169">		int pieceTo = cboard.getTileValue(toX, toY); </span>
+		
+		//move piece 
+<span class="nc" id="L172">		cboard.setTileValue(toX, toY, pieceFrom); </span>
+<span class="nc" id="L173">		cboard.setTileValue(fromX, fromY, 0); </span>
+		
+		//boolean isThreatened = false ; // = calebrate(team).size() &gt; 0 ; 
+		
+<span class="nc" id="L177">		int pos = findKing(team);</span>
+<span class="nc" id="L178">		int kx = pos%getMobilityBoard().getWidth(); </span>
+<span class="nc" id="L179">		int ky = pos/getMobilityBoard().getHeight(); </span>
+		
+		
+<span class="nc bnc" id="L182" title="All 2 branches missed.">		for(int i=0; i &lt; getMobilityBoard().getHeight(); i++)</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">			for(int j=0; j &lt; getMobilityBoard().getWidth(); j++)</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">				if(cboard.teamAt(j, i) + team == 0)</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">					if(canPieceKillKing(cboard, j, i, kx, ky))</span>
+					{
+<span class="nc" id="L187">						cboard.setTileValue(toX, toY, pieceTo); </span>
+<span class="nc" id="L188">						cboard.setTileValue(fromX, fromY, pieceFrom); </span>
+<span class="nc" id="L189">						return false; </span>
+					}
+		
+		
+		//reverse movement 
+<span class="nc" id="L194">		cboard.setTileValue(toX, toY, pieceTo); </span>
+<span class="nc" id="L195">		cboard.setTileValue(fromX, fromY, pieceFrom); </span>
+		
+<span class="nc" id="L197">		return true; </span>
+	}
+	
+	private boolean canPieceKillKing(ChessBoard cboard, int cx, int cy, int kx, int ky)
+	{
+<span class="nc" id="L202">		MovePattern pointer = cboard.getPieceMovementAt(cx, cy).getMovePattern(); </span>
+		
+		//it's a fking pawn
+<span class="nc bnc" id="L205" title="All 2 branches missed.">		if(pointer == null)</span>
+		{
+<span class="nc" id="L207">			Board b = new MobilityBoard(cboard);</span>
+			
+<span class="nc" id="L209">			cboard.getPieceMovementAt(cx, cy).specialAttackMark(b, 1, cx, cy, 0);</span>
+			
+<span class="nc bnc" id="L211" title="All 2 branches missed.">			return b.getTileValue(kx, ky) &gt; 0; </span>
+		}
+		
+		
+<span class="nc bnc" id="L215" title="All 2 branches missed.">		while(pointer != null)</span>
+		{
+			//track++; 
+<span class="nc" id="L218">			int itt = 0; </span>
+			int ox ;
+			int oy ;
+	
+			do{
+<span class="nc" id="L223">				itt++; </span>
+<span class="nc" id="L224">				ox = cx + pointer.x * itt; </span>
+<span class="nc" id="L225">				oy = cy + pointer.y * itt; </span>
+				
+				//System.out.printf(&quot;o:%d %d k:%d %d\n&quot;,ox,oy, kingX, kingY);
+				
+<span class="nc bnc" id="L229" title="All 4 branches missed.">				if(ox == kx &amp;&amp; oy == ky)</span>
+<span class="nc" id="L230">					return true; </span>
+				
+<span class="nc bnc" id="L232" title="All 4 branches missed.">			}while(cboard.getPieceMovementAt(cx, cy).isContinued() &amp;&amp; cboard.isEmpty(ox, oy)); </span>
+			
+			//if(mboard.getChessBoard().teamAt(ox, oy)+team == 0)
+			//mark all points
+
+			//see if king is marked 
+<span class="nc" id="L238">			pointer = pointer.next; </span>
+<span class="nc" id="L239">		}</span>
+		
+<span class="nc" id="L241">		return false; </span>
+	}
+	
+	/**
+	 * Not gonna correct the spelling at this point. This will locate kings of given team and find piece if enemy team that could possibly kill king. 
+	 * 
+	 * The killers are used later while marking movement. 
+	 * @param team
+	 * @return list of killers 
+	 * 
+	 * 
+	 */
+	public ArrayList&lt;Integer&gt; calebrate(int team)
+	{
+<span class="fc" id="L255">		MobilityBoard threat = new MobilityBoard(mboard.getChessBoard()); </span>
+<span class="fc" id="L256">		Marker marker = new Marker(threat); </span>
+		
+<span class="fc" id="L258">		ArrayList&lt;Integer&gt; killers = new ArrayList&lt;Integer&gt;();</span>
+		
+<span class="fc" id="L260">		int pos = findKing(team);</span>
+<span class="fc" id="L261">		int kingX = pos%getMobilityBoard().getWidth(); </span>
+<span class="fc" id="L262">		int kingY = pos/getMobilityBoard().getHeight(); </span>
+		
+		
+		//find king 
+<span class="fc bfc" id="L266" title="All 2 branches covered.">		for(int i=0; i&lt;threat.getHeight(); i++)</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			for(int j=0; j&lt;threat.getWidth(); j++)</span>
+			{
+				
+<span class="fc bfc" id="L270" title="All 2 branches covered.">				if(threat.getChessBoard().teamAt(j, i) == -team)</span>
+				{
+<span class="fc" id="L272">					marker.markMovement(threat.getChessBoard().getPieceMovementAt(j, i), j, i, -team);  </span>
+				}
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">				if(threat.getTileValue(kingX, kingY) &gt; 0)</span>
+				{
+<span class="nc" id="L276">					killers.add(i*8 + j); // i/8 j%8 don't forget </span>
+<span class="nc" id="L277">					threat.setTileValue(kingX, kingY, 0);  </span>
+				}
+			}
+		
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">		if(killers.size() &gt; 0)</span>
+<span class="nc" id="L282">			threat.setTileValue(kingX, kingY, 1);  </span>
+		
+<span class="fc" id="L284">		this.killers = killers; </span>
+		
+<span class="fc" id="L286">		return killers; </span>
+	}
+	
+	public boolean isThreatened()
+	{
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">		return killers.size() &gt; 0; </span>
+	}
+	
+	private int findKing(int team)
+	{
+<span class="fc bfc" id="L296" title="All 2 branches covered.">		for(int i=0; i&lt;getMobilityBoard().getHeight(); i++)</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">			for(int j=0; j&lt;getMobilityBoard().getWidth(); j++)</span>
+			{
+<span class="fc bfc" id="L299" title="All 4 branches covered.">				if(getMobilityBoard().getChessBoard().getPiece(j, i) == Piece.TYPE_KING &amp;&amp; getMobilityBoard().getChessBoard().teamAt(j, i) == team)</span>
+				{
+<span class="fc" id="L301">					return i*getMobilityBoard().getHeight() + j; </span>
+				}
+			}
+<span class="fc" id="L304">		return -1; </span>
+	}
+	
+	/**
+	 * 
+	 * 
+	 * NOTE: Check after move is made 
+	 * @param team team to check for 
+	 * @return
+	 */
+	public boolean isCheck(int team)
+	{
+<span class="fc" id="L316">		MobilityBoard mb = new MobilityBoard(getMobilityBoard().getChessBoard()); </span>
+<span class="fc" id="L317">		Marker m = new Marker(mb); </span>
+<span class="fc" id="L318">		m.calebrate(team); </span>
+		
+<span class="fc" id="L320">		return  m.isThreatened();</span>
+	}
+	
+	/**
+	 * 
+	 * 
+	 * NOTE: Check after move is made 
+	 * @param team team to check for 
+	 * @return
+	 */
+	public boolean isCheckMate(int team)
+	{
+<span class="fc" id="L332">		int pos  = findKing(team); </span>
+<span class="fc" id="L333">		int x = pos%getMobilityBoard().getWidth(); </span>
+<span class="fc" id="L334">		int y = pos/getMobilityBoard().getHeight(); </span>
+		
+<span class="fc" id="L336">		MobilityBoard mb = new MobilityBoard(getMobilityBoard().getChessBoard()); </span>
+<span class="fc" id="L337">		Marker m = new Marker(mb); </span>
+<span class="fc" id="L338">		m.calebrate(team); </span>
+		
+<span class="pc bpc" id="L340" title="2 of 4 branches missed.">		return m.markPieceAt(x, y)==0 &amp;&amp; m.isThreatened(); </span>
+		
+	}
+	
+	public boolean didLose(int team)
+	{
+<span class="fc" id="L346">		getMobilityBoard().reset();	</span>
+		
+<span class="fc" id="L348">		int sum =0; </span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">		for(int i=0; i&lt;8; i++)</span>
+<span class="fc bfc" id="L350" title="All 2 branches covered.">			for(int j=0; j&lt;8; j++)</span>
+			{
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">				if(getMobilityBoard().getChessBoard().teamAt(j, i) == team)</span>
+				{
+<span class="nc" id="L354">					int pieceMove = markPieceAt(j, i); </span>
+					
+					//System.out.println(&quot;Piece at &quot; + j + i + &quot; has &quot; + pieceMove);
+					
+<span class="nc" id="L358">					sum += pieceMove; </span>
+<span class="nc" id="L359">					getMobilityBoard().reset();	</span>
+				}
+			}
+		
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">		return sum == 0; </span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

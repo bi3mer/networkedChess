@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ChessBoard.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">ChessBoard.java</span></div><h1>ChessBoard.java</h1><pre class="source lang-java linenums">package model;
+
+import factory.PieceFactory;
+
+/**
+ * Hold piece values 
+ * 
+ * @author KLD
+ * 
+ * @See #Piece
+ */
+public class ChessBoard extends Board 
+{
+	private Piece[] pieces; 
+	
+	/**
+	 * Initializes board and creates pieces 
+	 * 
+	 * TODO set up about with pieces 
+	 */
+	
+	private int lastKilled; 
+	
+	public ChessBoard() 
+	{
+<span class="fc" id="L26">		super(8,8);</span>
+		
+		//define pieces 
+		
+<span class="fc" id="L30">		PieceFactory pissFactory = PieceFactory.instence(); </span>
+		
+<span class="fc" id="L32">		pieces = new Piece[7];</span>
+		
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		for(int i=0; i&lt;pieces.length; i++)</span>
+		{
+<span class="fc" id="L36">			pieces[i] = pissFactory.factor(i+1); </span>
+		}
+		
+		//set up pieces. &lt;-- Not my job
+<span class="fc" id="L40">	}</span>
+	
+	public int movePiece(int fromX, int fromY, int toX, int toY)
+	{
+<span class="fc" id="L44">		lastKilled = getTileValue(toX, toY); </span>
+		
+<span class="fc" id="L46">		int piece = getPiece(fromX, fromY); </span>
+		
+<span class="fc" id="L48">		int dyingTeam = teamAt(toX, toY); </span>
+<span class="fc" id="L49">		int dyingPiece = getPiece(toX, toY); </span>
+		
+<span class="fc" id="L51">		setTileValue(toX, toY, piece*teamAt(fromX,fromY)); </span>
+<span class="fc" id="L52">		setTileValue(fromX, fromY, 0);</span>
+		
+		//castling 
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if(piece == Piece.TYPE_KING)</span>
+		{
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">			if(Math.abs(toX-fromX) &gt; 1)</span>
+			{
+				//math for figuring out witch of four castles to move
+				//NOTE that marking will only happen if it's possible 
+<span class="fc" id="L61">				int y = 8 - (9 - (getTileValue(toX, toY)))%9;</span>
+<span class="fc" id="L62">				int delta = toX-fromX;	</span>
+<span class="fc" id="L63">				movePiece(((9-delta)%11), y,((delta+2)/2)+3, y);</span>
+			}
+			//mobilityBoard.markKingMoved(teamAt(fromX, fromY)); 
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">			return teamAt(toX, toY) == 1? 2 : 1; </span>
+		}
+		
+		
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">		if(dyingPiece != Piece.TYPE_ROOK)</span>
+<span class="pc bpc" id="L71" title="1 of 4 branches missed.">			if((toY==0 || toY==7))</span>
+			{
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">					if(toX == 0)</span>
+					{
+<span class="nc bnc" id="L75" title="All 2 branches missed.">						return dyingTeam == 1? 5 : 3; //mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_LEFT); </span>
+					}
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">					else if(toX == 7)</span>
+					{
+<span class="nc bnc" id="L79" title="All 2 branches missed.">						return dyingTeam == 1? 6 : 4; //mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_RIGHT); </span>
+					}	
+			}
+		
+		//TODO mark if cast,  I can't remember what this meant 
+<span class="fc bfc" id="L84" title="All 2 branches covered.">		if(piece == Piece.TYPE_ROOK)	</span>
+<span class="pc bpc" id="L85" title="3 of 4 branches missed.">			if(fromY==0 || fromY==7)</span>
+			{
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">					if(fromX == 0)</span>
+					{
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">						return teamAt(toX, toY) == 1? 5 : 3; //mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_LEFT); </span>
+					}
+<span class="nc bnc" id="L91" title="All 2 branches missed.">					else if(fromX == 7)</span>
+					{
+<span class="nc bnc" id="L93" title="All 2 branches missed.">						return teamAt(toX, toY) == 1? 6 : 4; //mobilityBoard.markRookMoved(teamAt(fromX, fromY), MobilityBoard.TAG_RIGHT); </span>
+					}	
+			}
+		
+<span class="fc" id="L97">			return 0; </span>
+	}
+	
+	/**
+	 * Undo's last killed piece 
+	 * @param fromX last piece moved from X co-od 
+	 * @param fromY last piece moved from  Y co-od 
+	 * @param toX last piece killed at X co-od 
+	 * @param toY last piece killed at Y co-od 
+	 */
+	public void untoLastMove(int fromX, int fromY, int toX, int toY)
+	{
+<span class="fc" id="L109">		setTileValue(fromX, fromX, getTileValue(toX, toY)); </span>
+<span class="fc" id="L110">		setTileValue(toX, toY, lastKilled);</span>
+<span class="fc" id="L111">	}</span>
+
+	/**
+	 * to be deleted (or set private) Do not use 
+	 * 
+	 * @see #movePiece(int, int, int, int)
+	 */
+	public void placePiece(int x, int y, int pieceType)
+	{
+<span class="fc" id="L120">		setTileValue(x,y,pieceType); </span>
+<span class="fc" id="L121">	}</span>
+
+	/**
+	 * @param x coordinate 
+	 * @param y coordinate
+	 * @return Team value of given piece at position, 0 if position is empty;teamless. 
+	 */
+	public int teamAt(int x, int y)
+	{
+<span class="fc bfc" id="L130" title="All 2 branches covered.">		if(getTileValue(x, y) &gt; Board.EMPTY)</span>
+<span class="fc" id="L131">			return 1; </span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">		else if (getTileValue(x, y) &lt; Board.EMPTY)</span>
+<span class="fc" id="L133">			return -1; </span>
+		
+<span class="fc" id="L135">		return 0; </span>
+	}
+	
+	/**
+	 * Marks a mobility board with given piece 
+	 * 
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @param mboard markable board 
+	 */
+	public int selectForMark(int x, int y, Marker marker)
+	{
+		//int pieceValue = getPiece(x, y); 
+		
+<span class="nc bnc" id="L149" title="All 2 branches missed.">		if(isOccupied(x, y))</span>
+		{
+<span class="nc" id="L151">			int marks = marker.markPieceAt(x, y); </span>
+<span class="nc" id="L152">			return marks; </span>
+		}
+		
+<span class="nc" id="L155">		return 0; </span>
+	}
+		
+	/**
+	 * return piece values 
+	 * @param x x co-ord 
+	 * @param y y co-ord 
+	 * @return 0 if no piece, otherwise piece value 
+	 * 
+	 * @see Piece
+	 */
+	public int getPiece(int x, int y)
+	{
+<span class="fc" id="L168">		return Math.abs(getTileValue(x, y));</span>
+	}
+
+	public PieceMovement getPieceMovementAt(int x, int y)
+	{
+<span class="fc bfc" id="L173" title="All 2 branches covered.">		if(getPiece(x,y) == 0)</span>
+<span class="fc" id="L174">			return null; </span>
+<span class="fc" id="L175">		return pieces[getPiece(x,y)-1].movement; </span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

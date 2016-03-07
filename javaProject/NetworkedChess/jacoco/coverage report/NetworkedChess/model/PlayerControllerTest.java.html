@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PlayerControllerTest.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">PlayerControllerTest.java</span></div><h1>PlayerControllerTest.java</h1><pre class="source lang-java linenums">package model;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Test;
+
+import GamePanels.MultiplayerChessGame;
+import KLD.Game;
+
+<span class="fc" id="L14">public class PlayerControllerTest {</span>
+
+	@Test
+	public void PlayerControllerTest() {
+		
+<span class="fc" id="L19">		ChessPlayerController conti = new ChessPlayerController();</span>
+<span class="fc" id="L20">		conti.main(null); // main exception test</span>
+<span class="fc" id="L21">		conti.getTeam();</span>
+		try {
+<span class="nc" id="L23">			JSONObject obj = conti.createAccount(&quot;Dude&quot;, &quot;where's my car&quot;);</span>
+<span class="fc" id="L24">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L26">			e.printStackTrace();</span>
+<span class="nc" id="L27">		}</span>
+		
+		//test worked the first time, once an account exists, a new account needs a different name
+		//this tes will always fail on the second coverage run
+		
+		try {
+<span class="fc" id="L33">			JSONObject obj = conti.login(&quot;Dude&quot;, &quot;where's my car&quot;);</span>
+<span class="nc" id="L34">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L36">			e.printStackTrace();</span>
+<span class="fc" id="L37">		}</span>
+		//login test for an existing account
+		
+		try {
+<span class="fc" id="L41">			conti.requestUndo();</span>
+<span class="nc" id="L42">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L44">			e.printStackTrace();</span>
+<span class="fc" id="L45">		}</span>
+		
+		try {
+<span class="fc" id="L48">			conti.acceptOrDenyUndo(true);</span>
+<span class="nc" id="L49">		} catch (JSONException | IOException | InterruptedException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L51">			e1.printStackTrace();</span>
+<span class="fc" id="L52">		}</span>
+		try {
+<span class="fc" id="L54">			conti.acceptOrDenyUndo(false);</span>
+<span class="nc" id="L55">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L57">			e.printStackTrace();</span>
+<span class="fc" id="L58">		}</span>
+		
+		//undo server call tests
+		
+		try {
+<span class="fc" id="L63">			conti.forfeit();</span>
+<span class="nc" id="L64">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L66">			e.printStackTrace();</span>
+<span class="fc" id="L67">		}</span>
+		//forfeit server call test
+		
+		try {
+<span class="fc" id="L71">			conti.leaveQueue();</span>
+<span class="nc" id="L72">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L74">			e.printStackTrace();</span>
+<span class="fc" id="L75">		}</span>
+		//Queue resolve test
+		
+<span class="fc" id="L78">		JSONObject from = new JSONObject();</span>
+<span class="fc" id="L79">		JSONObject to = new JSONObject();</span>
+		
+		try {
+<span class="fc" id="L82">			conti.addMove(from, to);</span>
+<span class="nc" id="L83">		} catch (JSONException | IOException | InterruptedException e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L85">			e.printStackTrace();</span>
+<span class="fc" id="L86">		}</span>
+		//Movement tracking to server test
+<span class="fc" id="L88">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

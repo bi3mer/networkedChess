@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package model;
+
+/**
+ * A two dimensional integer grid that can identifies empty and non empty tiles as well as modifying content within bounds. 
+ * @author KLD
+ */
+public class Board 
+{
+	/**
+	 * holds board values 
+	 */
+	private int[][] board; 
+	
+	/**
+	 * holds width
+	 */
+	private int width; 
+	
+	/**
+	 *  holds height 
+	 */
+	private int height; 
+	
+	/**
+	 * empty
+	 */
+	public final static int EMPTY = 0; 
+	
+	/**
+	 *  Sets board size and initialize values with given value
+	 *  
+	 *   @param fill filled value 
+	 */
+	public Board(int width, int height, int fill)
+<span class="fc" id="L35">	{</span>
+<span class="fc" id="L36">		this.width = width; </span>
+<span class="fc" id="L37">		this.height = height; </span>
+<span class="fc" id="L38">		board = new int[height][width]; </span>
+		
+<span class="fc bfc" id="L40" title="All 2 branches covered.">		for(int i=0; i&lt;height; i++)</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">			for(int j=0; j&lt;width; j++)</span>
+<span class="fc" id="L42">				board[i][j]=fill; </span>
+<span class="fc" id="L43">	}</span>
+	
+	/**
+	 *  Sets board size and initialize values with 0 
+	 */
+	public Board(int width, int height)
+	{
+<span class="fc" id="L50">		this(width, height, EMPTY); </span>
+<span class="fc" id="L51">	}</span>
+	
+	/**
+	 * Sets value at given position 
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @param value true if position is in bounds, otherwise false
+	 */
+	public boolean setTileValue(int x, int y, int value)
+	{
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		if(isOutBounds(x,y))</span>
+<span class="fc" id="L62">			return false; </span>
+		
+<span class="fc" id="L64">		board[y][x] = value; </span>
+<span class="fc" id="L65">		return true; </span>
+	}
+	
+	/**
+	 *  Returns value of given position 
+	 * @param x coordinate
+	 * @param y coordinate
+	 * @return 0 if position is out of bounds, otherwise stored tile value
+	 */
+	public int getTileValue(int x, int y)
+	{
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		if(isInBounds(x,y))</span>
+<span class="fc" id="L77">			return board[y][x]; </span>
+		
+<span class="fc" id="L79">		return 0; </span>
+	}
+
+	/**
+	 * @param x coordinate 
+	 * @param y coordinate
+	 * @return true if tile at given position is empty
+	 */
+	public boolean isEmpty(int x, int y)
+	{
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		if(isInBounds(x, y))</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		return (board[y][x] == EMPTY);</span>
+		
+<span class="fc" id="L92">		return false; </span>
+	}
+
+	/**
+	 * @param x coordinate 
+	 * @param y coordinate
+	 * @return true if tile at given position is not empty
+	 */
+	public boolean isOccupied(int x, int y)
+	{
+<span class="fc bfc" id="L102" title="All 2 branches covered.">		if(isInBounds(x, y))</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">			return (board[y][x] != EMPTY);</span>
+	
+<span class="fc" id="L105">		return false; </span>
+	}
+	
+	/**
+	 * @return board width 
+	 */
+	public int getWidth()
+	{
+<span class="fc" id="L113">		return width; </span>
+	}
+	
+	/**
+	 * @return board height 
+	 */
+	public int getHeight()
+	{
+<span class="fc" id="L121">		return height; </span>
+	}
+
+	/**
+	 * @param x x coordinate 
+	 * @param y y coordinate 
+	 * @return true if position is out of board bounds, otherwise false
+	 */
+	public boolean isOutBounds(int x, int y)
+	{
+<span class="fc bfc" id="L131" title="All 8 branches covered.">		return (x &lt; 0 || x &gt;= width || y &lt; 0 || y &gt;= height); </span>
+	}
+	
+	/**
+	 * @param x x coordinate 
+	 * @param y y coordinate 
+	 * @return true if position is within board bounds, otherwise false
+	 */
+	public boolean isInBounds(int x, int y)
+	{
+<span class="fc bfc" id="L141" title="All 2 branches covered.">		return !isOutBounds(x, y); </span>
+	}
+	
+	/**
+	 * Fills the board with a number 
+	 * @param fill filler 
+	 */
+	public void fill(int fill)
+	{
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		for(int i = 0; i &lt; height; i++)</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">			for(int j = 0; j &lt; width; j++)</span>
+<span class="fc" id="L152">				board[i][j] = fill; 	</span>
+<span class="fc" id="L153">	}</span>
+	
+	/**
+	 * adds the passed board value to it's value with corresponding position 
+	 * @param b
+	 */
+	public void add(Board b)
+	{
+<span class="fc bfc" id="L161" title="All 2 branches covered.">		for(int i = 0; i &lt; height; i++)</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">			for(int j = 0; j &lt; width; j++)</span>
+<span class="fc" id="L163">				board[i][j] += b.board[i][j]; 	</span>
+<span class="fc" id="L164">	}</span>
+	
+	/**
+	 * multiply the passed board value to it's value with corresponding position 
+	 * @param b
+	 * @retrurn number of changed values 
+	 */
+	public int multiply(Board b)
+	{
+<span class="fc" id="L173">		int changes = 0; </span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">		for(int i = 0; i &lt; height; i++)</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">			for(int j = 0; j &lt; width; j++)</span>
+			{
+<span class="fc" id="L177">				int previous = board[i][j]; </span>
+<span class="fc" id="L178">				board[i][j] *= b.board[i][j]; 	</span>
+				
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">				if(board[i][j]!=previous)</span>
+<span class="fc" id="L181">					changes++; </span>
+			}
+<span class="fc" id="L183">		return changes; </span>
+	}
+	
+	/**
+	 * @return a string image of the board with integer values
+	 * center point being like in real life 
+	 */
+	public String toString()
+	{
+<span class="fc" id="L192">		String build = &quot;&quot;; </span>
+		
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		for(int i =height-1; i&gt;=0; i--)</span>
+		{
+<span class="fc bfc" id="L196" title="All 2 branches covered.">			for(int j=0; j&lt;width; j++)</span>
+			{
+<span class="fc" id="L198">				build+= String.format(&quot;%2d &quot;, board[i][j]); </span>
+			}
+<span class="fc" id="L200">			build+=&quot;\n&quot;;</span>
+		}
+		
+<span class="fc" id="L203">		return build; </span>
+	}
+	
+	/**
+	 * Return a cloned object 
+	 */
+	public Board clone()
+	{
+<span class="fc" id="L211">		Board clone = new Board(width, height); </span>
+		
+<span class="fc bfc" id="L213" title="All 2 branches covered.">		for(int i=0; i&lt;height; i++)</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">			for(int j=0; j&lt;width; j++)</span>
+<span class="fc" id="L215">				clone.board[i][j] = board[i][j]; </span>
+ 		
+<span class="fc" id="L217">		return clone; </span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

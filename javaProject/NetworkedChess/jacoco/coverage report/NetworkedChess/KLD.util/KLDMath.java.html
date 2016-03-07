@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>KLDMath.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.util</a> &gt; <span class="el_source">KLDMath.java</span></div><h1>KLDMath.java</h1><pre class="source lang-java linenums">package KLD.util;
+
+import java.util.Scanner;
+
+<span class="fc" id="L5">public class KLDMath {</span>
+	
+	final static boolean SHOWSTEPS = false; 
+<span class="fc" id="L8">	static int numberCounter =0; </span>
+	
+		public static void main(String[] argv) {
+		 
+<span class="nc" id="L12">			final Scanner input = new Scanner(System.in); </span>
+			
+			while(true){
+<span class="nc" id="L15">			System.out.println(&quot;Enter an equation&quot;);</span>
+			 
+			
+<span class="nc" id="L18">			solve(input.nextLine());</span>
+			 
+			}
+		
+		
+			//input.close();
+			
+	}//end main
+	
+	static void solve(String s){
+		
+<span class="fc" id="L29">		s = s.replaceAll(&quot; &quot;, &quot;&quot;); </span>
+		
+			
+<span class="fc" id="L32">		System.out.println(&quot;Answer is &quot;+  calc(s));</span>
+		
+<span class="fc" id="L34">	}</span>
+	
+	
+	
+	static int calc(String s){
+<span class="fc" id="L39">		s +=&quot; &quot;; </span>
+		
+		if(SHOWSTEPS)
+			System.out.println(&quot;Solving &quot;+ s);
+		
+		//get length of numbers. 
+<span class="fc" id="L45">		String temp  = s;</span>
+<span class="fc" id="L46">		temp =temp.replaceAll(&quot;-?\\d+&quot;, &quot;_&quot;);</span>
+		
+		//numbers 
+<span class="fc" id="L49">		 int[] numberList = new int[temp.split(&quot;_&quot;).length-1]; </span>
+<span class="fc" id="L50">		 System.out.println(&quot;Length of numberList: &quot; + (temp.split(&quot;_&quot;).length-1)); </span>
+<span class="fc" id="L51">		int np=0; </span>
+		
+		//operators
+<span class="fc" id="L54">		char[] operatorList = new char[temp.split(&quot;_&quot;).length-2]; </span>
+<span class="fc" id="L55">		int op =0; </span>
+		
+		//chars 
+<span class="fc" id="L58">		char[] charList = s.toCharArray();</span>
+<span class="fc" id="L59">		int cp = 0; </span>
+<span class="fc" id="L60">		char current = charList[cp]; </span>
+		
+<span class="fc" id="L62">		boolean niga = false; </span>
+		
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">		if(current=='-'){</span>
+<span class="nc" id="L65">			niga = true; </span>
+<span class="nc" id="L66">			current = charList[++cp];</span>
+		}
+		
+		
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		while(current!=' '){</span>
+			
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">			if(current=='('){</span>
+<span class="nc" id="L73">				String sec=  &quot;&quot;; </span>
+<span class="nc" id="L74">				cp++; </span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">				while(current != ')'){</span>
+<span class="nc" id="L76">					sec += current; </span>
+<span class="nc" id="L77">					current = charList[++cp]; </span>
+				}
+				
+<span class="nc" id="L80">				numberList[++np] =  calc(sec);</span>
+				
+			}//end if () 
+			
+			
+<span class="fc" id="L85">				int sum=0; </span>
+				
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">				if(isDigit(current)){</span>
+					//System.out.println(&quot;my first digit= &quot;+ current);
+<span class="fc" id="L89">					sum= Integer.parseInt(&quot;&quot;+current);</span>
+<span class="fc" id="L90">					current = charList[++cp];</span>
+					
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">					while(isDigit(current)){</span>
+					
+<span class="nc" id="L94">						sum *= 10;</span>
+<span class="nc" id="L95">						sum+=Integer.parseInt(&quot;&quot;+current);</span>
+						
+				
+<span class="nc" id="L98">						current = charList[++cp];</span>
+						
+					}
+					///System.out.println(&quot;found number= &quot;+ sum);
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">					numberList[np++] = (niga)? -sum: sum; </span>
+<span class="fc" id="L103">					numberCounter++; </span>
+<span class="fc" id="L104">					niga = false; </span>
+				}
+				
+<span class="fc bfc" id="L107" title="All 2 branches covered.">				if(isOpetator(current)){</span>
+					
+<span class="fc" id="L109">					operatorList[op++] = current;</span>
+					
+<span class="fc" id="L111">					current = charList[++cp];</span>
+					
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">					if(charList[cp]=='-'){</span>
+<span class="nc" id="L114">						niga = true; </span>
+<span class="nc" id="L115">						current = charList[++cp];</span>
+					}
+					
+					
+				}
+			
+			
+<span class="fc" id="L122">		}//end awesome while</span>
+		/*
+		if(s.contains(&quot;(&quot;)){
+			if(SHOWSTEPS)
+			System.out.println(&quot;found  &quot;+ &quot;(&quot;);
+			
+			int firstIndex = s.indexOf(&quot;(&quot;); 
+			int lastIndex =  s.indexOf( &quot;)&quot;); 
+			
+			String firstPart = s.substring(0, firstIndex);
+			String middlePart = s.substring(firstIndex+1, lastIndex);
+			String lastPart = &quot;&quot;; 
+			if(lastIndex != s.length())
+				 lastPart = s.substring(lastIndex+1, s.length());
+			//2 + 4 * (2+3)
+			if(SHOWSTEPS){
+				System.out.println(&quot;firstPart &quot;+ firstPart);
+				System.out.println(&quot;middlePart &quot;+ middlePart);
+				System.out.println(&quot;lastPart &quot;+ lastPart);
+			}
+			
+			
+			return calc(firstPart+ calc(middlePart)+lastPart);
+			
+		}
+	
+		else if(s.contains(&quot;*&quot;) || s.contains(&quot;/&quot;) || s.contains(&quot;+&quot;) || s.contains(&quot;-&quot;)){
+			
+			if(SHOWSTEPS)
+			System.out.println(&quot;found an oporator &quot;);
+			
+			String sum ;
+			String sub; 
+			String o = &quot;&quot; ; 
+			
+			if(s.contains(&quot;*&quot;)){
+				o=&quot;*&quot;;
+			}else if (s.contains(&quot;/&quot;)){
+				o=&quot;/&quot;;
+			}else if (s.contains(&quot;-&quot;)){
+				o=&quot;-&quot;;
+			}else if (s.contains(&quot;+&quot;)){
+				o=&quot;+&quot;;
+			}
+			
+			int indexOfM = s.indexOf(o);
+			
+			if(SHOWSTEPS)
+				System.out.print(&quot;Operation &quot; + o);
+			
+			String n1 = matchNumberRev(s.substring(0,indexOfM).toCharArray());
+			String n2 = matchNumber(s.substring(indexOfM+1, s.length()).toCharArray());
+	
+			
+			
+			sub = n1+o+n2; 
+			sum = getNumber(n1, n2, o); 
+			try{
+			int i = s.indexOf(sub);
+			//System.out.println(&quot;sub &quot; +sub);
+			//System.out.println(&quot;sum &quot; +sum);
+
+			s = s.substring(0, i) + sum + s.subSequence(i+sub.length(), s.length());
+			
+			//System.out.println(&quot;\nnew s &quot; +s);
+			return calc(s); 
+	
+			}
+			catch(Exception e){
+				System.out.print( &quot;I'm am error: &quot; + s); 
+			}
+		}	
+		
+		*/
+		
+		
+		
+<span class="fc" id="L199">		System.out.println( &quot;I'm done&quot; ); </span>
+<span class="fc" id="L200">		System.out.print( &quot;Numbers = &quot; ); </span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		for(int i :  numberList){</span>
+<span class="fc" id="L202">			System.out.print(i + &quot;,&quot;);</span>
+		}
+<span class="fc" id="L204">		System.out.println();</span>
+		
+<span class="fc" id="L206">		System.out.print( &quot;Ops: &quot; ); </span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">		for(char i :  operatorList){</span>
+<span class="fc" id="L208">			System.out.print(i + &quot;,&quot;);</span>
+		}
+<span class="fc" id="L210">		System.out.println();</span>
+		
+		//calculate the total 
+<span class="fc" id="L213">		int sum=numberList[0];</span>
+	
+<span class="fc bfc" id="L215" title="All 2 branches covered.">		for(int i=1; i&lt; numberList.length;i++){</span>
+<span class="fc" id="L216">			sum = getNumber(sum, numberList[i], operatorList[i-1]);</span>
+		}
+		
+		
+		
+<span class="fc" id="L221">		return  sum; </span>
+	}
+	
+	
+	
+	
+	
+	
+	static String matchNumber(char[] c){
+<span class="fc" id="L230">		int sum = 0; </span>
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">		for(int i=0; i&lt; c.length; i++ ){</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">			if(Character.isDigit(c[i])){</span>
+<span class="nc" id="L233">				sum *=  10; </span>
+<span class="nc" id="L234">				sum += Integer.parseInt(&quot;&quot;+c[i]); </span>
+				
+			}
+			else { 
+				if(SHOWSTEPS)
+					System.out.println(&quot;Number on right=&quot; + sum);
+<span class="fc" id="L240">				return &quot;&quot;+sum;</span>
+			}
+			
+		}
+		if(SHOWSTEPS)
+			System.out.println(&quot;Number on right=&quot; + sum);
+<span class="nc" id="L246">		return &quot;&quot;+sum; </span>
+	}
+	
+   static String matchNumberRev(char[] c){
+<span class="fc" id="L250">	   int p = 1; </span>
+<span class="fc" id="L251">		int sum = 0; </span>
+<span class="pc bpc" id="L252" title="1 of 2 branches missed.">		for(int i=c.length-1; i&gt;=0; i-- ){</span>
+<span class="pc bpc" id="L253" title="1 of 2 branches missed.">			if(Character.isDigit(c[i])){</span>
+<span class="nc" id="L254">				sum += p* Integer.parseInt(&quot;&quot;+c[i]); </span>
+<span class="nc" id="L255">				p*=10; </span>
+			}
+			else {
+				if(SHOWSTEPS)
+					System.out.println(&quot;Number on left=&quot; + sum);
+<span class="fc" id="L260">				return &quot;&quot;+sum;</span>
+			}
+			
+		}
+		if(SHOWSTEPS)
+			System.out.println(&quot;Number on left=&quot; + sum);
+<span class="nc" id="L266">		return &quot;&quot;+sum; </span>
+	}
+	
+	
+	static int getNumber(int n1, int n2,  char o){
+		
+		
+		int sum ; 
+<span class="fc bfc" id="L274" title="All 2 branches covered.">		if(o=='+')</span>
+<span class="fc" id="L275">			sum=  n1+n2; </span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">		else if(o=='-')</span>
+<span class="fc" id="L277">			sum=  n1-n2;</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">		else if(o=='*')</span>
+<span class="fc" id="L279">			sum=  n1*n2; </span>
+		else 
+<span class="fc" id="L281">			sum=  n1/n2; </span>
+		if(SHOWSTEPS)
+			System.out.println(&quot;n1, O, n2, sum, &quot;  + n1 + o + n2 + &quot;=&quot;+ sum);
+<span class="fc" id="L284">		return sum; </span>
+	}
+	
+	
+	static boolean isDigit(char c){
+<span class="fc" id="L289">		return Character.isDigit(c);</span>
+	}
+	
+	static boolean isOpetator(char c){
+<span class="fc bfc" id="L293" title="All 12 branches covered.">		return (c=='+' | c=='-' || c=='*' | c=='/');</span>
+	}
+	
+	
+	
+}//end class
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

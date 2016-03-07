@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PieceMovement.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">model</a> &gt; <span class="el_source">PieceMovement.java</span></div><h1>PieceMovement.java</h1><pre class="source lang-java linenums">package model;
+
+/**
+ * Identifies possibles tiles a piece can move and marks those areas with either move or attack markers 
+ * 
+ * @author KLD
+ */
+public class PieceMovement 
+{
+	/**
+	 * True means the same pattern of a move occurs in greater distance 
+	 */
+	private boolean isContinued; 
+	
+	/**
+	 * A linked list of movement offsets value(s) away from center 
+	 */
+	private MovePattern move;
+	
+	/**
+	 * @param move movement offset(s) pattern 
+	 * @param isCon True means the same pattern of a move occurs in greater distance, false means non-repeated. 
+	 * 
+	 * @see Move
+	 */
+	public PieceMovement(MovePattern move, boolean isCon)
+<span class="fc" id="L27">	{</span>
+<span class="fc" id="L28">		this.move = move;</span>
+<span class="fc" id="L29">		isContinued = isCon; 	</span>
+<span class="fc" id="L30">	}</span>
+	
+	/**
+	 * Creates a movement with a single pattern 
+	 * @param ox offset x pattern 
+	 * @param oy offset y pattern 
+	 * @param isCon True means the same pattern of a move occurs in greater distance, false means non-repeated. 
+	 */
+	public PieceMovement(int ox, int oy, boolean isCon)
+	{
+<span class="nc" id="L40">		this(new MovePattern(ox,oy), isCon); </span>
+<span class="nc" id="L41">	}</span>
+
+	/**
+	 * Creates a new move object with 4 directional rotations of offsets 
+	 * @param x x offset 
+	 * @param y y offset 
+	 * @param move linked move if available. Otherwise, null 
+	 * 
+	 * @return a move pattern object 
+	 */
+	public static MovePattern createMove(int x, int y)
+	{
+<span class="fc" id="L53">		MovePattern m =  new MovePattern(x, y);</span>
+<span class="fc" id="L54">		int DIR = 4; </span>
+		
+<span class="fc" id="L56">		MovePattern point = m; </span>
+		
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		for(int i=1; i &lt; DIR; i++)</span>
+		{
+			//local x, y
+<span class="fc" id="L61">			int lx = x; </span>
+<span class="fc" id="L62">			int ly = y; </span>
+<span class="fc" id="L63">			double initR = Math.atan((double)ly/lx); </span>
+<span class="fc" id="L64">			double length = Math.sqrt(lx*lx + ly*ly); </span>
+			
+			//directed x, y
+<span class="fc" id="L67">			int dx = (int) Math.round(length*(Math.cos(initR+(i*Math.PI)/2)) ); </span>
+<span class="fc" id="L68">			int dy = (int) Math.round(length*(Math.sin(initR+(i*Math.PI)/2)) ); </span>
+			
+<span class="fc" id="L70">			point.next = new MovePattern(dx, dy); </span>
+<span class="fc" id="L71">			point = point.next; </span>
+		
+		}
+		
+<span class="fc" id="L75">		return m; </span>
+	}
+	
+	/**
+	 * 
+	 * @return movepattern linked list of movepatterns 
+	 */
+	public MovePattern getMovePattern()
+	{
+<span class="fc" id="L84">		return this.move; </span>
+	}
+	
+	public boolean isContinued()
+	{
+<span class="fc" id="L89">		return this.isContinued; </span>
+	}
+	
+	public int specialMarking(MobilityBoard mboard, int cx, int cy, int team)
+	{
+<span class="fc" id="L94">		return 0; </span>
+	}
+	
+	public int specialAttackMark(Board b, int mark, int cx, int cy, int team)
+	{
+<span class="nc" id="L99">		return 0; </span>
+	}
+	
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>
