@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Launcher.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">GamePanels</a> &gt; <span class="el_source">Launcher.java</span></div><h1>Launcher.java</h1><pre class="source lang-java linenums">/* KLD Game Library  1.0
+ * 
+ * Luncher gets called in the main method before Console is created. 
+ * 
+ * Luncher is meant to set the starting (or default) game.
+ * 
+ * Here you could set the FPS, width and height of the GameFrame. 
+ * 
+ */
+
+package GamePanels;
+
+import KLD.*;
+import KLD.obj.GameObject;
+import KLD.util.ShapeMaker;
+
+ 
+/**
+ * Launches a game into a the console (main is found KLD.GameFrame.java) 
+ */
+public class Launcher 
+{
+	public static void main(String[] args)
+	{
+		try 
+		{
+<span class="nc" id="L27">			GameFrame.launch();</span>
+		} 
+<span class="fc" id="L29">		catch (Exception e) </span>
+		{
+			// TODO Auto-generated catch block
+<span class="fc" id="L32">			e.printStackTrace();</span>
+<span class="nc" id="L33">		}</span>
+<span class="fc" id="L34">	}</span>
+	
+	public Launcher()
+<span class="fc" id="L37">	{</span>
+		//setting the main panel. You could also use GameMenuPanel.setGame(class).
+//		GameFrame.mainGame = SinglePlayerChess.class; 
+<span class="fc" id="L40">		GameFrame.mainGame = MultiplayerChessGame.class; </span>
+		
+		//TODO read json: config		
+<span class="fc" id="L43">		GameFrame.width = 800; </span>
+<span class="fc" id="L44">		GameFrame.height = 800;</span>
+		
+		//frame size is set by default 500x500 
+		//adding a title to the game frame. 
+<span class="fc" id="L48">		GameFrame.setTitle(&quot;Chess Game&quot;);</span>
+<span class="fc" id="L49">		GameFrame.setResizable(false);</span>
+<span class="fc" id="L50">		GameFrame.FPS = 30; </span>
+<span class="fc" id="L51">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

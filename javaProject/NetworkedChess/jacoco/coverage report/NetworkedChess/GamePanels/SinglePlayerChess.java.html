@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>SinglePlayerChess.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">GamePanels</a> &gt; <span class="el_source">SinglePlayerChess.java</span></div><h1>SinglePlayerChess.java</h1><pre class="source lang-java linenums">package GamePanels;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import KLD.Game;
+import KLD.GameFrame;
+import KLD.Input;
+import KLD.Loader;
+import KLD.cmd.Command;
+import KLD.cmd.Draw;
+import model.ChessBoard;
+import model.Marker;
+import model.MobilityBoard;
+import model.Piece;
+import ui.BoardUI;
+import ui.PieceImageFactory;
+
+<span class="fc" id="L20">public class SinglePlayerChess extends Game </span>
+{
+	private ChessBoard cboard; 
+	private MobilityBoard mboard; 
+	private Marker marker;  
+	
+	private int tileWidth;
+	private int tileHeight;
+	
+	private int offsetX;
+	private int offsetY;
+	
+	private int selectedX, selectedY; 
+	
+	private boolean whiteDead; 
+	private boolean blackDead; 
+	
+	private String whiteMessage; 
+	private String blackMessage; 
+	
+	private Command forfeitCmd; 
+	private Command undoCmd; 
+	
+	private Rectangle undoButton; 
+	private Rectangle forfeitButton; 
+	
+	// 0 false, 7 true 
+	/**
+	 * Reversing board for player two 
+	 */
+	private int reverse; 
+	
+	BoardUI boradui; 
+	//PawnPromotionUI promotion; 
+	
+	int promotionTeam; 
+	
+	private int undoRequested; 
+	private int forfeitRequested; 
+	
+	
+	@Override
+	protected void init() 
+	{
+<span class="fc" id="L64">		name = &quot;SinglePlayerChess&quot;; //not needed </span>
+<span class="fc" id="L65">		whiteMessage = &quot;&quot;; </span>
+<span class="fc" id="L66">		blackMessage = &quot;&quot;; </span>
+		
+<span class="fc" id="L68">		cboard = new ChessBoard(); </span>
+<span class="fc" id="L69">		mboard= new MobilityBoard(cboard); </span>
+<span class="fc" id="L70">		marker = new Marker(mboard); </span>
+		
+<span class="fc" id="L72">		whiteDead = false; </span>
+<span class="fc" id="L73">		blackDead = false; </span>
+<span class="fc" id="L74">		promotionTeam = 0; </span>
+		
+<span class="fc" id="L76">		undoRequested = 0; </span>
+<span class="fc" id="L77">		forfeitRequested = 0; </span>
+		
+<span class="fc" id="L79">		placePieces(); </span>
+	
+<span class="fc" id="L81">		tileWidth = GameFrame.width/10; </span>
+<span class="fc" id="L82">		tileHeight = GameFrame.height/10; </span>
+		
+<span class="fc" id="L84">		offsetX = GameFrame.width/2 - tileWidth*4; </span>
+<span class="fc" id="L85">		offsetY = GameFrame.height/2 - tileHeight*4 - 20; </span>
+		
+		//reverse = 0; 
+	
+		//this will allow the board to be drawn automatically 
+<span class="fc" id="L90">		boradui = new BoardUI(mboard, reverse); </span>
+<span class="fc" id="L91">		boradui.setSizes(offsetX, offsetY, tileWidth, tileHeight);</span>
+<span class="fc" id="L92">		revereBoard();</span>
+		
+<span class="fc" id="L94">		undoCmd = new Command(&quot;Undo&quot;) {</span>
+			
+<span class="fc" id="L96">			int offsetX = GameFrame.width/2 ;</span>
+<span class="fc" id="L97">			int offsetY = GameFrame.height/2 ;</span>
+			
+			@Override
+			protected void draw(Graphics g) 
+			{
+<span class="nc" id="L102">				Game.setFade(g, .8f);</span>
+<span class="nc" id="L103">				g.setColor(Color.black); </span>
+<span class="nc" id="L104">				g.fillRect(0, 0, GameFrame.width, GameFrame.height);</span>
+				
+<span class="nc" id="L106">				Game.setFade(g, 1f);</span>
+				
+			
+				//TODO replace with == myTeam 
+<span class="nc bnc" id="L110" title="All 2 branches missed.">				if(undoRequested != 0)</span>
+				{
+<span class="nc" id="L112">					g.setColor(Color.gray); </span>
+<span class="nc" id="L113">					g.fillRect(offsetX - 150,  offsetY - 60, 200, 80);</span>
+					
+<span class="nc" id="L115">					g.setColor(Color.black);</span>
+<span class="nc" id="L116">					g.drawString(&quot;Awaiting response&quot;, offsetX + tileWidth*2 - 80, offsetY + tileHeight/2); </span>
+				}
+				else //it's from the other player 
+				{
+					//g.drawString(&quot;Undo is requested&quot;, offsetX + tileWidth*2 - 80, offsetY + tileHeight/2); 
+					
+<span class="nc" id="L122">					Loader load = new Loader();</span>
+					
+<span class="nc" id="L124">					g.drawImage(load.loadRawImage(&quot;g/undo.cond.png&quot;), offsetX - 150,  offsetY - 60,  null); </span>
+					
+<span class="nc" id="L126">					g.drawImage(load.loadRawImage(&quot;g/accept.png&quot;), offsetX - 100, offsetY, 90, 40, null);</span>
+<span class="nc" id="L127">					g.drawImage(load.loadRawImage(&quot;g/Decline.png&quot;), offsetX + 20, offsetY, 90, 40, null);</span>
+					
+				}
+<span class="nc" id="L130">			}</span>
+			
+			@Override
+			protected void action() 
+			{
+				//TODO chnage to if undoRequested equals my team
+<span class="nc bnc" id="L136" title="All 4 branches missed.">				if(undoRequested == 0 &amp;&amp; input.mouseIsClicked())</span>
+				{
+<span class="nc bnc" id="L138" title="All 2 branches missed.">					if(input.isIn(new Rectangle(offsetX - 100, offsetY, 90, 40)))</span>
+					{
+<span class="nc" id="L140">						System.out.println(&quot;accept undo&quot;);</span>
+						//TODO accept undo
+						//cboard.untoLastMove(fromX, fromY, toX, toY);
+						
+						//this.deactivate();
+<span class="nc" id="L145">						this.disable();</span>
+					}
+<span class="nc bnc" id="L147" title="All 2 branches missed.">					else if (input.isIn(new Rectangle(offsetX + 20, offsetY, 90, 40)))</span>
+					{
+<span class="nc" id="L149">						System.out.println(&quot;no undo&quot;);</span>
+						//decline undo 
+						//this.deactivate();
+<span class="nc" id="L152">						this.disable();</span>
+					}
+				
+				}
+				
+<span class="nc" id="L157">			}</span>
+		};
+		
+<span class="fc" id="L160">		forfeitCmd = new Command(&quot;Forfiet&quot;) {</span>
+			
+<span class="fc" id="L162">			int offsetX = GameFrame.width/2 ;  </span>
+<span class="fc" id="L163">			int offsetY = GameFrame.height/2; </span>
+			
+			@Override
+			protected void draw(Graphics g) 
+			{
+				//int offsetX = GameFrame.width/2 - (4*tileWidth)/2; 
+				//int offsetY = GameFrame.height/2 + (tileHeight)/2; 
+				
+<span class="nc" id="L171">				Game.setFade(g, .8f);</span>
+<span class="nc" id="L172">				g.setColor(Color.black); </span>
+<span class="nc" id="L173">				g.fillRect(0, 0, GameFrame.width, GameFrame.height);</span>
+				
+<span class="nc" id="L175">				Game.setFade(g, 1f);</span>
+<span class="nc" id="L176">				g.setColor(Color.black);</span>
+				
+<span class="nc" id="L178">				Loader load = new Loader();</span>
+				
+<span class="nc" id="L180">				g.drawImage(load.loadRawImage(&quot;g/surrenderpop.png&quot;), offsetX - 150,  offsetY - 60,  null); </span>
+					
+<span class="nc" id="L182">				g.drawImage(load.loadRawImage(&quot;g/Forfeit.png&quot;), offsetX - 100, offsetY, 90, 40, null);</span>
+<span class="nc" id="L183">				g.drawImage(load.loadRawImage(&quot;g/cancel.png&quot;), offsetX + 20, offsetY, 90, 40, null);</span>
+				
+<span class="nc" id="L185">			}</span>
+			
+			@Override
+			protected void action() 
+			{
+				//TODO chnage to if forfeitRequestedRequested equals my team
+<span class="nc bnc" id="L191" title="All 4 branches missed.">				if(forfeitRequested == 0 &amp;&amp; input.mouseIsClicked())</span>
+				{
+<span class="nc bnc" id="L193" title="All 2 branches missed.">					if(input.isIn(new Rectangle(offsetX - 100, offsetY, 90, 40)))</span>
+					{
+<span class="nc" id="L195">						System.out.println(&quot;forfeit&quot;);</span>
+						//TODO accept undo
+						//cboard.untoLastMove(fromX, fromY, toX, toY);
+						
+						//this.deactivate();
+<span class="nc" id="L200">						this.disable();</span>
+					}
+<span class="nc bnc" id="L202" title="All 2 branches missed.">					else if (input.isIn(new Rectangle(offsetX + 20, offsetY, 90, 40)))</span>
+					{
+<span class="nc" id="L204">						System.out.println(&quot;nope&quot;);</span>
+						//decline undo 
+						//this.deactivate();
+<span class="nc" id="L207">						this.disable();</span>
+					}
+				
+				}
+				
+<span class="nc" id="L212">			}</span>
+		};
+		
+<span class="fc" id="L215">		undoButton = new Rectangle(offsetX, GameFrame.height-80 ,90, 40);</span>
+<span class="fc" id="L216">		forfeitButton = new Rectangle(offsetX + 100, GameFrame.height-80 ,90, 40);</span>
+		
+		
+		//automate board draw 
+<span class="fc" id="L220">		this.addDraw(new Draw(&quot;UnforAndForfitDraw&quot;) {</span>
+<span class="fc" id="L221">			Loader load = new Loader(); </span>
+			@Override
+			protected void draw(Graphics g) 
+			{
+<span class="nc" id="L225">				g.drawImage(load.loadRawImage(&quot;g/Forfeit.png&quot;), forfeitButton.x, forfeitButton.y, forfeitButton.width, forfeitButton.height, null);</span>
+<span class="nc" id="L226">				g.drawImage(load.loadRawImage(&quot;g/Undo.png&quot;), undoButton.x, undoButton.y, undoButton.width, undoButton.height, null);</span>
+				
+<span class="nc" id="L228">			}</span>
+		});
+<span class="fc" id="L230">		this.add(boradui);</span>
+<span class="fc" id="L231">		this.add(undoCmd);</span>
+<span class="fc" id="L232">		this.add(forfeitCmd);</span>
+
+		
+<span class="fc" id="L235">		undoCmd.disable();</span>
+<span class="fc" id="L236">		forfeitCmd.disable();</span>
+<span class="fc" id="L237">	}</span>
+	
+	@Override
+	protected void draw(Graphics g) 
+	{
+<span class="nc" id="L242">		g.setColor(Color.black);</span>
+		
+<span class="nc bnc" id="L244" title="All 2 branches missed.">		String s = (whiteDead)? &quot;White team is under threat&quot;  : &quot;White safe&quot;; </span>
+<span class="nc" id="L245">		g.drawString(s, 20, 20);</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">		String b = (blackDead)? &quot;Black team is under threat&quot;  : &quot;Black safe&quot;; </span>
+<span class="nc" id="L247">		g.drawString(b, 20, 40);</span>
+
+<span class="nc" id="L249">		g.drawString(whiteMessage, 200, 20);</span>
+<span class="nc" id="L250">		g.drawString(blackMessage, 200, 40);</span>
+
+		
+		
+<span class="nc bnc" id="L254" title="All 2 branches missed.">		if(promotionTeam !=0)</span>
+		{
+<span class="nc" id="L256">			drawPromotionMenu(g);</span>
+		}
+		
+		
+		
+<span class="nc" id="L261">	}//end color </span>
+	
+	@Override
+	protected void update() 
+	{
+		/*if(!myTurn)
+			return; 
+		*/
+		//TODO change != 0 to == myTeam. Player can only promote his pawns 
+		
+<span class="nc bnc" id="L271" title="All 2 branches missed.">		if(!input.mouseIsClicked())</span>
+<span class="nc" id="L272">			return; </span>
+		
+<span class="nc bnc" id="L274" title="All 2 branches missed.">		if(promotionTeam != 0)</span>
+		{
+<span class="nc" id="L276">			int offsetX = GameFrame.width/2 - (4*tileWidth)/2; </span>
+<span class="nc" id="L277">			int offsetY = GameFrame.height/2 - (4*tileHeight)/2 + tileHeight; </span>
+				
+<span class="nc bnc" id="L279" title="All 2 branches missed.">			if (input.isIn(new Rectangle(offsetX, offsetY, tileWidth*4, tileHeight)))</span>
+			{
+<span class="nc" id="L281">				int[] pieces = {Piece.TYPE_ROOK, Piece.TYPE_BISHOP, Piece.TYPE_KNIGHT, Piece.TYPE_QUEEN};</span>
+				
+<span class="nc" id="L283">				int x = ((Input.point.x - offsetX) / tileWidth); </span>
+				//int y = ((Input.point.y - offsetY) / tileHeight); 
+				
+<span class="nc" id="L286">				cboard.setTileValue(selectedX, selectedY, pieces[x]); </span>
+				
+<span class="nc" id="L288">				marker.calebrate(cboard.teamAt(selectedX, selectedY)); </span>
+				
+				//TODO server sent pieces[x] to finalize promotion 
+				
+<span class="nc" id="L292">				promotionTeam = 0; </span>
+			}
+<span class="nc" id="L294">		}</span>
+<span class="nc bnc" id="L295" title="All 2 branches missed.">		else if(input.isIn(new Rectangle(offsetX, offsetY, tileWidth*8, tileHeight*8)) )</span>
+		{
+<span class="nc" id="L297">			int x = ((Input.point.x - offsetX) / tileWidth); </span>
+<span class="nc" id="L298">			int y = ((Input.point.y - offsetY) / tileHeight); </span>
+			
+<span class="nc" id="L300">			boardClicked(x,y);  </span>
+<span class="nc" id="L301">		}</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">		else if(input.isIn(forfeitButton))</span>
+		{
+<span class="nc" id="L304">			forfeitCmd.enable(); </span>
+		}
+<span class="nc bnc" id="L306" title="All 2 branches missed.">		else if(input.isIn(undoButton))</span>
+		{
+<span class="nc" id="L308">			undoCmd.enable(); </span>
+		}
+<span class="nc bnc" id="L310" title="All 2 branches missed.">		else if(input.mouseIsClicked())</span>
+		{
+<span class="nc" id="L312">			mboard.reset(); </span>
+		}
+		
+<span class="nc" id="L315">	}</span>
+	
+	public void forfitRequest()
+	{
+		
+<span class="nc" id="L320">	}</span>
+	
+	public void undoRequest()
+	{
+		
+<span class="fc" id="L325">	}</span>
+	
+	
+	public boolean recieveMovement(int fromX, int fromY, int toX, int toY)
+	{
+		
+<span class="fc" id="L331">		cboard.movePiece(fromX, fromY, toX, toY);</span>
+<span class="fc" id="L332">		return true; </span>
+	}
+	
+	public boolean recievePromotion(int x, int y, int piece)
+	{
+<span class="fc" id="L337">		int team = cboard.teamAt(x, y); </span>
+<span class="fc" id="L338">		cboard.setTileValue(x, y, team*piece); </span>
+<span class="fc" id="L339">		return true; </span>
+	}
+	
+	public void revereBoard()
+	{
+<span class="fc" id="L344">		reverse = 7; </span>
+<span class="fc" id="L345">		boradui.setReverse(reverse);</span>
+		//
+	
+<span class="fc" id="L348">	}</span>
+	
+	public void placePieces()
+	{
+<span class="fc" id="L352">		int[] pieces = {Piece.TYPE_PAWN, Piece.TYPE_ROOK, Piece.TYPE_KNIGHT, Piece.TYPE_BISHOP, Piece.TYPE_QUEEN, Piece.TYPE_KING }; </span>
+			
+		//int[] pieces = {0, Piece.TYPE_ROOK, 0,0, 0, Piece.TYPE_KING }; 
+				
+	
+<span class="fc bfc" id="L357" title="All 2 branches covered.">		for(int i=0; i&lt;16; i++)</span>
+		{
+<span class="fc" id="L359">			int piece = pieces[(i/8)*(  (i-7)+((i/13)*(3-((2*i)%13)))  )%6]; </span>
+			
+			//positive bottom
+<span class="fc" id="L362">			cboard.setTileValue(i%8, 1-i/8, piece); </span>
+		
+			//negative top 
+<span class="fc" id="L365">			cboard.setTileValue(i%8, 6+i/8, -piece); 	</span>
+		}
+		
+		//board.setTileValue(4, 4, Piece.TYPE_PAWN);
+		
+		//board.setTileValue(4, 2, -Piece.TYPE_PAWN);
+		
+		
+		
+	
+<span class="fc" id="L375">	}//end place </span>
+	
+	public void boardClicked(int x, int y)
+	{
+<span class="fc" id="L379">		y = Math.abs(reverse-y); </span>
+		
+		//TODO if cboard.teamAt(x,y) doesn't match my team, I cannot move the unit 
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">		if(mboard.getTileValue(x, y) &gt; MobilityBoard.MARK_INVISIBLE)</span>
+		{
+			//rook or king moved notifications 
+<span class="nc" id="L385">			int notification =	cboard.movePiece(selectedX, selectedY, x, y);</span>
+			
+			//TODO server send coordinates 
+				
+<span class="nc bnc" id="L389" title="All 4 branches missed.">			if(cboard.getPiece(x, y) == Piece.TYPE_PAWN &amp;&amp; y%7==0)</span>
+			{
+<span class="nc" id="L391">				promotionTeam = cboard.teamAt(x, y); </span>
+			}
+		
+			//notify mobility to adjust castling 
+<span class="nc bnc" id="L395" title="All 2 branches missed.">			if (notification &gt; 0)</span>
+			{
+<span class="nc" id="L397">				notification--; </span>
+<span class="nc" id="L398">				mboard.setMoved(notification); </span>
+			
+			}//end if notification 
+			
+<span class="nc" id="L402">			marker.calebrate(1);</span>
+			
+			//update check and check mate 
+<span class="nc bnc" id="L405" title="All 2 branches missed.">			if((whiteDead = marker.isThreatened()))</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">				if(marker.isCheckMate(1))</span>
+<span class="nc" id="L407">					blackMessage = &quot;Checkmate!&quot;;</span>
+				else
+<span class="nc" id="L409">					blackMessage = &quot;Check..&quot;; </span>
+			else
+<span class="nc" id="L411">				blackMessage = &quot;&quot;; </span>
+			
+			
+<span class="nc" id="L414">			marker.calebrate(-1);</span>
+			
+<span class="nc bnc" id="L416" title="All 2 branches missed.">			if((blackDead = marker.isThreatened()))</span>
+<span class="nc bnc" id="L417" title="All 2 branches missed.">				if(marker.isCheckMate(-1))</span>
+<span class="nc" id="L418">					whiteMessage = &quot;Checkmate!&quot;;</span>
+				else 
+<span class="nc" id="L420">					whiteMessage = &quot;Check..&quot;; </span>
+			else
+<span class="nc" id="L422">				whiteMessage = &quot;&quot;; </span>
+			
+			
+			//calibrate the other team 
+<span class="nc" id="L426">			int team = cboard.teamAt(x, y); </span>
+<span class="nc bnc" id="L427" title="All 2 branches missed.">			if(marker.didLose(team))</span>
+			{
+<span class="nc bnc" id="L429" title="All 2 branches missed.">				if(team==1)</span>
+				{
+<span class="nc" id="L431">					whiteMessage = &quot;Lost!&quot;; </span>
+<span class="nc" id="L432">					blackMessage = &quot;Won!&quot;;</span>
+				}	
+				else
+				{
+<span class="nc" id="L436">					whiteMessage = &quot;Won!&quot;; </span>
+<span class="nc" id="L437">					blackMessage = &quot;Lost!&quot;;</span>
+				}
+			}
+<span class="nc" id="L440">			mboard.reset();	</span>
+<span class="nc" id="L441">		}//end mobility </span>
+		else
+		{
+			//System.out.println(&quot;selected&quot;);
+<span class="fc" id="L445">			mboard.reset();	</span>
+<span class="fc" id="L446">			marker.markPieceAt(x, y); 		</span>
+		}
+		
+	
+<span class="fc" id="L450">			selectedX = x; </span>
+<span class="fc" id="L451">			selectedY = y; </span>
+					
+<span class="fc" id="L453">	}</span>
+		
+	private void drawPromotionMenu(Graphics g)
+	{
+<span class="nc" id="L457">		int[] pieces = {Piece.TYPE_ROOK, Piece.TYPE_BISHOP, Piece.TYPE_KNIGHT, Piece.TYPE_QUEEN};</span>
+		
+<span class="nc" id="L459">		g.setColor(Color.BLACK);</span>
+<span class="nc" id="L460">		Game.setFade(g, .8f);</span>
+		
+<span class="nc" id="L462">		g.fillRect(0, 0, GameFrame.width, GameFrame.height);</span>
+		
+<span class="nc" id="L464">		int offsetX = GameFrame.width/2 - (pieces.length*tileWidth)/2; </span>
+<span class="nc" id="L465">		int offsetY = GameFrame.height/2 - (pieces.length*tileHeight)/2 + tileHeight; </span>
+		
+<span class="nc" id="L467">		Game.setFade(g, 1f);</span>
+<span class="nc" id="L468">		g.setColor(Color.gray); </span>
+<span class="nc" id="L469">		g.fillRect(offsetX, offsetY, tileWidth*4, tileHeight);</span>
+		
+		//TODO chnage to == myTeam
+<span class="nc bnc" id="L472" title="All 2 branches missed.">		if(promotionTeam == 1)</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">			for(int i=0; i&lt;pieces.length; i++)</span>
+			{
+				//g.drawImage(PieceImageFactory.Instnece().factor(pieces[i]), offsetX + i*tileWidth, offsetY + tileHeight, null); 
+<span class="nc bnc" id="L476" title="All 2 branches missed.">				int pieceIndex = 2*pieces[i] - (cboard.teamAt(selectedX, selectedY) &gt; 0? 0 : 1); </span>
+				//draw tiles
+<span class="nc" id="L478">				 g.drawImage(PieceImageFactory.Instnece().factor(pieceIndex), offsetX+i*tileWidth, offsetY,tileWidth, tileHeight, null); </span>
+			}
+		else
+		{
+<span class="nc" id="L482">			g.setColor(Color.black);</span>
+<span class="nc" id="L483">			g.drawString(&quot;Enemy is picking promotion&quot;, offsetX + tileWidth*2 - 80, offsetY + tileHeight/2);</span>
+		}
+<span class="nc" id="L485">	}</span>
+
+
+}//end class
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

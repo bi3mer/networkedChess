@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GameObjectTest.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.obj</a> &gt; <span class="el_source">GameObjectTest.java</span></div><h1>GameObjectTest.java</h1><pre class="source lang-java linenums">package KLD.obj;
+
+import static org.junit.Assert.*;
+
+import java.awt.Image;
+import java.awt.Point;
+
+import org.junit.Test;
+
+import KLD.Animation;
+
+<span class="fc" id="L12">public class GameObjectTest {</span>
+
+	@Test
+	public void Objtest() {
+<span class="fc" id="L16">		double a = 0;</span>
+<span class="fc" id="L17">		double b = 0;</span>
+<span class="fc" id="L18">		Image[] im = new Image[4];</span>
+<span class="fc" id="L19">		Animation Ani = new Animation(im);</span>
+<span class="fc" id="L20">		Point p = new Point();</span>
+<span class="fc" id="L21">		GameObject gamer = new GameObject();</span>
+<span class="fc" id="L22">		GameObject gamer2 = new GameObject(a,b);</span>
+		//GameObject gamer3 = new GameObject(im[1]);
+		//GameObject gamer4 = new GameObject(Ani);
+		
+<span class="fc" id="L26">		gamer.x();</span>
+<span class="fc" id="L27">		gamer.x(a);</span>
+<span class="fc" id="L28">		gamer.xa(a);</span>
+<span class="fc" id="L29">		gamer.xs(a);</span>
+<span class="fc" id="L30">		gamer.xm(a);</span>
+<span class="fc" id="L31">		gamer.xd(a);</span>
+<span class="fc" id="L32">		gamer.xr(a);</span>
+<span class="fc" id="L33">		gamer.x(p);</span>
+<span class="fc" id="L34">		gamer.xw();</span>
+<span class="fc" id="L35">		gamer.y();</span>
+<span class="fc" id="L36">		gamer.y(a);</span>
+<span class="fc" id="L37">		gamer.ya(a);</span>
+<span class="fc" id="L38">		gamer.ys(a);</span>
+<span class="fc" id="L39">		gamer.ym(a);</span>
+<span class="fc" id="L40">		gamer.yd(a);</span>
+<span class="fc" id="L41">		gamer.yr(a);</span>
+<span class="fc" id="L42">		gamer.y(p);</span>
+<span class="fc" id="L43">		gamer.yh();</span>
+<span class="fc" id="L44">		gamer.setXY(0, 0);</span>
+<span class="fc" id="L45">		gamer.setWH(a, b);</span>
+<span class="fc" id="L46">		gamer.width(a);</span>
+<span class="fc" id="L47">		gamer.height(a);</span>
+		
+<span class="fc" id="L49">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

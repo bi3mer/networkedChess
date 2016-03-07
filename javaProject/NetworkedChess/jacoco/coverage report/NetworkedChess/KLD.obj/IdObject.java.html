@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>IdObject.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.obj</a> &gt; <span class="el_source">IdObject.java</span></div><h1>IdObject.java</h1><pre class="source lang-java linenums">package KLD.obj;
+
+import java.awt.Graphics;
+
+public class IdObject {
+	
+	/**
+	 * Gives unique number to each object of it's instance starting from 0   
+	 */
+	
+<span class="fc" id="L11">	private static int counter =0 ;</span>
+	/**
+	 * A unique generated id
+	 */
+<span class="fc" id="L15">	public final int id  =  counter++; ; //add one after generating an id </span>
+	/**
+	 * name of object
+	 */
+<span class="fc" id="L19">	public String name = &quot;defultName&quot;; </span>
+	
+	/**
+	 * name of the object it set to &quot;defultname&quot; followed by the id 
+	 */
+<span class="fc" id="L24">	public IdObject(){ </span>
+<span class="fc" id="L25">		 name += &quot;&quot;+id;//generate an id automatically </span>
+<span class="fc" id="L26">	}</span>
+	
+	
+	
+	public IdObject(String s){
+<span class="fc" id="L31">		this();</span>
+<span class="fc" id="L32">		name = s+id; </span>
+<span class="fc" id="L33">	}</span>
+
+
+
+	
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

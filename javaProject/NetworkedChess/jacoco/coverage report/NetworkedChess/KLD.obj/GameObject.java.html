@@ -1,0 +1,1391 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GameObject.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.obj</a> &gt; <span class="el_source">GameObject.java</span></div><h1>GameObject.java</h1><pre class="source lang-java linenums">/*	GameObject
+ *  @author KLD
+ *  GameObject is anyObject that was created in the game. It has a x and y coordinates,
+ *   and a width and height. 
+ *  
+ * 
+ * Constructors:
+ * ------------------------ 
+ * 	A private constructor that sets the x and y  to 0 as well as creating a command,
+ * 		 action,and draw lists.  
+ * 	Three public constructors: 
+ * 
+ *  1) GameObject(width, height) sets the width and height. 
+ * 	2) GameObject(image) sets an image, width and height of the image. 
+ *  3) GameObject(animation) sets an animation, also sets the width and height to the
+ * 	 	first frame of the animation. 
+ * &lt;soon&gt;
+ *  4)GameObject(shape) sets a shape, and width and height to maximum. 
+ *  Features:
+ *  ------------------------
+ *   &gt;DrawMe(g) : draws the objects animation if existed, else it's image, else a rectangle.
+ *   &gt;callAllAction(): calls actions and action commands of the object, as well as setting prevX and Y
+ *   &gt;callAllDraw(): calls draws and draw commands that was added to object. 
+ *   &gt;isOnTopOf, isUnder, isRightTo, isLeftTo (GameObject): returns true when a object is next to
+ *     another object; You could also add bounds to increase the area of interference.  
+ *  &gt;isMoving(), 
+ * 
+ */
+
+//[x] get functions for action, draw and command DONE
+//TODO remove orbit to a new class called : Install
+
+package KLD.obj;
+
+import intf.ActionFace;
+import intf.CommandFace;
+import intf.DrawFace;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
+
+import KLD.Animation;
+import KLD.Input;
+import KLD.cmd.Action;
+import KLD.cmd.ActionList;
+import KLD.cmd.Command;
+import KLD.cmd.CommandList;
+import KLD.cmd.Draw;
+import KLD.cmd.DrawList;
+
+/**
+ * 
+ * 
+ * This class was created to easily control, and draw objects in games. This
+ * class uses commands, actions, and draws.
+ * 
+ * @author KLD
+ * @version none
+ * @see GameObject#callAllAction()
+ * @see #callAllDraw(Graphics)
+ * 
+ * 
+ */
+public class GameObject extends IdObject implements ActionFace, DrawFace,
+		CommandFace {
+
+	/**
+	 * holds the x position
+	 */
+	protected double x;
+	/**
+	 * holds the y position
+	 */
+	protected double y;
+
+	/**
+	 * holds the previous x position.
+	 * 
+	 */
+	protected double prevX;
+	/**
+	 * holds the previous x position.
+	 */
+	protected double prevY;
+	/**
+	 * holds the width
+	 */
+	protected double width;
+	/**
+	 * holds the height
+	 */
+	protected double height;
+
+	/**
+	 * animation of the object. Can be set through the constructor
+	 * 
+	 * @see #GameObject(Animation)
+	 * @see #getAnimationImage()
+	 */
+	public Animation animation;
+	/**
+	 * images of the object. Can be set through the constructor
+	 */
+	public Image image;
+	/**
+	 * Shape. Not very useful yet, so don't use it.
+	 */
+	public Shape shape;
+
+	/**
+	 * Holds command list
+	 * 
+	 * @see KLD.cmd.CommandList
+	 */
+	protected CommandList command; // commands &lt;:)
+	/**
+	 * Holds an action list that is responsible for updating(setting) variables.
+	 * 
+	 * @see KLD.cmd.ActionList
+	 */
+	protected ActionList action; // actions &lt;:)
+	/*
+	 * Holds an action list that is responsible for checking(if statements)
+	 * changes.
+	 * 
+	 * @see KLD.cmd.ActionList
+	 * 
+	 * protected ActionList rule; // READ ME : rules are actions that doesn't
+	 */// control the player(or any object), but they can decide if
+		// the player is dead, immune, flying etc.
+	// TODO create priorities
+	/**
+	 * Holds a draw list
+	 * 
+	 * @see KLD.cmd.DrawList
+	 */
+	protected DrawList draw; // draws &lt;:)
+
+	/**
+	 * sets x,y to 0, width and height to 20, and creates new command, action,
+	 * and draw lists. Then calls init()
+	 * 
+	 * @see #x
+	 * @see #y
+	 * @see #width
+	 * @see #height
+	 * @see #command
+	 * @see #action
+	 * @see #draw
+	 * @see #init()
+	 */
+<span class="fc" id="L156">	protected GameObject() {</span>
+<span class="fc" id="L157">		x = 0;</span>
+<span class="fc" id="L158">		y = 0;</span>
+<span class="fc" id="L159">		width = 20;</span>
+<span class="fc" id="L160">		height = 20;</span>
+
+<span class="fc" id="L162">		init();</span>
+<span class="fc" id="L163">	}</span>
+
+	/**
+	 * Calls a private constructor which : calls a private constructor ,then
+	 * sets width to w and height to h
+	 * 
+	 * @param w
+	 *            width
+	 * @param h
+	 *            height
+	 * @see #GameObject()
+	 * @see #init()
+	 */
+	public GameObject(double w, double h) {
+<span class="fc" id="L177">		this();</span>
+<span class="fc" id="L178">		width = w;</span>
+<span class="fc" id="L179">		height = h;</span>
+<span class="fc" id="L180">	}</span>
+
+	/**
+	 * @param im
+	 *            sets the objects image, width, and height to the images
+	 * @see #GameObject(double, double)
+	 */
+	public GameObject(Image im) {
+<span class="nc" id="L188">		this(im.getWidth(null), im.getHeight(null));</span>
+<span class="nc" id="L189">		image = im;</span>
+<span class="nc" id="L190">	}</span>
+
+	/**
+	 * 
+	 * @param ani
+	 *            is set to the object. And the first frame of ani will be the
+	 *            width and height.
+	 * @see #GameObject(double, double)
+	 */
+
+	public GameObject(Animation ani) {
+<span class="nc" id="L201">		this(ani.getImageAt(0).getWidth(null), ani.getImageAt(0)</span>
+<span class="nc" id="L202">				.getHeight(null));</span>
+<span class="nc" id="L203">		animation = ani;</span>
+<span class="nc" id="L204">	}</span>
+
+	// end of constructors
+	/**
+	 * Created for overriding. This method is called by all constructors.
+	 */
+	public void init() {
+		// empty method. used only for overriding
+		// it gets called at the end of constructor
+<span class="fc" id="L213">	}</span>
+
+	// get methods
+
+	/**
+	 * @return an integer of x position
+	 */
+	public int x() {
+<span class="fc" id="L221">		return (int) x;</span>
+	}
+
+	/**
+	 * set x to the parameter
+	 * 
+	 * @param n
+	 *            number
+	 */
+	public void x(double n) {
+<span class="fc" id="L231">		prevX = x;</span>
+<span class="fc" id="L232">		this.x = n;</span>
+<span class="fc" id="L233">	}</span>
+
+	/**
+	 * adds a number to x position
+	 * 
+	 * @param delta
+	 *            step
+	 */
+	public void xa(double d) {
+<span class="fc" id="L242">		x(x() + d);</span>
+<span class="fc" id="L243">	}</span>
+
+	/**
+	 * subtract
+	 * 
+	 * @param d
+	 *            number
+	 */
+	public void xs(double d) {
+<span class="fc" id="L252">		x(x() - d);</span>
+<span class="fc" id="L253">	}</span>
+
+	/**
+	 * multiplication
+	 * 
+	 * @param d
+	 */
+	public void xm(double d) {
+<span class="fc" id="L261">		x(x() * d);</span>
+<span class="fc" id="L262">	}</span>
+
+	/**
+	 * divide
+	 * 
+	 * @param d
+	 */
+	public void xd(double d) {
+<span class="fc" id="L270">		x(x() / d);</span>
+<span class="fc" id="L271">	}</span>
+
+	/**
+	 * remainder
+	 * 
+	 * @param d
+	 */
+	public void xr(double d) {
+<span class="fc" id="L279">		x(x() % d);</span>
+<span class="fc" id="L280">	}</span>
+
+	/**
+	 * return x position relative to a point
+	 * 
+	 * @param p
+	 *            Point
+	 * @return int
+	 */
+	public int x(Point p) {
+<span class="fc" id="L290">		return x() + p.x;</span>
+	}
+
+	/**
+	 * @return x + width
+	 */
+	public int xw() {
+<span class="fc" id="L297">		return width() + x();</span>
+	}
+
+	/**
+	 * @return an integer of y position
+	 */
+	public int y() {
+<span class="fc" id="L304">		return (int) y;</span>
+	}
+
+	/**
+	 * sets y to the parameter
+	 * 
+	 * @param n
+	 */
+	public void y(double n) {
+<span class="fc" id="L313">		prevY = y;</span>
+<span class="fc" id="L314">		y = n;</span>
+<span class="fc" id="L315">	}</span>
+
+	/**
+	 * return y position relative to Pointu
+	 * 
+	 * @param p
+	 *            Pointu
+	 * @return intu
+	 */
+	public int y(Point p) {
+<span class="fc" id="L325">		return y() + p.y;</span>
+	}
+
+	/**
+	 * adds a number to y position
+	 * 
+	 * @param delta
+	 *            step
+	 */
+	public void ya(double d) {
+<span class="fc" id="L335">		y(y() + d);</span>
+<span class="fc" id="L336">	}</span>
+
+	/**
+	 * subtract y position 
+	 * 
+	 * @param d
+	 *            number
+	 */
+	public void ys(double d) {
+<span class="fc" id="L345">		y(y() - d);</span>
+<span class="fc" id="L346">	}</span>
+
+	/**
+	 * multiply y position 
+	 * 
+	 * @param d
+	 */
+	public void ym(double d) {
+<span class="fc" id="L354">		y(y() * d);</span>
+<span class="fc" id="L355">	}</span>
+
+	/**
+	 * divide y position 
+	 * 
+	 * @param d
+	 */
+	public void yd(double d) {
+<span class="fc" id="L363">		y(y() / d);</span>
+<span class="fc" id="L364">	}</span>
+
+	/**
+	 * remainder y position 
+	 * 
+	 * @param d
+	 */
+	public void yr(double d) {
+<span class="fc" id="L372">		y(y() % d);</span>
+<span class="fc" id="L373">	}</span>
+
+	/**
+	 * @return y + height
+	 */
+	public int yh() {
+<span class="fc" id="L379">		return y() + height();</span>
+	}
+
+	/**
+	 * sets x and y
+	 * 
+	 * @param x
+	 *            number
+	 * @param y
+	 *            number
+	 */
+
+	public void setXY(int x, int y) {
+<span class="fc" id="L392">		prevX = this.x;</span>
+<span class="fc" id="L393">		prevY = this.y;</span>
+<span class="fc" id="L394">		this.x = x;</span>
+<span class="fc" id="L395">		this.y = y;</span>
+<span class="fc" id="L396">	}</span>
+
+	/**
+	 * @return an integer of width
+	 */
+	public int width() {
+<span class="fc" id="L402">		return (int) width;</span>
+	}
+
+	/**
+	 * sets the width to n
+	 * 
+	 * @param n
+	 */
+	public void width(double n) {
+<span class="fc" id="L411">		width = n;</span>
+<span class="fc" id="L412">	}</span>
+
+	/**
+	 * @return an integer of height
+	 */
+	public int height() {
+<span class="fc" id="L418">		return (int) height;</span>
+	}
+
+	/**
+	 * sets height to n
+	 * 
+	 * @param n
+	 *            double
+	 */
+	public void height(double n) {
+<span class="fc" id="L428">		height = n;</span>
+<span class="fc" id="L429">	}</span>
+
+	public void setWH(double w, double h) {
+<span class="fc" id="L432">		width = w;</span>
+<span class="fc" id="L433">		height = h;</span>
+<span class="fc" id="L434">	}</span>
+
+	/**
+	 * @return an image of the next image frame of animation
+	 */
+	public Image getNextFrame() {
+<span class="nc" id="L440">		return animation.getNextFrame();</span>
+	}
+
+	/**
+	 * @return shape if exist, else returns a rectangle of the object
+	 */
+	public Shape getShape() {
+<span class="nc bnc" id="L447" title="All 2 branches missed.">		if (shape != null)</span>
+<span class="nc" id="L448">			return shape;</span>
+<span class="nc" id="L449">		return new Rectangle(x(), y(), width(), height());</span>
+	}
+	
+	/**
+	 * 
+	 * @param x 
+	 * @param y
+	 * @return a rectangle shape at x and y with the objects width and height
+	 */
+	public Shape getShape(int x, int y) {
+<span class="nc bnc" id="L459" title="All 2 branches missed.">		if (shape != null)</span>
+<span class="nc" id="L460">			return shape;</span>
+<span class="nc" id="L461">		return new Rectangle(x, y, width(), height());</span>
+	}
+	
+	
+
+	// drawMeh!
+
+	/**
+	 * Draws: animation of exist, else image if exist. Else, calls
+	 * &lt;code&gt;getShape()&lt;/code&gt; and fills it.
+	 * 
+	 * @param g Graphics
+	 * @param p relative to p 
+	 * @see #getShape()
+	 */
+	public void drawMe(Graphics g, Point p) {
+<span class="nc" id="L477">		Graphics2D g2d = (Graphics2D) g;</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">		if (!(animation == null)) // draw animation if exist</span>
+<span class="nc" id="L479">			g.drawImage(animation.getNextFrame(), x(p), y(p), null);</span>
+<span class="nc bnc" id="L480" title="All 2 branches missed.">		else if (!(image == null)) // draw image if exist</span>
+<span class="nc" id="L481">			g.drawImage(image, x(p), y(p), null);</span>
+		else
+			// draw shape.
+<span class="nc" id="L484">			g2d.fill(getShape());</span>
+<span class="nc" id="L485">	}</span>
+	
+	
+/**
+ * draws the object. Prioritizes animation then image then shape, and default shape is rectangle
+ * @param g Graphics
+ */
+	public void drawMe(Graphics g) {
+<span class="nc" id="L493">		drawMe(g, new Point(0, 0));</span>
+<span class="nc" id="L494">	}</span>
+	/** Draws the object at x y 
+	 * @param g
+	 * @param x
+	 * @param y
+	 */
+	public void drawMe(Graphics g, int x, int y) {
+<span class="nc" id="L501">		Graphics2D g2d = (Graphics2D) g;</span>
+<span class="nc bnc" id="L502" title="All 2 branches missed.">		if (!(animation == null)) // draw animation if exist</span>
+<span class="nc" id="L503">			g.drawImage(animation.getNextFrame(), x, y, null);</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">		else if (!(image == null)) // draw image if exist</span>
+<span class="nc" id="L505">			g.drawImage(image, x, y, null);</span>
+		else
+<span class="nc" id="L507">			g2d.fill(getShape(x,y ));</span>
+<span class="nc" id="L508">	}</span>
+
+	/**
+	 * calls &lt;code&gt;action.callAllAction&lt;/code&gt; then calls
+	 * &lt;code&gt;command.callAllAction&lt;/code&gt;
+	 */
+	public void callAllAction() {
+<span class="nc bnc" id="L515" title="All 2 branches missed.">		if (action != null)</span>
+<span class="nc" id="L516">			action.callAllAction();</span>
+<span class="nc bnc" id="L517" title="All 2 branches missed.">		if (command != null)</span>
+<span class="nc" id="L518">			command.callAllAction();</span>
+<span class="nc" id="L519">	}</span>
+
+	/**
+	 * Draws &lt;code&gt;draw.callAllDraw(g)&lt;/code&gt; then calls
+	 * &lt;code&gt;command.callAllDraw(g)&lt;/code&gt;
+	 * 
+	 * @see {@link KLD.cmd.Draw}
+	 * @see {@link KLD.cmd.DrawList}
+	 * @see {@link KLD.cmd.Command}
+	 * @see {@link KLD.cmd.Command}
+	 */
+	public void callAllDraw(Graphics g) {
+<span class="nc bnc" id="L531" title="All 2 branches missed.">		if (draw != null)</span>
+<span class="nc" id="L532">			draw.callAllDraw(g);</span>
+<span class="nc bnc" id="L533" title="All 2 branches missed.">		if (command != null)</span>
+<span class="nc" id="L534">			command.callAllDraw(g);</span>
+<span class="nc" id="L535">	}</span>
+
+	private boolean inBetween(int x, int a, int b) {
+<span class="nc bnc" id="L538" title="All 4 branches missed.">		return (x &gt;= a &amp;&amp; x &lt;= b);</span>
+	}
+
+	// location methods
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @param leftBound
+	 *            adds more width on the left side of this game object
+	 * @param rightBound
+	 *            adds more width to the right side of this game object
+	 * @param upperBound
+	 *            adds more height to the top of this game object
+	 * @param bottomBound
+	 *            adds more height to the bottom of this game object
+	 * @return returns &lt;code&gt;true&lt;/code&gt; if the object is on top of
+	 *         &lt;code&gt;go&lt;/code&gt;
+	 */
+	public boolean isOnTopOf(GameObject go, int leftBound, int rightBound,
+			int upperBound, int bottomBound) {
+<span class="nc bnc" id="L558" title="All 2 branches missed.">		if (this.width() &lt;= go.width()) {</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">			if ((inBetween(this.x(), go.x() - leftBound, go.x() + go.width()</span>
+<span class="nc bnc" id="L560" title="All 2 branches missed.">					+ rightBound) || inBetween(this.x() + this.width(), go.x()</span>
+<span class="nc" id="L561">					- leftBound, go.x() + go.width() + rightBound))</span>
+<span class="nc bnc" id="L562" title="All 2 branches missed.">					&amp;&amp; inBetween(this.y() + this.height(),</span>
+<span class="nc" id="L563">							go.y() - bottomBound, go.y() + upperBound))</span>
+<span class="nc" id="L564">				return true;</span>
+<span class="nc" id="L565">			return false;</span>
+		}// end if(this.width...)
+		else
+<span class="nc" id="L568">			return go.isUnder(this, leftBound, rightBound, upperBound,</span>
+					bottomBound);
+
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @return true if this object is on top of the game object.
+	 * @see #isOnTopOf(GameObject, int, int, int, int)
+	 */
+	public boolean isOnTopOf(GameObject go) {
+<span class="nc" id="L580">		return isOnTopOf(go, 0, 0, 0, 0);</span>
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @param leftBound
+	 *            adds more width on the left side of this game object
+	 * @param rightBound
+	 *            adds more width to the right side of this game object
+	 * @param upperBound
+	 *            adds more height to the top of this game object
+	 * @param bottomBound
+	 *            adds more height to the bottom of this game object
+	 * @return returns &lt;code&gt;true&lt;/code&gt; if the object is under &lt;code&gt;go&lt;/code&gt;
+	 */
+	public boolean isUnder(GameObject go, int leftBound, int rightBound,
+			int upperBound, int bottomBound) {
+<span class="nc bnc" id="L598" title="All 2 branches missed.">		if (this.width() &lt;= go.width()) {</span>
+<span class="nc bnc" id="L599" title="All 2 branches missed.">			if ((inBetween(this.x(), go.x() - leftBound, go.x() + go.width()</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">					+ rightBound) || inBetween(this.x() + this.width(), go.x()</span>
+<span class="nc" id="L601">					- leftBound, go.x() + go.width() + rightBound))</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">					&amp;&amp; inBetween(this.y(), go.y() + go.height() - bottomBound,</span>
+<span class="nc" id="L603">							go.y() + go.height() + upperBound))</span>
+<span class="nc" id="L604">				return true;</span>
+<span class="nc" id="L605">			return false;</span>
+		} else
+<span class="nc" id="L607">			return go.isOnTopOf(this, leftBound, rightBound, upperBound,</span>
+					bottomBound);
+
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @return true if this object is under go .
+	 * @see #isUnder(GameObject, int, int, int, int)
+	 */
+	public boolean isUnder(GameObject go) {
+<span class="nc" id="L619">		return isUnder(go, 0, 0, 0, 0);</span>
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @param leftBound
+	 *            adds more width on the left side of this game object
+	 * @param rightBound
+	 *            adds more width to the right side of this game object
+	 * @param upperBound
+	 *            adds more height to the top of this game object
+	 * @param bottomBound
+	 *            adds more height to the bottom of this game object
+	 * @return returns &lt;code&gt;true&lt;/code&gt; if the object is on the left side to
+	 *         &lt;code&gt;go&lt;/code&gt;
+	 */
+	public boolean isLeftTo(GameObject go, int upperBound, int bottomBound,
+			int leftBound, int rightBound) {
+<span class="nc bnc" id="L638" title="All 2 branches missed.">		if (this.height() &lt;= go.height()) {</span>
+<span class="nc bnc" id="L639" title="All 2 branches missed.">			if ((inBetween(this.y(), go.y() - upperBound, go.y() + go.height()</span>
+<span class="nc bnc" id="L640" title="All 2 branches missed.">					+ bottomBound) || inBetween(this.y() + this.height(),</span>
+<span class="nc" id="L641">						go.y() - upperBound, go.y() + go.height() + bottomBound))</span>
+<span class="nc bnc" id="L642" title="All 2 branches missed.">					&amp;&amp; inBetween(this.x() + this.width(), go.x() - leftBound,</span>
+<span class="nc" id="L643">							go.x() + rightBound))</span>
+<span class="nc" id="L644">				return true;</span>
+<span class="nc" id="L645">			return false;</span>
+		} else
+<span class="nc" id="L647">			return go.isRightTo(this, upperBound, bottomBound, leftBound,</span>
+					rightBound);
+
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @returns &lt;code&gt;true&lt;/code&gt; if the object is on the left side to
+	 *          &lt;code&gt;go&lt;/code&gt;
+	 * @see #isRightTo(GameObject, int, int, int, int)
+	 */
+	public boolean isLeftTo(GameObject go) {
+<span class="nc" id="L660">		return isLeftTo(go, 0, 0, 0, 0);</span>
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @param leftBound
+	 *            adds more width on the left side of this game object
+	 * @param rightBound
+	 *            adds more width to the right side of this game object
+	 * @param upperBound
+	 *            adds more height to the top of this game object
+	 * @param bottomBound
+	 *            adds more height to the bottom of this game object
+	 * @return returns &lt;code&gt;true&lt;/code&gt; if the object is on the right side to
+	 *         &lt;code&gt;go&lt;/code&gt;
+	 */
+	public boolean isRightTo(GameObject go, int upperBound, int bottomBound,
+			int leftBound, int rightBound) {
+<span class="nc bnc" id="L679" title="All 2 branches missed.">		if (this.height() &lt;= go.height()) {</span>
+<span class="nc bnc" id="L680" title="All 2 branches missed.">			if ((inBetween(this.y(), go.y() - upperBound, go.y() + go.height()</span>
+<span class="nc bnc" id="L681" title="All 2 branches missed.">					+ bottomBound) || inBetween(this.y() + this.height(),</span>
+<span class="nc" id="L682">						go.y() - upperBound, go.y() + go.height() + bottomBound))</span>
+<span class="nc bnc" id="L683" title="All 2 branches missed.">					&amp;&amp; inBetween(this.x(), go.x() + go.width() - leftBound,</span>
+<span class="nc" id="L684">							go.x() + go.width() + rightBound))</span>
+<span class="nc" id="L685">				return true;</span>
+<span class="nc" id="L686">			return false;</span>
+		} else
+<span class="nc" id="L688">			return go.isLeftTo(this, upperBound, bottomBound, leftBound,</span>
+					rightBound);
+
+	}
+
+	/**
+	 * @param go
+	 *            the gameObject that is being compared with.
+	 * @returns &lt;code&gt;true&lt;/code&gt; if the object is on the right side to
+	 *          &lt;code&gt;go&lt;/code&gt;
+	 * @see #isRightTo(GameObject, int, int, int, int)
+	 */
+	public boolean isRightTo(GameObject go) {
+<span class="nc" id="L701">		return isRightTo(go, 0, 0, 0, 0);</span>
+	}
+
+	/**
+	 * @return true if object is moving in any direction
+	 */
+	public boolean isMoving() {
+<span class="nc bnc" id="L708" title="All 4 branches missed.">		return prevX != x || prevY != y;</span>
+	}
+
+	/**
+	 * @return true if object is moving left
+	 */
+	public boolean isMovingLeft() {
+<span class="nc bnc" id="L715" title="All 2 branches missed.">		return (prevX &gt; x);</span>
+	}
+
+	/**
+	 * @return true if object is moving right
+	 */
+	public boolean isMovingRight() {
+<span class="nc bnc" id="L722" title="All 2 branches missed.">		return (prevX &lt; x);</span>
+	}
+
+	/**
+	 * @return true if object is moving up
+	 */
+	public boolean isMovingUp() {
+<span class="nc bnc" id="L729" title="All 2 branches missed.">		return (prevY &gt; y);</span>
+	}
+
+	/**
+	 * @return true if object is moving down
+	 */
+	public boolean isMovingDown() {
+<span class="nc bnc" id="L736" title="All 2 branches missed.">		return (prevX &lt; x);</span>
+	}
+
+	// Commands
+	/**
+	 * @param c
+	 *            added to command list.
+	 * @see #callAllAction()
+	 * @see #callAllDraw(Graphics)
+	 */
+	public void addCommand(Command c) {
+<span class="nc bnc" id="L747" title="All 2 branches missed.">		if (command == null)</span>
+<span class="nc" id="L748">			createCommandList();</span>
+<span class="nc" id="L749">		command.addLinkObject(c);</span>
+<span class="nc" id="L750">	}</span>
+
+	/**
+	 * prints a message after removing.
+	 * 
+	 * @param id
+	 *            the command object that will be removed
+	 */
+	public void removeCommand(int id) {
+<span class="nc" id="L759">		command.removeLinkObject(id);</span>
+<span class="nc" id="L760">	}</span>
+
+	/**
+	 * prints a message after removing.
+	 * 
+	 * @param name
+	 *            of the command object that will be removed
+	 */
+	public void removeCommand(String name) {
+<span class="nc" id="L769">		command.removeLinkObject(name);</span>
+<span class="nc" id="L770">	}</span>
+
+	/*
+	 * i don't think its efficient /**
+	 * 
+	 * @param c
+	 * 
+	 * public void removeCommand(Command c){ command.removeLinkObject(c); }
+	 */
+	/**
+	 * creates a new empty command
+	 */
+	public void clearCommands() {
+<span class="nc" id="L783">		command.clear();</span>
+<span class="nc" id="L784">	}</span>
+
+	// Action
+	/**
+	 * @param a
+	 *            adds action to the objects action list
+	 * @see #callAllAction()
+	 * @see {@link KLD.cmd.Action}
+	 * @see {@link KLD.cmd.ActionList}
+	 */
+	public void addAction(Action a) {
+<span class="nc bnc" id="L795" title="All 2 branches missed.">		if (action == null)</span>
+<span class="nc" id="L796">			createActionList();</span>
+<span class="nc" id="L797">		action.addLinkObject(a);</span>
+<span class="nc" id="L798">	}</span>
+
+	/**
+	 * @param id
+	 *            of the action that will be removed.
+	 * @see {@link KLD.cmd.Action}
+	 * @see {@link KLD.cmd.ActionList}
+	 */
+	public void removeAction(int id) {
+<span class="nc" id="L807">		action.removeLinkObject(id);</span>
+<span class="nc" id="L808">	}</span>
+
+	/**
+	 * It's only recommended to remove by name when a customized name is set to
+	 * an action
+	 * 
+	 * @param name
+	 *            of the action that will be removed.
+	 * @see {@link KLD.cmd.Action}
+	 * @see {@link KLD.cmd.ActionList}
+	 */
+	public void removeAction(String name) {
+<span class="nc" id="L820">		action.removeLinkObject(name);</span>
+<span class="nc" id="L821">	}</span>
+
+	/*
+	 * not recommended. use id or name public void removeAction(Action c){
+	 * action.removeLinkObject(c); }
+	 */
+	/**
+	 * creates a new action list
+	 * 
+	 * @see {@link KLD.cmd.ActionList}
+	 */
+	public void clearActions() {
+<span class="nc" id="L833">		action.clear();</span>
+<span class="nc" id="L834">	}</span>
+
+	/*
+	 * /** Creates a ruleList if doesn't exist, and adds an action object to it.
+	 * 
+	 * @param a action that will be added to the list
+	 * 
+	 * public void addRule(Action a) { if (rule == null) createRuleList();
+	 * rule.addLinkObject(a); }
+	 * 
+	 * /**
+	 * 
+	 * @param ID the id of the rule that will be removed
+	 * 
+	 * public void removeRule(int ID) { rule.removeLinkObject(ID); }
+	 * 
+	 * /**
+	 * 
+	 * @param name of the rule that will be removed
+	 * 
+	 * public void removeRule(String name) { rule.removeLinkObject(name); }
+	 * 
+	 * /* public void removeRule(Action c){ rule.removeLinkObject(c); }
+	 * 
+	 * /** recreate a new list
+	 * 
+	 * public void clearRules() { rule.clear(); }
+	 */
+	// Draws
+	/**
+	 * Adds a draw object to drawList
+	 * 
+	 * @param d
+	 *            draw object
+	 * @see #callAllDraw(Graphics)
+	 * @see {@link KLD.cmd.Draw}
+	 * @see {@link KLD.cmd.DrawList}
+	 */
+	public void addDraw(Draw d) {
+<span class="nc bnc" id="L873" title="All 2 branches missed.">		if (draw == null)</span>
+<span class="nc" id="L874">			createDrawList();</span>
+<span class="nc" id="L875">		draw.addLinkObject(d);</span>
+<span class="nc" id="L876">	}</span>
+
+	/**
+	 * removes object with a certain id. Prints a message that states if the
+	 * object is removed or not found
+	 * 
+	 * @param id
+	 *            of an object in drawList
+	 */
+	public void removeDraw(int id) {
+<span class="nc" id="L886">		draw.removeLinkObject(id);</span>
+<span class="nc" id="L887">	}</span>
+
+	/**
+	 * removes object with a certain name. Prints a message that states if the
+	 * object is removed or not found
+	 * 
+	 * @param id
+	 *            of an object in drawList
+	 */
+	public void removeDraw(String name) {
+<span class="nc" id="L897">		draw.removeLinkObject(name);</span>
+<span class="nc" id="L898">	}</span>
+
+	/*
+	 * not recommended public void removeDraw(Draw c){ draw.removeLinkObject(c);
+	 * }
+	 */
+	/**
+	 * creates new empty drawList
+	 */
+	public void clearDraws() {
+<span class="nc" id="L908">		draw.clear();</span>
+<span class="nc" id="L909">	}</span>
+
+	/**
+	 * moves the object one step of length &lt;code&gt;speed&lt;/code&gt; towards
+	 * &lt;code&gt;x &amp; y&lt;/code&gt;
+	 * 
+	 * @param x
+	 *            coordinate
+	 * @param y
+	 *            coordinate
+	 * @param speed
+	 *            step length
+	 */
+	public void approach(int x, int y, double speed) {
+<span class="nc" id="L923">		double theta = Math.atan(Math.abs((this.y - y) / (this.x - x)));</span>
+
+<span class="nc bnc" id="L925" title="All 2 branches missed.">		this.x += ((this.x &lt; x) ? 1 : -1) * speed * Math.cos(theta);</span>
+<span class="nc bnc" id="L926" title="All 2 branches missed.">		this.y += ((this.y &lt; y) ? 1 : -1) * speed * Math.sin(theta);</span>
+<span class="nc" id="L927">	}</span>
+
+	/**
+	 * add an action to the object.... not sure if this work, use approach.
+	 * 
+	 * @param x
+	 *            stands for pokemonX
+	 * @param y
+	 *            do u question my function?
+	 * @param speed
+	 *            need more speed
+	 * @return it's a void function god damn it.
+	 */
+	// TODO not sure what I did there. Should use 'approach' and also check the
+	// spelling.
+	public void moveTo(final int x, final int y, final double speed) {
+
+<span class="nc" id="L944">		addAction(new Action(String.format(&quot;|id%s moveTo %s %s %.2f by %s &quot;,</span>
+<span class="nc" id="L945">				id, x, y, speed, name), this) {</span>
+
+			double theta;
+			double speedX;
+			double speedY;
+
+			@Override
+			public void init() {
+<span class="nc" id="L953">				theta = Math.atan(Math.abs((go.y - y) / (go.x - x)));</span>
+<span class="nc bnc" id="L954" title="All 2 branches missed.">				speedX = ((go.x &lt; x) ? 1 : -1) * speed * Math.cos(theta);</span>
+<span class="nc bnc" id="L955" title="All 2 branches missed.">				speedY = ((go.y &lt; y) ? 1 : -1) * speed * Math.sin(theta);</span>
+<span class="nc" id="L956">			}</span>
+
+			@Override
+			public void action() {
+				/*
+				 * if(inBetween(go.x(), x- (int)speedX/2, x+(int)speedX/2 ) &amp;&amp;
+				 * inBetween(go.y(),(y-(int)speedY/2), (y+(int)speedY/2)) ){
+				 * go.x = x; go.y = y; this.deactivate(); go.removeAction(id); }
+				 * go.x += speedX; go.y += speedY;
+				 */
+<span class="nc bnc" id="L966" title="All 2 branches missed.">				if (inBetween(go.x(), x - (int) ((speedX + 3) / 2), x</span>
+						+ (int) (speedX + 3) / 2)
+<span class="nc bnc" id="L968" title="All 2 branches missed.">						&amp;&amp; inBetween(go.y(), (y - (int) (speedY + 3) / 2),</span>
+								(y + (int) (speedY + 3) / 2))) {
+<span class="nc" id="L970">					go.x = x;</span>
+<span class="nc" id="L971">					go.y = y;</span>
+<span class="nc" id="L972">					this.deactivate();</span>
+<span class="nc" id="L973">					go.removeAction(id);</span>
+				}
+<span class="nc" id="L975">				double theta = Math.atan(Math.abs((go.y - y) / (go.x - x)));</span>
+
+<span class="nc" id="L977">				go.x += speedX;</span>
+<span class="nc" id="L978">				go.y += speedY;</span>
+
+<span class="nc bnc" id="L980" title="All 2 branches missed.">				speedX = ((go.x &lt; x) ? 1 : -1) * speed * Math.cos(theta);</span>
+<span class="nc bnc" id="L981" title="All 2 branches missed.">				speedY = ((go.y &lt; y) ? 1 : -1) * speed * Math.sin(theta);</span>
+
+<span class="nc" id="L983">			}</span>
+		});
+
+<span class="nc" id="L986">	}</span>
+
+	/**
+	 * adds an action. Calls &lt;code&gt;moveTo(p.x ,p.y ,speed)&lt;/code&gt;
+	 * 
+	 * @param p
+	 *            point
+	 * @param speed
+	 *            speed
+	 * @see GameObject#moveTo(int, int, double)
+	 */
+	public void moveTo(Point p, double speed) {
+<span class="nc" id="L998">		moveTo(p.x, p.y, speed);</span>
+<span class="nc" id="L999">	}</span>
+
+	/**
+	 * adds an action. Calls &lt;code&gt;moveTo(p.x ,p.y ,1.0)&lt;/code&gt;
+	 * 
+	 * @param p
+	 *            point
+	 * @see GameObject#moveTo(int, int, double)
+	 */
+	public void moveTo(Point p) {
+<span class="nc" id="L1009">		moveTo(p.x, p.y, 1);</span>
+<span class="nc" id="L1010">	}</span>
+
+	/**
+	 * Adds an action to actionList. Calls &lt;code&gt;moveTo(x ,y ,1.0)&lt;/code&gt;
+	 * 
+	 * @param x
+	 *            coordinates
+	 * @param y
+	 *            coordinates
+	 * @see #moveTo(int, int, double)
+	 */
+	public void moveTo(int x, int y) {
+<span class="nc" id="L1022">		moveTo(x, y, 1.0);</span>
+<span class="nc" id="L1023">	}</span>
+
+	/**
+	 * Adds an action that moves the object up to height &lt;code&gt;y&lt;/code&gt; with
+	 * speed &lt;code&gt;s&lt;/code&gt;
+	 * 
+	 * @param y
+	 *            max height
+	 * @param s
+	 *            speed
+	 */
+	public void moveUp(final int y, final double s) {
+
+<span class="nc" id="L1036">		this.addAction(new Action(String.format(&quot;%s MoveUp max:%s speed:%s&quot;,</span>
+<span class="nc" id="L1037">				this.name, y, s), this) {</span>
+
+			@Override
+			public void action() {
+
+<span class="nc bnc" id="L1042" title="All 2 branches missed.">				if (go.y - s &gt; y)</span>
+<span class="nc" id="L1043">					go.y -= s;</span>
+				else {
+<span class="nc" id="L1045">					go.y = y;</span>
+<span class="nc" id="L1046">					deactivate();</span>
+<span class="nc" id="L1047">					go.removeAction(this.id);</span>
+				}
+<span class="nc" id="L1049">			}</span>
+		});
+<span class="nc" id="L1051">	}// end move</span>
+
+	/**
+	 * Adds an action that moves the object up to height &lt;code&gt;y&lt;/code&gt; with
+	 * speed 1 Calls &lt;code&gt;moveUp(y, 1);&lt;/code&gt;
+	 * 
+	 * @param y
+	 *            max height
+	 * @see #moveUp(int, double)
+	 */
+	public void moveUp(final int y) {
+<span class="nc" id="L1062">		moveUp(y, 1);</span>
+<span class="nc" id="L1063">	}</span>
+
+	/**
+	 * Adds an action that moves the object up. Calls
+	 * &lt;code&gt;moveUp(Integer.MIN_VALUE)&lt;/code&gt;
+	 * 
+	 * @see #moveUp(int)
+	 */
+	public void moveUp() {
+<span class="nc" id="L1072">		moveUp(Integer.MIN_VALUE);</span>
+<span class="nc" id="L1073">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move down with
+	 * speed &lt;code&gt;speed&lt;/code&gt; until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 * @param speed
+	 *            speed
+	 */
+	public void moveDown(final int max, final double speed) {
+
+<span class="nc" id="L1086">		this.addAction(new Action(String.format(&quot;%s MoveDown max:%s speed:%s&quot;,</span>
+<span class="nc" id="L1087">				this.name, max, speed), this) {</span>
+
+			@Override
+			public void action() {
+
+<span class="nc bnc" id="L1092" title="All 2 branches missed.">				if (go.y + speed &lt; y)</span>
+<span class="nc" id="L1093">					go.y += speed;</span>
+				else {
+<span class="nc" id="L1095">					go.y = max;</span>
+<span class="nc" id="L1096">					deactivate();</span>
+<span class="nc" id="L1097">					go.removeAction(this.id);</span>
+				}
+<span class="nc" id="L1099">			}</span>
+		});
+<span class="nc" id="L1101">	}// end move</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move down with
+	 * speed 1 until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 * @see #moveDown(int, double)
+	 */
+	public void moveDown(int max) {
+<span class="nc" id="L1112">		moveDown(max, 1);</span>
+<span class="nc" id="L1113">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move down
+	 * forever
+	 * 
+	 * @see #moveDown(int, double)
+	 */
+	public void moveDown() {
+<span class="nc" id="L1122">		moveDown(Integer.MAX_VALUE);</span>
+<span class="nc" id="L1123">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move right with
+	 * speed &lt;code&gt;speed&lt;/code&gt; until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 * @param speed
+	 *            speed in which the object will move each frame
+	 */
+	public void moveRight(final int max, final double speed) {
+
+<span class="nc" id="L1136">		this.addAction(new Action(String.format(&quot;%s MoveRight max:%s speed:%s&quot;,</span>
+<span class="nc" id="L1137">				this.name, max, speed), this) {</span>
+
+			@Override
+			public void action() {
+
+<span class="nc bnc" id="L1142" title="All 2 branches missed.">				if (go.x + speed &lt; max)</span>
+<span class="nc" id="L1143">					go.x += speed;</span>
+				else {
+<span class="nc" id="L1145">					go.x = max;</span>
+<span class="nc" id="L1146">					deactivate();</span>
+<span class="nc" id="L1147">					go.removeAction(this.id);</span>
+				}
+<span class="nc" id="L1149">			}</span>
+		});
+<span class="nc" id="L1151">	}// end move</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move right
+	 * until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 */
+	public void moveRight(final int max) {
+<span class="nc" id="L1161">		moveRight(max, 1);</span>
+<span class="nc" id="L1162">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move right
+	 * forever
+	 * 
+	 * @param max
+	 *            maximum point
+	 * @param speed
+	 *            speed in which the object will move each frame
+	 */
+	public void moveRight() {
+<span class="nc" id="L1174">		moveRight(Integer.MAX_VALUE);</span>
+<span class="nc" id="L1175">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move left with
+	 * speed &lt;code&gt;speed&lt;/code&gt; until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 * @param speed
+	 *            speed in which the object will move each frame
+	 */
+	public void moveLeft(final int max, final double speed) {
+
+<span class="nc" id="L1188">		this.addAction(new Action(String.format(&quot;%s MoveLeft max:%s speed:%s&quot;,</span>
+<span class="nc" id="L1189">				this.name, max, speed), this) {</span>
+
+			@Override
+			public void action() {
+
+<span class="nc bnc" id="L1194" title="All 2 branches missed.">				if (go.x - speed &gt; max)</span>
+<span class="nc" id="L1195">					go.x -= speed;</span>
+				else {
+<span class="nc" id="L1197">					go.x = max;</span>
+<span class="nc" id="L1198">					deactivate();</span>
+<span class="nc" id="L1199">					go.removeAction(this.id);</span>
+				}
+<span class="nc" id="L1201">			}</span>
+		});
+<span class="nc" id="L1203">	}// end move</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move right
+	 * until reaching &lt;code&gt;max&lt;/code&gt;
+	 * 
+	 * @param max
+	 *            maximum point
+	 */
+	public void moveLeft(final int max) {
+<span class="nc" id="L1213">		moveLeft(max, 1);</span>
+<span class="nc" id="L1214">	}</span>
+
+	/**
+	 * Adds an action to the object. The object will continue to move left
+	 * forever
+	 */
+	public void moveLeft() {
+<span class="nc" id="L1221">		moveLeft(Integer.MIN_VALUE);</span>
+<span class="nc" id="L1222">	}</span>
+
+	/**
+	 * Adds an action to the gameObject and lets it orbit around it's current
+	 * point.
+	 * 
+	 * @param r
+	 *            radius
+	 * @param angelerVelocity
+	 *            in radian
+	 */
+	public void orbit(final int r, final double angelerVelocity) {
+
+<span class="nc" id="L1235">		addAction(new Action(&quot;Orbit&quot;, this) {</span>
+<span class="nc" id="L1236">			double pi = 0;</span>
+<span class="nc" id="L1237">			double oX = go.x;</span>
+<span class="nc" id="L1238">			double oY = go.y;</span>
+
+			@Override
+			public void action() {
+
+<span class="nc" id="L1243">				go.x = oX + r * Math.cos(pi);</span>
+
+<span class="nc" id="L1245">				go.y = oY + r * Math.sin(pi);</span>
+
+<span class="nc" id="L1247">				pi += angelerVelocity;</span>
+<span class="nc" id="L1248">			}</span>
+
+		});
+
+<span class="nc" id="L1252">	}</span>
+
+	/**
+	 * Adds an action to the gameObject and lets it orbit around the mouse.
+	 * 
+	 * @param r
+	 *            radius
+	 * @param angelerVelocity
+	 *            in radian
+	 * @see {@link KLD.Input#point}
+	 */
+	public void orbitMouse(final int r, final double angelerVelocity) {
+
+<span class="nc" id="L1265">		addAction(new Action(&quot;OrbitMouse&quot;, this) {</span>
+<span class="nc" id="L1266">			double pi = 0;</span>
+
+			@Override
+			public void action() {
+
+<span class="nc" id="L1271">				go.x = Input.point.x + r * Math.cos(pi);</span>
+
+<span class="nc" id="L1273">				go.y = Input.point.y + r * Math.sin(pi);</span>
+
+<span class="nc" id="L1275">				pi += angelerVelocity;</span>
+<span class="nc" id="L1276">			}</span>
+
+		});
+
+<span class="nc" id="L1280">	}</span>
+
+	/**
+	 * Adds a draw that clones (draws) the game object after cloning the
+	 * animation. Note that this animation does not effect the object's
+	 * animation.
+	 * 
+	 * @param x
+	 *            shift
+	 * @param y
+	 *            shift
+	 * @see {@link KLD.Animation#getAnimation()}
+	 * 
+	 */
+	public void cloneAnimation(final int x, final int y) {
+
+<span class="nc" id="L1296">		addDraw(new Draw(&quot;cloneAnimation&quot;, this) {</span>
+
+			Animation ani;
+
+			@Override
+			public void init() {
+<span class="nc" id="L1302">				ani = go.animation.clone();</span>
+<span class="nc" id="L1303">				ani.setFrame(go.animation.getCurrentFrame());</span>
+<span class="nc" id="L1304">			}</span>
+
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L1308">				g.drawImage(ani.getNextFrame(), go.x() + x, go.y() + y, null);</span>
+<span class="nc" id="L1309">			}</span>
+
+		});
+<span class="nc" id="L1312">	}</span>
+
+	/**
+	 * @return an action that calls all Action of this object
+	 * @see #callAllAction()
+	 */
+	public Action getAction() {
+<span class="nc" id="L1319">		return new Action(name + &quot;'s Action&quot;, this) {</span>
+
+			@Override
+			public void action() {
+<span class="nc" id="L1323">				go.callAllAction();</span>
+
+<span class="nc" id="L1325">			}</span>
+		};
+	}
+
+	/**
+	 * @return a draw that calls all Draw of this object
+	 * @see #callAllDraw(Graphics)
+	 */
+	public Draw getDraw() {
+
+<span class="nc" id="L1335">		return new Draw(name + &quot;'s Draw&quot;, this) {</span>
+
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L1339">				go.callAllDraw(g);</span>
+
+<span class="nc" id="L1341">			}</span>
+		};
+	}
+
+	/**
+	 * creates a new command list
+	 */
+	public void createCommandList() {
+<span class="nc" id="L1349">		command = new CommandList(&quot;GameObject CommandList&quot;); // commands :&gt;</span>
+<span class="nc" id="L1350">	}</span>
+
+	/**
+	 * creates a new action list
+	 */
+	public void createActionList() {
+<span class="nc" id="L1356">		action = new ActionList(&quot;GameObject ActionList&quot;); // commands &lt;:</span>
+<span class="nc" id="L1357">	}</span>
+
+	/**
+	 * creates a new rule list
+	 * 
+	 * protected void createRuleList() { rule = new
+	 * ActionList(&quot;GameObject RulesList&quot;); }
+	 */
+	/**
+	 * creates a new draw list
+	 */
+	public void createDrawList() {
+<span class="nc" id="L1369">		draw = new DrawList(&quot;GameObject DrawList&quot;); // commands (:&lt;</span>
+<span class="nc" id="L1370">	}</span>
+
+	@Override
+	public Command getCommand() {
+
+<span class="nc" id="L1375">		return new Command(this.name + &quot;Command&quot;, this) {</span>
+
+			@Override
+			protected void draw(Graphics g) {
+<span class="nc" id="L1379">				go.getDraw().callDraw(g);</span>
+<span class="nc" id="L1380">			}</span>
+
+			@Override
+			protected void action() {
+<span class="nc" id="L1384">				go.getAction().callAction();</span>
+
+<span class="nc" id="L1386">			}</span>
+		};
+	}
+
+}// end GameObject
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

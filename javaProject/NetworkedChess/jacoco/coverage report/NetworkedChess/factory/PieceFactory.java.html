@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>PieceFactory.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">factory</a> &gt; <span class="el_source">PieceFactory.java</span></div><h1>PieceFactory.java</h1><pre class="source lang-java linenums">package factory;
+
+import java.util.ArrayList;
+
+import intf.ChessFactory;
+import model.KingMovement;
+import model.MovePattern;
+import model.PawnMovement;
+import model.Piece;
+import model.PieceMovement;
+
+/** Responsible of creating pieces either by index (see Piece.java) or by function. 
+ * 
+ * @author KLD
+ * @see Piece
+ * 
+ * @TODO singleton and document 
+ */
+public class PieceFactory implements ChessFactory&lt;Piece&gt;
+{
+	//singleton 
+	private static PieceFactory insentce; 
+	
+	public static PieceFactory instence()
+	{
+<span class="fc bfc" id="L26" title="All 2 branches covered.">		if(insentce==null)</span>
+<span class="fc" id="L27">			insentce = new PieceFactory(); </span>
+		
+<span class="fc" id="L29">		return insentce; </span>
+	}
+	//end singleton 
+
+	/**
+	 * memorize created pieces by index  
+	 */
+	private ArrayList&lt;Piece&gt; pieces; 
+	
+	private PieceFactory() 
+<span class="fc" id="L39">	{</span>
+<span class="fc" id="L40">		pieces = new ArrayList&lt;&gt;(); </span>
+<span class="fc" id="L41">	}</span>
+	
+	@Override
+	public Piece factor(int index) 
+	{
+<span class="fc bfc" id="L46" title="All 2 branches covered.">		while(pieces.size() &lt;= index )</span>
+<span class="fc" id="L47">			pieces.add(null); </span>
+		
+<span class="fc bfc" id="L49" title="All 2 branches covered.">		if(pieces.get(index) == null)</span>
+<span class="fc" id="L50">			initlize(index); </span>
+	
+<span class="fc" id="L52">		return pieces.get(index);</span>
+	}
+
+	private void initlize(int index) 
+	{
+<span class="fc bfc" id="L57" title="All 2 branches covered.">		if(index == Piece.TYPE_BISHOP)</span>
+<span class="fc" id="L58">			pieces.set(index, factorBishop()); </span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		else if(index == Piece.TYPE_KING)</span>
+<span class="fc" id="L60">			pieces.set(index, factorKing()); </span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">		else if (index == Piece.TYPE_KNIGHT)</span>
+<span class="fc" id="L62">			pieces.set(index, factorKnight()); </span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		else if (index == Piece.TYPE_QUEEN)</span>
+<span class="fc" id="L64">			pieces.set(index, factorQueen()); </span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		else if (index == Piece.TYPE_PAWN)</span>
+<span class="fc" id="L66">			pieces.set(index, factorPawn()); </span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		else if (index == Piece.TYPE_ROOK)</span>
+<span class="fc" id="L68">			pieces.set(index, factorRook()); </span>
+<span class="fc" id="L69">	}</span>
+
+	@Override
+	public Piece factorKing() 
+	{
+<span class="fc" id="L74">		MovePattern rookLike = PieceMovement.createMove(1, 0); </span>
+<span class="fc" id="L75">		MovePattern bishipLike = PieceMovement.createMove(1, 1); </span>
+	
+		//attach
+<span class="fc" id="L78">		rookLike.next.next.next.next = bishipLike; </span>
+		
+<span class="fc" id="L80">		PieceMovement m = new KingMovement(rookLike);</span>
+<span class="fc" id="L81">		Piece noobking = new Piece(Piece.TYPE_KING, m);</span>
+	
+<span class="fc" id="L83">		return noobking;</span>
+	}
+
+	@Override
+	public Piece factorQueen() 
+	{
+<span class="fc" id="L89">		MovePattern rookLike = PieceMovement.createMove(1, 0); </span>
+<span class="fc" id="L90">		MovePattern bishipLike = PieceMovement.createMove(1, 1); </span>
+	
+		//attach
+<span class="fc" id="L93">		rookLike.next.next.next.next = bishipLike; </span>
+	
+		
+<span class="fc" id="L96">		PieceMovement m = new PieceMovement(rookLike, true); </span>
+<span class="fc" id="L97">		Piece queen = new Piece(Piece.TYPE_QUEEN, m);</span>
+	
+<span class="fc" id="L99">		return queen; </span>
+	}
+
+	@Override
+	public Piece factorRook() 
+	{
+<span class="fc" id="L105">		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 0), true); </span>
+	
+<span class="fc" id="L107">		Piece rockSolid = new Piece(Piece.TYPE_ROOK, m);</span>
+	
+<span class="fc" id="L109">		return rockSolid; </span>
+	}
+
+	@Override
+	public Piece factorBishop() 
+	{
+<span class="fc" id="L115">		PieceMovement m = new PieceMovement(PieceMovement.createMove(1, 1), true); </span>
+<span class="fc" id="L116">		Piece satan = new Piece(Piece.TYPE_BISHOP, m);</span>
+	
+<span class="fc" id="L118">		return satan; </span>
+	}
+
+	@Override
+	public Piece factorKnight()
+	{
+<span class="fc" id="L124">		MovePattern horse1 = PieceMovement.createMove(1, 2); </span>
+<span class="fc" id="L125">		MovePattern horse2 = PieceMovement.createMove(1, -2); </span>
+	
+		//attach
+<span class="fc" id="L128">		horse1.next.next.next.next = horse2; </span>
+			
+				
+<span class="fc" id="L131">		PieceMovement m = new PieceMovement(horse1, false); </span>
+<span class="fc" id="L132">		Piece DoNotAssumeIAmAManYouSexist = new Piece(Piece.TYPE_KNIGHT, m);</span>
+	
+<span class="fc" id="L134">		return DoNotAssumeIAmAManYouSexist; </span>
+	}
+
+	@Override
+	public Piece factorPawn() 
+	{
+<span class="fc" id="L140">		PieceMovement m = new PawnMovement(); //this piece of dick follows no logic </span>
+<span class="fc" id="L141">		Piece dick = new Piece(Piece.TYPE_PAWN, m);</span>
+		
+<span class="fc" id="L143">		return dick;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>
