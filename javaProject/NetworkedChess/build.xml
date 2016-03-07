@@ -16,12 +16,12 @@
     <path id="NetworkedChess.classpath">
         <pathelement location="bin"/>
         <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="lib/java-json.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -52,6 +52,22 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="AnimationTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="KLD.AnimationTest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
+    </target>
+    <target name="BoardUITest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="ui.BoardUITest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
     </target>
     <target name="ChessBoardTest">
         <mkdir dir="${junit.output.dir}"/>
@@ -95,19 +111,67 @@
             <classpath refid="NetworkedChess.classpath"/>
         </junit>
     </target>
+    <target name="Menus">
+        <java classname="menus.Menus" failonerror="true" fork="yes">
+            <classpath refid="NetworkedChess.classpath"/>
+        </java>
+    </target>
     <target name="MovabilityTest">
         <java classname="KLDtest.MovabilityTest" failonerror="true" fork="yes">
             <classpath refid="NetworkedChess.classpath"/>
         </java>
     </target>
+    <target name="MultiplayerChessGameTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="GamePanels.MultiplayerChessGameTest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
+    </target>
     <target name="NetworkedChess">
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="GamePanels.ChessGameTest" todir="${junit.output.dir}"/>
+            <test name="GamePanels.LauncherTest" todir="${junit.output.dir}"/>
+            <test name="GamePanels.MultiplayerChessGameTest" todir="${junit.output.dir}"/>
+            <test name="GamePanels.SinglePlayerChessTest" todir="${junit.output.dir}"/>
+            <test name="KLD.AnimationTest" todir="${junit.output.dir}"/>
+            <test name="KLD.ConsoleTest" todir="${junit.output.dir}"/>
+            <test name="KLD.GameFrameTest" todir="${junit.output.dir}"/>
+            <test name="KLD.GameObjectMapTest" todir="${junit.output.dir}"/>
+            <test name="KLD.GameTest" todir="${junit.output.dir}"/>
+            <test name="KLD.obj.GameObjectTest" todir="${junit.output.dir}"/>
             <test name="KLD.util.MathTest" todir="${junit.output.dir}"/>
+            <test name="KLD.util.ShapeMakerTest" todir="${junit.output.dir}"/>
+            <test name="menus.MenusTest" todir="${junit.output.dir}"/>
             <test name="model.ChessBoardTest" todir="${junit.output.dir}"/>
             <test name="model.ControllerTest" todir="${junit.output.dir}"/>
+            <test name="model.PlayerControllerTest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
+    </target>
+    <target name="PlayerControllerTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="model.PlayerControllerTest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
+    </target>
+    <target name="ShapeMakerTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="KLD.util.ShapeMakerTest" todir="${junit.output.dir}"/>
+            <classpath refid="NetworkedChess.classpath"/>
+        </junit>
+    </target>
+    <target name="SinglePlayerChessTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="GamePanels.SinglePlayerChessTest" todir="${junit.output.dir}"/>
             <classpath refid="NetworkedChess.classpath"/>
         </junit>
     </target>

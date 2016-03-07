@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="DESKTOP-9PHIP5K" name="model.ChessBoardTest" skipped="0" tests="1" time="0.049" timestamp="2016-02-20T00:13:41">
+<testsuite errors="0" failures="0" hostname="DESKTOP-9PHIP5K" name="model.ChessBoardTest" skipped="0" tests="1" time="0.042" timestamp="2016-03-07T21:41:42">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="env.USERDOMAIN_ROAMINGPROFILE" value="DESKTOP-9PHIP5K" />
@@ -73,8 +73,8 @@
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.4 compiled on April 29 2014" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner model.ChessBoardTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junit\TEST-model.ChessBoardTest.xml crashfile=C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junitvmwatcher4697331313133321422.properties propsfile=C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junit2503412374194402980.properties" />
-    <property name="java.class.path" value="C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\bin;C:\Users\Firzen\.p2\pool\plugins\org.junit_4.12.0.v201504281640\junit.jar;C:\Users\Firzen\.p2\pool\plugins\org.hamcrest.core_1.3.0.v201303031735.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-launcher.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit4.jar" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner model.ChessBoardTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junit\TEST-model.ChessBoardTest.xml crashfile=C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junitvmwatcher7021406512727563214.properties propsfile=C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\junit4917989274054899292.properties" />
+    <property name="java.class.path" value="C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\bin;C:\Users\Firzen\.p2\pool\plugins\org.junit_4.12.0.v201504281640\junit.jar;C:\Users\Firzen\.p2\pool\plugins\org.hamcrest.core_1.3.0.v201303031735.jar;C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess\lib\java-json.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-launcher.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit.jar;C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant-junit4.jar" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
     <property name="env.windir" value="C:\WINDOWS" />
     <property name="env.LOGONSERVER" value="\\DESKTOP-9PHIP5K" />
@@ -100,7 +100,7 @@
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM" />
     <property name="env.PATHEXT" value=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC" />
     <property name="env.Path" value="C:/Program Files/Java/jdk1.8.0_71/bin/../jre/bin/server;C:/Program Files/Java/jdk1.8.0_71/bin/../jre/bin;C:/Program Files/Java/jdk1.8.0_71/bin/../jre/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\SSH Communications Security\SSH Tectia\SSH Tectia AUX;C:\Program Files (x86)\SSH Communications Security\SSH Tectia\SSH Tectia AUX\Support binaries;C:\Program Files (x86)\SSH Communications Security\SSH Tectia\SSH Tectia Broker;C:\Program Files (x86)\SSH Communications Security\SSH Tectia\SSH Tectia Client;%SONAR_RUNNER_HOME%\bin;C:\Program Files\nodejs\;C:\Program Files\Java\jdk1.8.0_71\bin;C:\Users\Firzen\AppData\Roaming\npm;C:\Users\Firzen\Desktop;" />
-    <property name="org.apache.tools.ant.taskdefs.optional.junit.AggregateTransformer0" value="C:\Users\Firzen\AppData\Local\Temp\null2101300094" />
+    <property name="org.apache.tools.ant.taskdefs.optional.junit.AggregateTransformer0" value="C:\Users\Firzen\AppData\Local\Temp\null1282025859" />
     <property name="basedir" value="C:\Users\Firzen\git\networkedChess\javaProject\NetworkedChess" />
     <property name="ant.java.version" value="1.8" />
     <property name="ant.core.lib" value="C:\Users\Firzen\.p2\pool\plugins\org.apache.ant_1.9.4.v201504302020\lib\ant.jar" />
@@ -111,10 +111,10 @@
     <property name="file.encoding" value="Cp1252" />
     <property name="env.USERDOMAIN" value="DESKTOP-9PHIP5K" />
     <property name="java.specification.version" value="1.8" />
-    <property name="ant.project.invoked-targets" value="init,cleanall,build,ChessBoardTest,ChessGameTest,junitreport,ControllerTest,JUnitCore,GameFrame,MathTest,MovabilityTest,NetworkedChess" />
+    <property name="ant.project.invoked-targets" value="init,cleanall,build,ChessBoardTest,junitreport,MathTest,MovabilityTest,NetworkedChess,AnimationTest,MultiplayerChessGameTest,SinglePlayerChessTest,JUnitCore,ControllerTest,PlayerControllerTest,ShapeMakerTest,Menus" />
     <property name="env.PROCESSOR_LEVEL" value="6" />
   </properties>
-  <testcase classname="model.ChessBoardTest" name="BoardTest" time="0.017" />
+  <testcase classname="model.ChessBoardTest" name="BoardTest" time="0.005" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

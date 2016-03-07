@@ -25,7 +25,7 @@
     
         cur['ant.project.default-target'] = 'build';
     
-        cur['ant.project.invoked-targets'] = 'init,cleanall,build,ChessBoardTest,ChessGameTest,junitreport,ControllerTest,JUnitCore,GameFrame,MathTest,MovabilityTest,NetworkedChess';
+        cur['ant.project.invoked-targets'] = 'init,cleanall,build,ChessBoardTest,ChessGameTest,junitreport,ControllerTest,JUnitCore,GameFrame,MathTest,MovabilityTest,NetworkedChess,AnimationTest,BoardUITest,Menus,MultiplayerChessGameTest,PlayerControllerTest,ShapeMakerTest,SinglePlayerChessTest,TestRunner';
     
         cur['ant.project.name'] = 'NetworkedChess';
     
@@ -129,7 +129,7 @@
     
         cur['java.awt.printerjob'] = 'sun.awt.windows.WPrinterJob';
     
-        cur['java.class.path'] = 'C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\bin;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.junit_4.12.0.v201504281640\\junit.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.hamcrest.core_1.3.0.v201303031735.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-launcher.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-junit.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-junit4.jar';
+        cur['java.class.path'] = 'C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\bin;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.junit_4.12.0.v201504281640\\junit.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.hamcrest.core_1.3.0.v201303031735.jar;C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\lib\\java-json.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-launcher.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-junit.jar;C:\\Users\\Firzen\\.p2\\pool\\plugins\\org.apache.ant_1.9.4.v201504302020\\lib\\ant-junit4.jar';
     
         cur['java.class.version'] = '52.0';
     
@@ -203,7 +203,7 @@
     
         cur['sun.io.unicode.encoding'] = 'UnicodeLittle';
     
-        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner GamePanels.ChessGameTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junit\\TEST-GamePanels.ChessGameTest.xml crashfile=C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junitvmwatcher7753135764207566475.properties propsfile=C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junit4874289627481611303.properties';
+        cur['sun.java.command'] = 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner GamePanels.ChessGameTest skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.OutErrSummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junit\\TEST-GamePanels.ChessGameTest.xml crashfile=C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junitvmwatcher3158997906060988280.properties propsfile=C:\\Users\\Firzen\\git\\networkedChess\\javaProject\\NetworkedChess\\junit2467278481262752165.properties';
     
         cur['sun.java.launcher'] = 'SUN_STANDARD';
     
@@ -273,8 +273,8 @@
 <tr valign="top">
 <th width="80%">Name</th><th>Tests</th><th>Errors</th><th>Failures</th><th>Skipped</th><th nowrap>Time(s)</th><th nowrap>Time Stamp</th><th>Host</th>
 </tr>
-<tr valign="top" class="Pass">
-<td><a title="Display all tests" href="0_ChessGameTest.html">ChessGameTest</a></td><td><a title="Display all tests" href="0_ChessGameTest.html">1</a></td><td>0</td><td>0</td><td>0</td><td>0.047</td><td>2016-02-20T00:13:36</td><td>DESKTOP-9PHIP5K</td>
+<tr valign="top" class="Error">
+<td><a title="Display all tests" href="0_ChessGameTest.html">ChessGameTest</a></td><td><a title="Display all tests" href="0_ChessGameTest.html">1</a></td><td><a title="Display only errors" href="0_ChessGameTest-errors.html">1</a></td><td>0</td><td>0</td><td>0.000</td><td>2016-03-07T21:13:49</td><td>DESKTOP-9PHIP5K</td>
 </tr>
 </table>
 <h2>Tests</h2>
@@ -282,8 +282,11 @@
 <tr valign="top">
 <th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
 </tr>
-<tr valign="top" class="TableRowColor">
-<td><a name="gametest"></a>gametest</td><td>Success</td><td></td><td>0.000</td>
+<tr class="Error">
+<td colspan="4">GamePanels.ChessGameTest<br>
+<br>
+<code>java.lang.ClassNotFoundException: GamePanels.ChessGameTest<br>	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)<br>	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)<br>	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)<br>	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)<br>	at java.lang.Class.forName0(Native Method)<br>	at java.lang.Class.forName(Class.java:264)<br>
+</code></td>
 </tr>
 </table>
 <div class="Properties">
