@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>AnimationTest.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">AnimationTest.java</span></div><h1>AnimationTest.java</h1><pre class="source lang-java linenums">package KLD;
+
+import static org.junit.Assert.*;
+
+import java.awt.Image;
+
+import org.junit.Test;
+
+<span class="fc" id="L9">public class AnimationTest {</span>
+
+	@Test
+	public void Animtest() {
+<span class="fc" id="L13">		Image[] im = new Image[4];</span>
+<span class="fc" id="L14">		Image[] im2 = new Image[2];</span>
+<span class="fc" id="L15">		int[] d = new int[3];</span>
+<span class="fc" id="L16">		int q = 0;</span>
+<span class="fc" id="L17">		Animation anie = new Animation(im,q);</span>
+		try {
+<span class="fc" id="L19">			Animation anie2 = new Animation(im,d);</span>
+<span class="nc" id="L20">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L22">			e.printStackTrace();</span>
+<span class="fc" id="L23">		}</span>
+		try {
+<span class="nc" id="L25">			Animation anie2_5 = new Animation(im2,d);</span>
+<span class="fc" id="L26">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L28">			e.printStackTrace();</span>
+<span class="nc" id="L29">		}</span>
+<span class="fc" id="L30">		Animation anie3 = new Animation(im);		// initial and alternate constructor tests</span>
+		
+<span class="fc" id="L32">		anie.getNextFrame();</span>
+<span class="fc" id="L33">		anie.clone();</span>
+<span class="fc" id="L34">		anie.getImageAt(0);</span>
+<span class="fc" id="L35">		anie.getImageAt(-1);</span>
+<span class="fc" id="L36">		anie.getCurrentImage();</span>
+<span class="fc" id="L37">		anie.getImageArray();</span>
+<span class="fc" id="L38">		anie.getDelayAt(0);</span>
+<span class="fc" id="L39">		anie.getDelayAt(-1);</span>
+<span class="fc" id="L40">		anie.getDelayArray();</span>
+<span class="fc" id="L41">		anie.getCurrentFrame();</span>
+<span class="fc" id="L42">		anie.isLooping();</span>
+<span class="fc" id="L43">		anie.isReversed();</span>
+		try {
+<span class="fc" id="L45">			anie.setImages(im);</span>
+<span class="nc" id="L46">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L48">			e.printStackTrace();</span>
+<span class="fc" id="L49">		}</span>
+		try {
+<span class="nc" id="L51">			anie.setImages(im2);</span>
+<span class="fc" id="L52">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="fc" id="L54">			e.printStackTrace();</span>
+<span class="nc" id="L55">		}</span>
+<span class="fc" id="L56">		anie.setFrame(-1);</span>
+<span class="fc" id="L57">		anie.setDelays(-1);</span>
+		try {
+<span class="fc" id="L59">			anie.setDelays(d);</span>
+<span class="nc" id="L60">		} catch (Exception e) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L62">			e.printStackTrace();</span>
+<span class="fc" id="L63">		}</span>
+<span class="fc" id="L64">		anie.goNext();</span>
+<span class="fc" id="L65">		anie.goPrevious();							//method tests</span>
+<span class="fc" id="L66">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">/**
+ * @author KLD
+  &gt;Game: is an abstract class which has three abstract methods: 
+  1- init():void; which gets called once when the game is lunched. 
+  2- draw(g : Graphics):void; responsible for drawing on the screen and gets called after action.
+  3- action():void; used to update variables in it's game and gets called first on every game. 
+  
+ &gt;Game: Attributes
+  -gameActions : ActionList; gets called by Console after calling action() and before Command's actions
+  -gameCommands : CommandList ; it's action and draw gets called last separately. 
+  -gameDraws : DrawList ; callAllDraws get called after draw() and before Command's draws. 
+  -name : String; just a name of the game. 
+  -input : Input; input object
+  -l  : Loader  ; loads images and animations. 
+  
+ &gt;Game: Non-Abstract Functions
+ 	-add(lo : LinkObject) : void; adds a LinkObject[Command, Action, Draw] and adds it to the appropriate list
+ 	-getCommand() : Command; returns a command object of the game that contains the game's draw and action
+ 	-getAction() : Action; returns an action object of the game that contains the game's action
+ 	-getDraw() : Draw; returns a draw object of the game that contains the game's draw
+&gt;Game: Static Functions
+	-setFade(g : graphics, f : float) : void; sets g to f (out of 1.00) transept (fade)   	
+ */
+//
+
+
+
+
+/*
+ * 
+ */
+package KLD;
+
+import intf.ActionFace;
+import intf.CommandFace;
+import intf.DrawFace;
+
+import java.awt.AlphaComposite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
+import KLD.cmd.Action;
+import KLD.cmd.ActionList;
+import KLD.cmd.Command;
+import KLD.cmd.CommandList;
+import KLD.cmd.Draw;
+import KLD.cmd.DrawList;
+import KLD.cmd.LinkObject;
+
+/**
+ * Game is an abstract class that represent a game or a state of a game which includes graphics, sound, and objects.
+ * Game's abstract methods are:  init(), draw(Graphics), and update(). 
+ * 
+ * &lt;p&gt;init() : gets calls after the game object it created&lt;/p&gt;
+ * &lt;p&gt;draw(Graphics) : uses a Graphics to draw on &lt;code&gt;Console&lt;/code&gt;&lt;/p&gt;
+ * &lt;p&gt;update() : updates variables every frame &lt;/p&gt;
+ * 
+ * After a game object is created, it may be passed to a &lt;code&gt;Console&lt;/code&gt; using &lt;code&gt;Console.setGame(Game)&lt;/code&gt;
+ * @author KLD
+ * @version 0.0
+ *
+ */
+public abstract class Game implements CommandFace, ActionFace, DrawFace {
+	
+	/*
+	 * TODO : 
+	 * adding gameObjects to the game
+	 * adding background music
+	 * 
+	 */
+
+	/**
+	 * holds a list of commands object. it's only initialized when it's being used.  
+	 * @see {@link KLD.cmd.CommandList}
+	 */
+	protected CommandList gameCommands ;
+	/**
+	 * holds a list of action object. it's only initialized when it's being used.  
+	 * @see {@link KLD.cmd.ActionList}
+	 */
+	protected ActionList gameActions ;
+	/**
+	 * holds a list of draw object. it's only initialized when it's being used.  
+	 * @see {@link KLD.cmd.DrawList}
+	 */
+	protected DrawList gameDraws ;
+	/**
+	 * game name (optional). The name will appear on java's Console when game runs.
+	 */
+	protected String name; 
+	
+	/**
+	 * holds a Point that represents the view of the game objects
+	 */
+	protected Point camera; 
+	
+<span class="fc" id="L101">	public static final Input input = Console.input;</span>
+	/**
+	 * loader object that loads files which are located in /res
+	 */
+<span class="fc" id="L105">	public static final Loader l = new Loader();</span>
+	
+	/**
+	 * holds width of frame
+	 */
+	protected int maxWidth ;
+	/**
+	 * holds height of frame
+	 */
+	protected int maxHeight ;
+	
+<span class="fc" id="L116">	public Game(){</span>
+<span class="fc" id="L117">		camera = new Point(0,0);</span>
+<span class="fc" id="L118">		maxWidth = Console.maxWidth;</span>
+<span class="fc" id="L119">		maxHeight = Console.maxHeight;</span>
+<span class="fc" id="L120">		name = &quot;Unnamed&quot;;</span>
+<span class="fc" id="L121">	}</span>
+	
+	public Game(String name){
+<span class="nc" id="L124">		this();</span>
+<span class="nc" id="L125">		this.name = name;</span>
+<span class="nc" id="L126">	}</span>
+	
+	
+	
+	/**
+	 * initialize the game once before starting it
+	 */
+	protected abstract void init() ;
+	/**
+	 * draws on the screen each frame after action()
+	 * @param g frame's graphics
+	 * @see #action()
+	 */
+	protected abstract void draw(Graphics g);
+	/**
+	 * updates variables each frame before draw()
+	 * @see #draw(Graphics) 
+	 */
+	protected abstract void update() ;
+	
+	/**
+	 * gets called before getting the Console switches to another game.
+	 */
+	public void end(){
+<span class="fc" id="L150">		System.out.printf(&quot;%s game has ended&quot;,this.name);</span>
+<span class="fc" id="L151">	}</span>
+	
+	/**
+	 * adds a command, action, or draw to the appropriate list.  
+	 * @param lo linkObject of instance Command, Action, or Draw 
+	 */
+	public void add(LinkObject lo){
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if(lo instanceof Command)</span>
+<span class="fc" id="L159">			addCommand((Command)lo);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		else if(lo instanceof Action)</span>
+<span class="nc" id="L161">			addAction((Action)lo); </span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">		else if(lo instanceof Draw)</span>
+<span class="nc" id="L163">			addDraw((Draw)lo); </span>
+		else
+<span class="nc bnc" id="L165" title="All 2 branches missed.">			System.out.printf(&quot;LinkObject %s cannot be added&quot;, (lo.name==null)? &quot;Unnamed&quot; : lo.name);</span>
+		
+		
+<span class="fc" id="L168">	}</span>
+	
+	public void addCommand(Command cmd){
+<span class="fc bfc" id="L171" title="All 2 branches covered.">		if(gameCommands==null)</span>
+<span class="fc" id="L172">			createCommandList();</span>
+<span class="fc" id="L173">		gameCommands.addLinkObject(cmd);</span>
+<span class="fc" id="L174">	}</span>
+	public void addAction(Action a){
+<span class="nc bnc" id="L176" title="All 2 branches missed.">		if(gameActions==null)</span>
+<span class="nc" id="L177">			createActionList();</span>
+<span class="nc" id="L178">		gameActions.addLinkObject(a);</span>
+<span class="nc" id="L179">	}</span>
+	
+	
+	public void addDraw(Draw d){
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">		if(gameDraws==null)</span>
+<span class="fc" id="L184">			createDrawList();</span>
+<span class="fc" id="L185">		gameDraws.addLinkObject(d);</span>
+<span class="fc" id="L186">	}</span>
+	
+	//copy of action used for getAction and getCommand
+	private void updateC(){ 
+<span class="nc" id="L190">		update(); </span>
+<span class="nc" id="L191">	}</span>
+	//copy of draw used for getDraw and getComand
+	private void drawC(Graphics g){
+<span class="nc" id="L194">		draw(g);</span>
+<span class="nc" id="L195">	}</span>
+	
+	
+	
+	public Draw getDraw() throws NullPointerException{
+<span class="nc" id="L200">		return new Draw(name+&quot;Draw&quot;) {</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L204">				drawC(g);</span>
+<span class="nc" id="L205">				}</span>
+		};
+	}
+	
+	public Action getAction()throws NullPointerException{
+<span class="nc" id="L210">		return new Action(name+&quot;Action&quot;) {</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L214">				updateC();</span>
+<span class="nc" id="L215">				}};</span>
+			}
+	
+	public Command getCommand() throws NullPointerException{
+<span class="nc" id="L219">		return new Command(name+&quot;Command&quot;) {</span>
+			
+			@Override
+			public void draw(Graphics g) {
+<span class="nc" id="L223">				drawC(g);</span>
+<span class="nc" id="L224">			}</span>
+			
+			@Override
+			public void action() {
+<span class="nc" id="L228">				updateC();</span>
+<span class="nc" id="L229">			}};</span>
+	}
+	
+	public static void setFade(Graphics g, float f){
+<span class="nc" id="L233">		Graphics2D g2d = (Graphics2D) g;</span>
+<span class="nc" id="L234">	    g2d.setComposite(AlphaComposite.getInstance(</span>
+	            AlphaComposite.SRC_OVER, f));
+<span class="nc" id="L236">	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);</span>
+
+<span class="nc" id="L238">	}</span>
+
+
+
+
+
+	@Override
+	public void callAllAction() 
+	{
+<span class="nc" id="L247">		maxWidth = Console.maxWidth;</span>
+<span class="nc" id="L248">		maxHeight = Console.maxHeight;</span>
+		
+<span class="nc bnc" id="L250" title="All 2 branches missed.">		if(gameActions!=null)</span>
+<span class="nc" id="L251">			gameActions.callAllAction();</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">		if(gameCommands!=null)</span>
+<span class="nc" id="L253">			gameCommands.callAllAction();</span>
+		
+<span class="nc" id="L255">		update();</span>
+		
+<span class="nc" id="L257">	}</span>
+
+
+
+	@Override
+	public void callAllDraw(Graphics g) 
+	{
+<span class="nc bnc" id="L264" title="All 2 branches missed.">		if(gameDraws!=null)</span>
+<span class="nc" id="L265">			gameDraws.callAllDraw(g);</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">		if(gameCommands!=null)</span>
+<span class="nc" id="L267">			gameCommands.callAllDraw(g);</span>
+<span class="nc" id="L268">		draw(g);</span>
+<span class="nc" id="L269">	}</span>
+	
+	
+	protected void drawTime(Graphics g, int x, int y){
+<span class="nc" id="L273">		SimpleDateFormat format = new SimpleDateFormat(&quot;HH:mm:ss&quot;);</span>
+		
+<span class="nc" id="L275">		Date date = new Date(System.currentTimeMillis());</span>
+		
+<span class="nc" id="L277">		g.drawString(format.format(date),x,y);</span>
+<span class="nc" id="L278">	}</span>
+
+	@Override
+	public void removeDraw(int id) {
+<span class="nc" id="L282">		gameDraws.removeLinkObject(id);</span>
+<span class="nc" id="L283">	}</span>
+
+	@Override
+	public void removeAction(int id) {
+<span class="nc" id="L287">		gameActions.removeLinkObject(id);</span>
+		
+<span class="nc" id="L289">	}</span>
+	
+	@Override
+	public void removeCommand(int id) {
+<span class="nc" id="L293">		removeCommand(id);</span>
+<span class="nc" id="L294">	}</span>
+
+
+
+	@Override
+	public void createDrawList() {
+<span class="fc" id="L300">		gameDraws = new DrawList(this.name+&quot;'s drawList&quot;);</span>
+<span class="fc" id="L301">	}</span>
+
+
+
+	@Override
+	public void createActionList() {
+<span class="nc" id="L307">		gameActions = new ActionList(this.name+&quot;'s actionList&quot;);</span>
+<span class="nc" id="L308">	}</span>
+
+	@Override
+	public void createCommandList() {
+<span class="fc" id="L312">		gameCommands = new CommandList(this.name+&quot;'s commandList&quot;);</span>
+<span class="fc" id="L313">	}</span>
+	
+}//end Game
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

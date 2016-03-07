@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Console.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">Console.java</span></div><h1>Console.java</h1><pre class="source lang-java linenums">/**
+ * @author KLD
+ * 
+ *A Console objected is created automatically in the main method, so you don't need to
+ *	worry about creating one. But, there are two methods that should be known. 
+ * 	setGame(game : Class) and setFPS(fps : int)
+ *Console is a Console (which is a JPanel) that's runs games. Console has a static function
+ *		setGame(game : Class) that is most used. You passed a game class 
+ *		such as etc: Console.setGame(Game.class) . 
+ * Console also can set the game's FPS using the function setFPS(fps : int) 
+ * 
+ * 
+ */
+package KLD;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.sound.sampled.Clip;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public  class Console extends JPanel {
+	//ignore this
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Holds the current game object
+	 */
+	private Game game;
+	/**
+	 * temporary holds a game class then creates an instance and sets it to {@link #game}
+	 */
+	private static Class&lt;?&gt; gameClass;
+	
+	/**
+	 * Not really needed. TODO Make use of thread 
+	 */
+<span class="fc" id="L41">	private boolean isLoading = false; </span>
+	 
+
+	private static final int SECOND = 1000; 
+	protected static Timer timer;
+	//protected int time; 
+<span class="fc" id="L47">	protected static int stage = 0; </span>
+<span class="fc" id="L48">	protected static boolean stageChanged = false; </span>
+	public static int maxWidth; 
+	public static int maxHeight; 
+<span class="fc" id="L51">	private static boolean showFPS = false; </span>
+	public static Input input;
+	
+	private long delay ;
+	private long x; 
+ 
+	//protected KLDList loadingScreen ;
+	
+<span class="fc" id="L59">	public static final Loader loader = new Loader();</span>
+	
+	
+	
+	public Clip backgroundClip;  
+	
+	
+	
+<span class="fc" id="L67">	public Console(Class&lt;Game&gt; mainGame ,int FPS){</span>
+<span class="fc" id="L68">		JFrame frame = GameFrame.frame;</span>
+		
+<span class="fc" id="L70">		maxWidth = frame.getContentPane().getWidth();</span>
+<span class="fc" id="L71">		maxHeight = frame.getContentPane().getHeight();</span>
+		
+<span class="fc" id="L73">		input = new Input(frame); </span>
+<span class="fc" id="L74">		input.addListenerTo(this);//extra </span>
+		
+		
+<span class="fc" id="L77">		delay = System.currentTimeMillis() ;</span>
+<span class="fc" id="L78">		x = System.currentTimeMillis() ;</span>
+		
+		
+<span class="fc" id="L81">		 timer = new Timer(SECOND/FPS,new ActionListener() {</span>
+			
+			//calls actionPerformed using the timer object//independent of constructor
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="fc" id="L86">				delay =  System.currentTimeMillis() -x;//TODO delay instead of x</span>
+				
+<span class="fc" id="L88">			    	update();</span>
+<span class="fc" id="L89">					repaint(); </span>
+<span class="fc" id="L90">				x = System.currentTimeMillis() ;</span>
+<span class="fc" id="L91">			}</span>
+		});
+		 
+
+	
+		
+		
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		if(mainGame!=null){</span>
+			try {
+<span class="nc" id="L100">				game = (Game) mainGame.newInstance();</span>
+<span class="nc" id="L101">				game.init();</span>
+<span class="nc" id="L102">				System.out.println(&quot;Main game is set&quot;);</span>
+<span class="nc" id="L103">			} catch (InstantiationException | IllegalAccessException e) {</span>
+<span class="nc" id="L104">				e.printStackTrace();</span>
+<span class="nc" id="L105">			} </span>
+		}	
+		
+<span class="fc" id="L108">		System.out.println(&quot;Console object is created&quot;);</span>
+	
+	
+<span class="fc" id="L111">	}</span>
+	
+	public Console(int FPS) {
+<span class="fc" id="L114">		this(null, FPS);</span>
+<span class="fc" id="L115">	}</span>
+	
+	public void destroyTimer()
+	{
+<span class="nc" id="L119">		this.timer.stop();</span>
+<span class="nc" id="L120">	}</span>
+	
+	
+	@Override
+	public void paintComponent(Graphics g){
+<span class="nc" id="L125">		super.paintComponent(g);</span>
+	
+<span class="nc" id="L127">		draw(g); //draw the Console </span>
+		
+		
+<span class="nc" id="L130">		g.setColor(Color.BLACK);</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">		 if(showFPS)</span>
+<span class="nc" id="L132">			 g.drawString(&quot;FPS: &quot; + SECOND/(delay), 10,10);</span>
+<span class="nc" id="L133">	}</span>
+	
+	
+	
+	
+	public void drawLoading(Graphics g){
+		//TODO
+<span class="nc" id="L140">	}</span>
+	
+	
+	
+	
+	public void run(){
+<span class="fc" id="L146">		System.out.println(&quot;Console Running with &quot;+getFPS()+&quot; FPS&quot;);</span>
+<span class="fc" id="L147">		timer.start();</span>
+		
+		
+<span class="fc" id="L150">	}</span>
+	public void stop(){
+<span class="fc" id="L152">		timer.stop();</span>
+<span class="fc" id="L153">	}</span>
+		
+	public static void setFPS(int fps){	
+<span class="fc" id="L156">		System.out.println(&quot;FPS set to &quot; + fps);</span>
+<span class="fc" id="L157">		timer.setDelay(SECOND/fps);</span>
+<span class="fc" id="L158">		timer.restart();//TODO</span>
+<span class="fc" id="L159">	}</span>
+	
+	public static int getFPS(){
+<span class="fc" id="L162">		return 	1000/timer.getDelay();</span>
+	}
+
+	public Timer getTimer(){
+<span class="fc" id="L166">		return timer; </span>
+	}
+
+	
+	//TODO remove
+	public  String getRealTime(int time){
+<span class="fc" id="L172">		return String.format(&quot;%2d:%2d&quot;, time/(60*SECOND/timer.getDelay()),((time/(SECOND/timer.getDelay()))%60)).replace(' ', '0');</span>
+	}
+
+
+
+
+	public static void showFPS() {
+<span class="fc" id="L179">		showFPS = true; </span>
+<span class="fc" id="L180">	}</span>
+
+
+	public void draw(Graphics g) {
+<span class="nc bnc" id="L184" title="All 4 branches missed.">		if(isLoading || game==null){</span>
+			//loadingScreen.callAll(g);TODO
+<span class="nc" id="L186">			g.drawString(&quot;Loading new game...&quot;, 50,50);</span>
+<span class="nc" id="L187">			System.out.println(&quot;Loading...&quot;);</span>
+		}
+		else {
+<span class="nc" id="L190">			game.callAllDraw(g);//calls the game draws</span>
+			//System.out.println(game.gameObjects.name);
+		}
+		
+		
+<span class="nc" id="L195">	}</span>
+
+	
+	 
+	public void update() {
+<span class="pc bpc" id="L200" title="1 of 4 branches missed.">	if(!isLoading &amp;&amp; (game != null)){	</span>
+<span class="nc" id="L201">		game.callAllAction();//calls the game's actions</span>
+	}
+	
+<span class="fc bfc" id="L204" title="All 2 branches covered.">		if(Console.stageChanged)</span>
+<span class="fc" id="L205">			switchPanel();</span>
+	
+	
+<span class="fc" id="L208">	}//end action</span>
+
+	
+
+	private void switchPanel(){
+<span class="fc" id="L213">		isLoading = true; </span>
+		
+<span class="fc" id="L215">		new Thread(){</span>
+			@Override
+			public void run(){
+				
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">				if(Console.stageChanged){</span>
+<span class="fc" id="L220">					System.out.println(&quot;Changing game...&quot;);</span>
+<span class="fc" id="L221">					Console.stageChanged = false;</span>
+				try {
+<span class="nc" id="L223">					game = (Game) gameClass.newInstance();</span>
+<span class="nc" id="L224">					game.init();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">					System.out.println(&quot;new Game is set. Name: &quot; + ( (game.name==null)? &quot;Unnamed&quot; : game.name));</span>
+<span class="nc" id="L226">					} catch (InstantiationException	| IllegalAccessException e) {</span>
+<span class="nc" id="L227">						System.out.println(&quot;Cannot create &quot; + gameClass.toString());</span>
+<span class="nc" id="L228">					}</span>
+<span class="nc" id="L229">				 stageChanged = false;</span>
+<span class="nc" id="L230">					isLoading = false;</span>
+				
+					
+				}
+<span class="nc" id="L234">			}</span>
+			
+<span class="fc" id="L236">		}.start();</span>
+		
+<span class="fc" id="L238">	}</span>
+
+	public static void setGame(Class&lt;?&gt; c){
+<span class="fc" id="L241">		stageChanged = true; </span>
+<span class="fc" id="L242">		gameClass = c; </span>
+<span class="fc" id="L243">	}</span>
+	
+	
+	
+	
+	//TODO setLoadingScreen(){} 
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

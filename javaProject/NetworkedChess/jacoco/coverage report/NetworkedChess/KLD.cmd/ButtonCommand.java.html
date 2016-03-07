@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>ButtonCommand.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.cmd</a> &gt; <span class="el_source">ButtonCommand.java</span></div><h1>ButtonCommand.java</h1><pre class="source lang-java linenums">package KLD.cmd;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+
+
+
+import KLD.Game;
+import KLD.Input;
+
+public abstract class ButtonCommand extends Command{
+
+	//private Rectangle button;
+	
+<span class="fc" id="L21">	Color color = Color.lightGray; </span>
+<span class="fc" id="L22">	Color boarder = Color.darkGray.darker();</span>
+<span class="fc" id="L23">	Color over = Color.darkGray.brighter().brighter(); </span>
+<span class="fc" id="L24">	Color textColor = Color.black;</span>
+	
+	protected int x; 
+	protected int y; 
+	protected int width; 
+	protected int height; 
+	
+	String label; 
+	int sx; //string x
+	int sy; //string y
+	
+<span class="fc" id="L35">	static int nxtPos = 0; </span>
+<span class="fc" id="L36">	static int spacing = 1;</span>
+<span class="fc" id="L37">	float w =1f;</span>
+	
+<span class="fc" id="L39">	boolean setSettings = true; </span>
+	boolean click; 
+<span class="fc" id="L41">	boolean placeSet = true; </span>
+<span class="fc" id="L42">	protected boolean setNextToAnother = false;</span>
+<span class="fc" id="L43">	Font font= new Font(Font.SERIF, Font.PLAIN, 16); </span>
+	
+<span class="fc" id="L45">	public boolean isFocused = false;</span>
+	
+	public ButtonCommand(String text,int x, int y){
+<span class="fc" id="L48">		super(text +&quot; Button&quot;);</span>
+<span class="fc" id="L49">		this.x = x; </span>
+<span class="fc" id="L50">		this.y = y; </span>
+<span class="fc" id="L51">		label = text;</span>
+<span class="fc" id="L52">		width = label.length()*font.getSize() ;</span>
+<span class="fc" id="L53">		width -= width/8;</span>
+<span class="fc" id="L54">		height = font.getSize();</span>
+		
+	
+
+<span class="fc" id="L58">		setSettings = true; </span>
+		
+<span class="fc" id="L60">		init();</span>
+		
+<span class="fc" id="L62">	}</span>
+	
+	
+	
+
+	public void setColor(Color button, Color border, Color text,Color over){
+<span class="nc" id="L68">		color = button;</span>
+<span class="nc" id="L69">		boarder = border; </span>
+<span class="nc" id="L70">		textColor = text; </span>
+<span class="nc" id="L71">		this.over = over; </span>
+		
+<span class="nc" id="L73">	}</span>
+	
+	public void setButtonColor(Color c){
+<span class="fc" id="L76">		color = c;</span>
+<span class="fc" id="L77">	}</span>
+	
+	public void setBorderColor(Color c){
+<span class="nc" id="L80">		boarder = c;</span>
+<span class="nc" id="L81">	}</span>
+	
+	public void setTextColor(Color c){
+<span class="nc" id="L84">		textColor = c;</span>
+<span class="nc" id="L85">	}</span>
+	
+	public void setBorderWidth(float f){
+<span class="nc" id="L88">		w = f; </span>
+<span class="nc" id="L89">	}</span>
+	
+	public void createBorder(float width, Color c){
+<span class="nc" id="L92">		setBorderWidth(width);</span>
+<span class="nc" id="L93">		setBorderColor(c);</span>
+<span class="nc" id="L94">	}</span>
+	
+	public void setText(String s){
+<span class="nc" id="L97">		label = s; </span>
+<span class="nc" id="L98">	}</span>
+	
+	
+	public int getX(){
+<span class="nc" id="L102">		return x; </span>
+	}
+	public int getY(){
+<span class="nc" id="L105">		return y; </span>
+	}
+	public int getWidth(){
+<span class="nc" id="L108">		return width;</span>
+	}
+	public int getHeight(){
+<span class="nc" id="L111">		return height; </span>
+	}
+	
+	
+	@Override
+	public void callAction() {
+		
+			
+		
+<span class="nc bnc" id="L120" title="All 2 branches missed.">		if(Game.input.mouseIsClicked(new Rectangle(x,y,width,height))){</span>
+<span class="nc" id="L121">			action();</span>
+		}
+		
+<span class="nc" id="L124">	}</span>
+	
+	public abstract void action();
+
+
+	@Override
+	public void draw(Graphics g) {
+<span class="nc" id="L131">		Graphics2D g2d = (Graphics2D) g; </span>
+		
+<span class="nc" id="L133">		g.setFont(font);</span>
+		
+<span class="nc bnc" id="L135" title="All 2 branches missed.">		if(setSettings)</span>
+<span class="nc" id="L136">			setSettings(g);</span>
+		
+<span class="nc" id="L138">		g.setColor(color);</span>
+<span class="nc" id="L139">		g.fillRect(x,y, width, height);//draw the background</span>
+		
+<span class="nc" id="L141">		g.setColor(textColor); //draw text</span>
+<span class="nc" id="L142">		g.drawString(label, sx,  sy );</span>
+		
+<span class="nc" id="L144">		g.setColor(boarder);//drawing the border</span>
+		//draw frame
+<span class="nc bnc" id="L146" title="All 2 branches missed.">		if(w&gt;0f){</span>
+<span class="nc" id="L147">			Stroke s = g2d.getStroke(); //save prev settings </span>
+<span class="nc" id="L148">			g2d.setStroke(new BasicStroke(w));</span>
+<span class="nc" id="L149">		    g.drawRect(x, y, width, height);</span>
+<span class="nc" id="L150">			g2d.setStroke(s);// return the prev stroke </span>
+		}
+		
+		
+<span class="nc" id="L154">	}</span>
+
+	private void setSettings(Graphics g){
+
+<span class="nc" id="L158">		FontMetrics fm = g.getFontMetrics();</span>
+<span class="nc" id="L159">		width =  (int) fm.getStringBounds(label, g).getWidth();</span>
+<span class="nc" id="L160">		width += width/3;</span>
+<span class="nc" id="L161">		height = font.getSize();</span>
+		
+<span class="nc bnc" id="L163" title="All 4 branches missed.">		if(placeSet &amp;&amp; setNextToAnother){</span>
+<span class="nc" id="L164">			x = nxtPos;</span>
+<span class="nc" id="L165">			nxtPos = x + width + spacing; </span>
+<span class="nc" id="L166">			placeSet = false; </span>
+		}
+			
+		
+<span class="nc" id="L170">		sy = y + fm.getDescent()/2 + fm.getAscent();</span>
+<span class="nc" id="L171">		sx = x + width/8 ;</span>
+		
+		
+		
+<span class="nc" id="L175">		setSettings = false; </span>
+			
+<span class="nc" id="L177">	}</span>
+	
+	public void removeBorder(){
+<span class="nc" id="L180">		w = 0f; </span>
+<span class="nc" id="L181">	}</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

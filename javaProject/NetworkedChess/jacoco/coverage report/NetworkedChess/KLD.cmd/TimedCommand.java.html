@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>TimedCommand.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.cmd</a> &gt; <span class="el_source">TimedCommand.java</span></div><h1>TimedCommand.java</h1><pre class="source lang-java linenums">/*READ ME
+*  TimedCommand is an Command that works for t times and then determinates itself .
+*  
+*  Determinate calls stop() and then removes the object from his parent list if existed. 
+*  You can override that method which I spelled wrong : deteminate() and make just so that it stop()
+*  the command. 
+*
+*/
+package KLD.cmd;
+
+import java.awt.Graphics;
+
+import KLD.obj.GameObject;
+
+public abstract class TimedCommand extends Command {
+
+<span class="nc" id="L17">	private int cd =0; </span>
+
+	public TimedCommand(String name, int t, GameObject go) {
+<span class="nc" id="L20">		super(name, go);</span>
+<span class="nc" id="L21">		this.cd = t;</span>
+<span class="nc" id="L22">	}</span>
+	
+	public TimedCommand(String name, int t) {
+<span class="nc" id="L25">		this(name,  t, null);</span>
+<span class="nc" id="L26">	}</span>
+
+	
+	public abstract void action() ;
+
+	public abstract void draw(Graphics g);
+	
+	
+	@Override 
+	public void callAction(){
+<span class="nc bnc" id="L36" title="All 2 branches missed.">		if(cd&lt;0)</span>
+<span class="nc" id="L37">			this.deteminate();</span>
+		
+<span class="nc bnc" id="L39" title="All 4 branches missed.">		if(enabled &amp;&amp; active)</span>
+<span class="nc" id="L40">			action();</span>
+		
+		
+<span class="nc" id="L43">		cd--; </span>
+<span class="nc" id="L44">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

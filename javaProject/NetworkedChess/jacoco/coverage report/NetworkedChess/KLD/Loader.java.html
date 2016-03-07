@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Loader.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">Loader.java</span></div><h1>Loader.java</h1><pre class="source lang-java linenums">/**
+ * Loader 
+ * 
+ * loads Transepted Images and Clips. 
+ * 
+ * 
+ * 
+ * 
+ * Future thoughts: 
+ *  -Loads Object Files.
+ *  -Write Objects to Files. 
+ * 
+ *  Updates:
+ *  Loader 1.1
+ * 	
+ * loads animation; 
+ * 	
+ * Loader 1.0 : 
+ *   - All new. 
+ */
+
+
+package KLD;
+
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Formatter;
+
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
+/**
+ * Loader loads images and .wav files from /res file 
+ * 
+ * 
+ * @author KLD
+ *
+ */
+//TODO create path instead of always using /res 
+public class Loader {
+
+	private String folder; 
+	private String ex;
+	
+	private String path;//TODO
+	
+	private Color alpha; //TODO alpha color should'nt be always white 
+	
+<span class="fc" id="L61">	public Loader(){</span>
+<span class="fc" id="L62">		folder = &quot;&quot;;</span>
+<span class="fc" id="L63">		ex= &quot;&quot;;</span>
+<span class="fc" id="L64">		alpha = Color.WHITE; </span>
+	
+<span class="fc" id="L66">	}</span>
+	
+	// ### set ###
+	
+	/**
+	 * Sets a common path prefix that will be used for loading. 
+	 * @param s  prefix 
+	 */
+	public void setFolder(String s){
+<span class="nc" id="L75">		folder = s;</span>
+<span class="nc" id="L76">	}</span>
+	/**
+	 * Sets a common path suffix that will be used for loading
+	 * @param s  suffix 
+	 */
+	public void setExtention(String s){
+<span class="nc" id="L82">		ex = s;</span>
+<span class="nc" id="L83">	}</span>
+	// ### loads ###
+	
+	public void setAlpha(Color alpha)
+	{
+<span class="nc" id="L88">		this.alpha = alpha; </span>
+<span class="nc" id="L89">	}</span>
+	
+	/**
+	 * 
+	 * @param fileName full file name.
+	 * @return a transparent image 
+	 */
+	public Image loadImage(String fileName){
+		BufferedImage image ;
+		try {
+<span class="nc" id="L99">			image = ImageIO.read(getClass().getResource(folder+fileName+ex));// TODO</span>
+			
+<span class="nc" id="L101">			ImageFilter filter = new RGBImageFilter()</span>
+<span class="nc" id="L102">		    { //TODO use alpha color</span>
+<span class="nc" id="L103">				int markerRGB = alpha.getRGB() | 0xFF000000;</span>
+				
+				@Override
+		      public final int filterRGB(int x, int y, int rgb){
+<span class="nc bnc" id="L107" title="All 2 branches missed.">				if ((rgb | 0xFF000000) == markerRGB) {</span>
+    				// Mark the alpha bits as zero - transparent
+<span class="nc" id="L109">    				return 0x00FFFFFF &amp; rgb;</span>
+    			} else {
+    				// nothing to do
+<span class="nc" id="L112">    				return rgb;</span>
+    			}
+				 }
+		    };
+<span class="nc" id="L116">		    ImageProducer ip = new FilteredImageSource(image.getSource(), filter);</span>
+<span class="nc" id="L117">		    return Toolkit.getDefaultToolkit().createImage(ip);</span>
+			
+		    
+		} 
+<span class="nc" id="L121">		catch (Exception e ) {</span>
+<span class="nc" id="L122">			System.out.println(&quot;Cannot find &quot;+folder+fileName+ex);</span>
+<span class="nc" id="L123">			e.printStackTrace();</span>
+		}
+	
+<span class="nc" id="L126">		return null;</span>
+	}//end 
+	
+	/**
+	 * 
+	 * @param fileName
+	 * @return
+	 */
+	public Image loadRawImage(String fileName){
+		BufferedImage image ;
+		try {
+<span class="nc" id="L137">			image = ImageIO.read(getClass().getResource(folder+fileName+ex));// TODO</span>
+	
+<span class="nc" id="L139">		    return image; </span>
+		    
+		} 
+<span class="nc" id="L142">		catch (Exception e ) {</span>
+<span class="nc" id="L143">			System.out.println(&quot;Cannot find &quot;+folder+fileName+ex);</span>
+<span class="nc" id="L144">			e.printStackTrace();</span>
+		}
+	
+<span class="nc" id="L147">		return null;</span>
+	}//end 
+
+
+	/**
+	 * @param fileName
+	 * @return
+	 */
+	public ImageIcon loadImageIcon(String fileName) {
+
+<span class="nc" id="L157">		   return new ImageIcon(getClass().getResource( fileName )); </span>
+		}
+
+	public Clip loadClip(String path){
+		 try {
+<span class="nc" id="L162">			 AudioInputStream audioIn = AudioSystem.getAudioInputStream(this.getClass().getResource(folder+path+ex));</span>
+<span class="nc" id="L163">			 Clip music = AudioSystem.getClip();</span>
+<span class="nc" id="L164">			 music.open(audioIn);</span>
+			 
+<span class="nc" id="L166">			 return music; </span>
+			 
+			 
+<span class="nc" id="L169">	      } catch (FileNotFoundException e){</span>
+<span class="nc" id="L170">	    	 e.printStackTrace();</span>
+	    	  Formatter output;
+			try {
+<span class="nc" id="L173">				output = new Formatter(&quot;errorLog.txt&quot;);</span>
+<span class="nc" id="L174">				 output.format(&quot;Error!! %s&quot;, e.toString());</span>
+<span class="nc" id="L175">				 output.close();</span>
+<span class="nc" id="L176">			} catch (FileNotFoundException e1) {</span>
+<span class="nc" id="L177">				e1.printStackTrace();</span>
+<span class="nc" id="L178">			}  </span>
+<span class="nc" id="L179">	      } catch (UnsupportedAudioFileException e) {</span>
+	         //e.printStackTrace();
+<span class="nc" id="L181">	      } catch (IOException e) {</span>
+	         //e.printStackTrace();
+<span class="nc" id="L183">	      } catch (LineUnavailableException e) {</span>
+	         //e.printStackTrace();
+<span class="nc" id="L185">	      }</span>
+		 
+<span class="nc" id="L187">		 return null; </span>
+}
+
+		
+	public Animation loadAnimation(int[] d, String... paths){
+		
+<span class="nc" id="L193">		Image[] im = new Image[paths.length];</span>
+		
+<span class="nc bnc" id="L195" title="All 2 branches missed.">		for(int i=0;i&lt;im.length;i++)</span>
+<span class="nc" id="L196">			im[i] = loadImage(paths[i]);</span>
+		try{
+<span class="nc" id="L198">		return new Animation(im,d);</span>
+		}
+<span class="nc" id="L200">		catch(Exception e){</span>
+<span class="nc" id="L201">			 e.printStackTrace();</span>
+		}
+		
+<span class="nc" id="L204">		return null;</span>
+	}
+	public Animation loadAnimation(int d, String... paths){
+		
+<span class="nc" id="L208">		Image[] im = new Image[paths.length];</span>
+		
+<span class="nc bnc" id="L210" title="All 2 branches missed.">		for(int i=0;i&lt;im.length;i++)</span>
+<span class="nc" id="L211">			im[i] = loadImage(paths[i]);</span>
+		
+<span class="nc" id="L213">		return new Animation(im,d);</span>
+	}
+	public Animation loadAnimation(String... paths){
+		
+<span class="nc" id="L217">		Image[] im = new Image[paths.length];</span>
+		
+<span class="nc bnc" id="L219" title="All 2 branches missed.">		for(int i=0;i&lt;im.length;i++){</span>
+<span class="nc" id="L220">			im[i] = loadImage(paths[i]);</span>
+		}
+		
+<span class="nc" id="L223">		return new Animation(im);</span>
+	}
+	
+		
+	// TODO this is awesome. 
+	public &lt;T&gt; T load(T object){
+<span class="nc" id="L229">		return object; </span>
+	}
+
+	
+	
+}//end class
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

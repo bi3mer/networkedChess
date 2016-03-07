@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>TimedDraw.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD.cmd</a> &gt; <span class="el_source">TimedDraw.java</span></div><h1>TimedDraw.java</h1><pre class="source lang-java linenums">package KLD.cmd;
+
+import java.awt.Graphics;
+
+import KLD.obj.GameObject;
+
+public abstract class TimedDraw extends Draw {
+
+<span class="nc" id="L9">	private int cd =0; </span>
+
+	public TimedDraw(String name, int t, GameObject go) {
+<span class="nc" id="L12">		super(name, go);</span>
+<span class="nc" id="L13">		this.cd = t;</span>
+<span class="nc" id="L14">	}</span>
+	
+	public TimedDraw(String name, int t) {
+<span class="nc" id="L17">		this(name,  t, null);</span>
+<span class="nc" id="L18">	}</span>
+	
+
+	public abstract void draw(Graphics g) ;
+	
+	
+	@Override
+	public void callDraw(Graphics g){
+
+<span class="nc" id="L27">		final Graphics gugu = g; // we love gugu, again &lt;3 </span>
+		
+<span class="nc bnc" id="L29" title="All 2 branches missed.">		if(cd&lt;0)</span>
+<span class="nc" id="L30">			this.deteminate();</span>
+		
+<span class="nc bnc" id="L32" title="All 2 branches missed.">		if(visible)</span>
+<span class="nc" id="L33">			draw(g);</span>
+		
+<span class="nc" id="L35">		cd--;</span>
+		
+<span class="nc" id="L37">		g= gugu; // copy pasted YOLO</span>
+<span class="nc" id="L38">	}</span>
+	
+	public int getTime(){
+<span class="nc" id="L41">		return cd; </span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

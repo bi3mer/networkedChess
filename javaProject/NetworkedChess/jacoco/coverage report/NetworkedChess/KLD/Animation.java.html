@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Animation.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">Animation.java</span></div><h1>Animation.java</h1><pre class="source lang-java linenums">package KLD;
+
+import java.awt.Graphics;
+import java.awt.Image;
+/**
+ *  Animation class allows images to be animated via multiple frames. 
+ *  After creating an animation object, call {@link #getNextFrame()} to receive each image in each call.
+ *  Also, you can reverse the animation, or ever set it to loop once then stop at the last frame.
+ * @author      KLD
+ * @version     1.2  Animation can draw itself using  &lt;code&gt;drawNextFrame(Graphics, int, int)&lt;/code&gt;         
+ * @version     1.1  changed &lt;code&gt;getAnimation()&lt;/code&gt; to &lt;code&gt;clone()&lt;/code&gt;        
+ * @version		1.0  class created
+ * @since       2013-04-01          (From package KLD) 
+ * 
+ * 
+ */
+public class Animation {
+/**
+ * Holds images (frames) of the animation
+ */
+	private Image[] image;
+	/**
+	 * Holds delays for each image frame (default delay is 1) 
+	 */
+	private int[] delay; 
+	/**
+	 * NOT TO BE USED YET! Holds the length of the animation  
+	 */
+	//private int length;
+	/**
+	 * Holds an int value of the current frame
+	 */
+<span class="fc" id="L33">	private int frame = 0;</span>
+	/**
+	 * Holds an int time that is used to switch between frames according to the delay.
+	 */
+<span class="fc" id="L37">	private int timer = -1;</span>
+	/**
+	 * Holds a flag that reverse the animation when true (initialized false)
+	 */
+	private boolean isReversed; 
+	/**
+	 * Holds a flag that allows the animation to loop (initialized true)
+	 */
+	private boolean loop;
+	/**
+	 * Holds a flag that makes the animation loop once then stops at the last frame (initialized false)
+	 */
+	private boolean once;
+
+	// IT'S A PRIVATE CONSTRUCTOR
+	
+	/**
+	 * sets &lt;code&gt;loop&lt;/code&gt; to true, &lt;code&gt;once&lt;/code&gt; and &lt;code&gt;isReversed&lt;/code&gt; to false
+	 */
+<span class="fc" id="L56">	private Animation() {</span>
+<span class="fc" id="L57">		loop = true;</span>
+<span class="fc" id="L58">		once = false;</span>
+<span class="fc" id="L59">		isReversed = false; </span>
+<span class="fc" id="L60">	}</span>
+
+	
+	/**
+	 * calls the private constructor, then sets delays and images. The constructor also matches delays to images if the length of delays is less than images
+	 * @param im array of images that will represent the animation frame
+	 * @param d array of delays that delays each frame
+	 * @throws Exception if the length of delays is more than length of images
+	 * @see #Animation()
+	 */
+	public Animation(Image[] im, int[] d) throws Exception{
+<span class="fc" id="L71">		this();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		if(im.length&lt;d.length)</span>
+<span class="fc" id="L73">			throw new Exception(&quot;images array doesn't match delay length&quot;);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if(im.length&gt;d.length){</span>
+<span class="fc" id="L75">			int[] newdelay = new int[im.length];</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">			for(int i=0; i&lt;newdelay.length;i++)</span>
+<span class="fc" id="L77">				newdelay[i] = d[i%d.length];</span>
+<span class="fc" id="L78">			d = newdelay;</span>
+		}
+<span class="fc" id="L80">		image = im;</span>
+<span class="fc" id="L81">		delay = d;</span>
+		//length=im.length;
+
+<span class="fc" id="L84">	}</span>
+	
+	// overloaded constructor takes image array and single delay for all images
+	/**
+	 * calls the private constructor, then sets delays and images. 
+	 * @param im array of images that will represent the animation frame
+	 * @param d shared delay for all frames
+	 * @see #Animation()
+	 */
+	public Animation(Image[] im, int d) {
+<span class="fc" id="L94">		this();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (d &lt;= 0)</span>
+<span class="fc" id="L96">			d = 1;//TODO test for 0 </span>
+<span class="fc" id="L97">		int[] delay = new int[im.length]; /// </span>
+
+<span class="fc bfc" id="L99" title="All 2 branches covered.">		for (int i = 0; i &lt; delay.length; i++)</span>
+<span class="fc" id="L100">			delay[i] = d;</span>
+
+<span class="fc" id="L102">		image = im;</span>
+<span class="fc" id="L103">		this.delay = delay;</span>
+<span class="fc" id="L104">	}</span>
+/**
+ * Creates an animation object of images passed with no delay (delay =1)
+ * @param im array of images that will represent the animation frame
+ * {@link #Animation(Image[], int)}
+ */
+	public Animation(Image[] im) {
+<span class="fc" id="L111">		this(im, 1);</span>
+<span class="fc" id="L112">	}</span>
+
+	// ##### GET~TERS #####
+/**
+ * The returned image is based three many factors such as loop, once and isReversed. 
+ * &lt;p&gt;As for loop,  if it's true, the images can change(move next or previous)&lt;/p&gt;
+ * &lt;p&gt;As for once, if it's false, the animation will reset after reaching last frame &lt;/p&gt;
+ * &lt;p&gt;As for isRevered, if it's true, the animation will move backwards   &lt;/p&gt;
+ * @return image returns an image of a frame every time it gets called
+ */
+	public Image getNextFrame() { 
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">		if (loop)</span>
+<span class="fc" id="L124">			timer++;</span>
+		
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">		int nxt = (isReversed)? -1: 1; </span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">		if (timer == delay[frame]) {</span>
+<span class="nc" id="L128">			timer = 0;</span>
+<span class="nc bnc" id="L129" title="All 4 branches missed.">			if (frame + nxt == image.length || frame + nxt == -1) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">				if (once) {</span>
+<span class="nc" id="L131">					timer--;</span>
+<span class="nc" id="L132">					return image[frame];</span>
+				}// once
+<span class="nc bnc" id="L134" title="All 2 branches missed.">				if(isReversed)</span>
+<span class="nc" id="L135">					frame = image.length-1;</span>
+				else
+<span class="nc" id="L137">				frame = 0;</span>
+			}// frame+1
+			else
+<span class="nc" id="L140">				frame+= nxt;</span>
+		}// timer==
+		
+<span class="fc" id="L143">		return image[frame];</span>
+	}
+	/**
+	 * draws an image using g at x and y 
+	 * @param g
+	 * @param x
+	 * @param y
+	 */
+	public void drawNextFrame(Graphics g, int x, int y){
+<span class="nc" id="L152">		g.drawImage(getNextFrame(), x, y, null);</span>
+<span class="nc" id="L153">	}</span>
+	/**
+	 * 
+	 * @param g Graphics 
+	 * @param x Integer x position  
+	 * @param y Integer y position 
+	 * @param w width  of the image 
+	 * @param h height of the image
+	 */
+	public void drawNextFrame(Graphics g, int x, int y, int w, int h){
+<span class="nc" id="L163">		g.drawImage(getNextFrame(), x, y,w,h, null);</span>
+<span class="nc" id="L164">	}</span>
+	 
+	
+	
+/**
+ * 
+ * @return a copy of the animation object
+ */
+	public Animation clone() {
+	
+		Animation ani;
+		try {
+<span class="fc" id="L176">			ani = new Animation(image, delay);</span>
+<span class="fc" id="L177">			ani.setLoop(loop);</span>
+<span class="fc" id="L178">			ani.setLoopOnce(once);</span>
+<span class="fc" id="L179">			ani.setReversed(isReversed);</span>
+<span class="fc" id="L180">			ani.setFrame(frame);</span>
+<span class="fc" id="L181">			return ani;</span>
+<span class="nc" id="L182">		} catch (Exception e) {</span>
+<span class="nc" id="L183">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L185">		return null;</span>
+	}
+	/**
+	 * frame could be any positive or negative value that could exceed the length. 
+	 * @param frame  frame number 
+	 * @return image frame of that index 
+	 */
+	public Image getImageAt(int frame) {
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		boolean nega = frame&lt;0;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L195">			frame=0-frame;// &gt;:/</span>
+<span class="fc" id="L196">		frame %= length();</span>
+			
+<span class="fc bfc" id="L198" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L199">			frame = length() - frame;</span>
+	
+<span class="fc" id="L201">		return image[frame];</span>
+	}
+
+	/**
+	 * 
+	 * @return current image
+	 */
+	public Image getCurrentImage() {
+<span class="fc" id="L209">		return image[frame];</span>
+	}
+/**
+ * 
+ * @return number of frames 
+ */
+	
+	public int length() {
+<span class="fc" id="L217">		return image.length;</span>
+	}
+
+	/**
+	 * not tested yet
+	 * @return a copy of the frames 
+	 */
+	public Image[] getImageArray() {
+<span class="fc" id="L225">		return image.clone();</span>
+	}
+	/**
+	 * frame could be any positive or negative value that could exceed the length. 
+	 * @param frame frame number
+	 * @return int value of the frame delay
+	 */
+	public int getDelayAt(int frame){
+<span class="fc bfc" id="L233" title="All 2 branches covered.">		boolean nega = frame&lt;0;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L235">			frame=0-frame;// &gt;:/</span>
+<span class="fc" id="L236">		frame %= length();</span>
+			
+<span class="fc bfc" id="L238" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L239">			frame = length() - frame;</span>
+		
+<span class="fc" id="L241">		return delay[frame];</span>
+	}
+	/**
+	 * not tested yet 
+	 * @return a copy of frame delays 
+	 */
+	public int[] getDelayArray(){
+<span class="fc" id="L248">		return delay.clone();</span>
+	}
+	/**
+	 * 
+	 * @return current frame int value
+	 */
+	public int getCurrentFrame(){
+<span class="fc" id="L255">		return frame; </span>
+	}
+/**
+ * 
+ * @return loop value
+ * @see #loop
+ */
+	public boolean isLooping() {
+<span class="fc" id="L263">		return loop;</span>
+	}
+	/**
+	 * 
+	 * @return isReversed value 
+	 * @see #isReversed
+	 */
+	public boolean isReversed(){
+<span class="fc" id="L271">		return isReversed;</span>
+	}
+	
+	// ##### SET~TERS ######
+
+	/*
+	 * just create an new object
+	public void setAnimation(Animation ani){
+		image = ani.getImageArray();
+		delay = ani.getDelayArray();
+		frame = ani.getCurrentFrame();
+	}
+*/
+	
+	/**
+	 * @param im replacement of old images. 
+	 * @throws Exception length of the images doesn't match old images 
+	 */
+	public void setImages(Image[] im) throws Exception {
+<span class="fc bfc" id="L290" title="All 2 branches covered.">		if (this.length() == im.length)</span>
+<span class="fc" id="L291">			image = im;</span>
+		else
+<span class="fc" id="L293">			throw new Exception(String.format(&quot;Array length doesn't &quot;</span>
+<span class="fc" id="L294">					+ &quot;match: input %d != current %d&quot;, im.length, image.length));</span>
+<span class="fc" id="L295">	}</span>
+
+	
+	/**
+	 * frame could be any positive or negative value that could exceed the length. 
+	 * @param frame frame number  
+	 */
+	public void setFrame(int frame) {
+<span class="fc bfc" id="L303" title="All 2 branches covered.">		boolean nega = frame&lt;0;</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L305">			frame=0-frame;// &gt;:/</span>
+<span class="fc" id="L306">		frame %= length();</span>
+			
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		if(nega)</span>
+<span class="fc" id="L309">			frame = length() - frame;</span>
+		
+<span class="fc" id="L311">		this.frame = frame;</span>
+<span class="fc" id="L312">	}</span>
+/**
+ * @param d delays replacement 
+ * @throws Exception new length doesn't match the old one
+ */
+	public void setDelays(int[] d) throws Exception {
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">		if (d.length == d.length)</span>
+<span class="fc" id="L319">			delay = d;</span>
+		else
+<span class="nc" id="L321">			throw new Exception(String.format(&quot;Array length doesn't &quot;</span>
+<span class="nc" id="L322">					+ &quot;match: input %d != current %d&quot;, d.length, image.length));</span>
+
+<span class="fc" id="L324">	}</span>
+/**
+ * sets all delays to a single value 
+ * @param d delay value
+ */
+	public void setDelays(int d) {
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">		if (d &lt; 0)</span>
+<span class="fc" id="L331">			d = 1;</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">		for (int i = 0; i &lt; delay.length; i++)</span>
+<span class="fc" id="L333">			delay[i] = d;</span>
+<span class="fc" id="L334">	}</span>
+/**
+ * sets the value of &lt;code&gt;loop&lt;/code&gt;
+ * @param b boolean 
+ * @see #loop
+ */
+	public void setLoop(boolean b) {
+<span class="fc" id="L341">		loop = b;</span>
+<span class="fc" id="L342">	}</span>
+/**
+ * sets the value of &lt;code&gt;once&lt;/code&gt;
+ * @param b b(o.o)lean 
+ * @see #once
+ */
+	public void setLoopOnce(boolean b) {
+<span class="fc" id="L349">		once = b;</span>
+<span class="fc" id="L350">	}</span>
+	/**
+	 * sets the value of {@link #isReversed}
+	 * @param b
+	 */
+	public void setReversed(boolean b){
+<span class="fc" id="L356">		isReversed = b;</span>
+<span class="fc" id="L357">	}</span>
+	
+
+	// #### Something else
+	/**
+	 * forced the frame to move to the next frame each call. 
+	 */
+	public void goNext() {
+<span class="pc bpc" id="L365" title="1 of 2 branches missed.">		if (frame + 1 == image.length)</span>
+<span class="fc" id="L366">			frame = 0;</span>
+		else
+<span class="nc" id="L368">			frame++;</span>
+<span class="fc" id="L369">	}</span>
+	/**
+	 * forces the frame to move to the previous frame each call. 
+	 */
+	public void goPrevious() {
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">		if (frame - 1 == -1)</span>
+<span class="fc" id="L375">			frame = image.length - 1;</span>
+		else
+<span class="nc" id="L377">			frame--;</span>
+<span class="fc" id="L378">	}</span>
+	/**
+	 * Adds a new frame and delay to the animation 
+	 * @param im image
+	 * @param d  delay 
+	 */
+	public void addImage(Image im, int d){
+		Image[] newIm ;
+		int[] newDelay;
+		
+		//if(image[image.length-1]!=null)
+		//	newIm = new Image[image.length+1];
+		
+<span class="nc" id="L391">	   newIm = new Image[image.length+1]; //TODO better resizing</span>
+<span class="nc" id="L392">	   newDelay = new int[delay.length+1];</span>
+		
+<span class="nc bnc" id="L394" title="All 2 branches missed.">	   for(int i=0; i&lt; image.length;i++){</span>
+<span class="nc" id="L395">		   newIm[i]= image[i];</span>
+<span class="nc" id="L396">		   newDelay[i] = delay[i];</span>
+	   }
+<span class="nc" id="L398">		newIm[image.length] = im; </span>
+<span class="nc" id="L399">		newDelay[delay.length] = d; </span>
+		
+<span class="nc" id="L401">		image = newIm; </span>
+<span class="nc" id="L402">		delay = newDelay;</span>
+		
+<span class="nc" id="L404">	}</span>
+	
+	/**
+	 * Adds a new images with the same delay as the last frame's delay
+	 * @param im image
+	 */
+	public void addImage(Image im){
+<span class="nc" id="L411">		addImage(im, delay[length()-1]);</span>
+<span class="nc" id="L412">	}</span>
+	
+
+	//TODO resize for both Animation.image and Animation.delay 
+	private &lt;T&gt; T[] resize(T[] t){
+<span class="nc bnc" id="L417" title="All 2 branches missed.">		if(t[t.length-1]!=null){</span>
+<span class="nc" id="L418">			T[] newt = (T[])new Object[t.length];</span>
+<span class="nc bnc" id="L419" title="All 2 branches missed.">			for(int i=0; i&lt;t.length;i++){</span>
+<span class="nc" id="L420">				newt[i]=t[i];</span>
+			}
+<span class="nc" id="L422">			return newt;</span>
+		}
+<span class="nc" id="L424">		return t;</span>
+		
+	}
+	
+	
+
+}// end animation class
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>

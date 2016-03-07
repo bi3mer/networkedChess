@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Music.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">NetworkedChess (Mar 7, 2016 4:29:16 PM)</a> &gt; <a href="../../index.html" class="el_group">NetworkedChess</a> &gt; <a href="../index.html" class="el_bundle">src</a> &gt; <a href="index.source.html" class="el_package">KLD</a> &gt; <span class="el_source">Music.java</span></div><h1>Music.java</h1><pre class="source lang-java linenums">package KLD;
+
+import javax.sound.sampled.Clip;
+
+
+
+public class Music {
+
+	Clip clip; 
+<span class="nc" id="L10">	public Music(Clip c){</span>
+<span class="nc" id="L11">		clip = c;</span>
+		
+<span class="nc" id="L13">	}//end music  </span>
+	
+	public void play(){
+<span class="nc bnc" id="L16" title="All 2 branches missed.">		if(clip!=null)</span>
+<span class="nc" id="L17">			clip.start(); </span>
+<span class="nc" id="L18">	}</span>
+	
+	public void stop(){
+<span class="nc bnc" id="L21" title="All 2 branches missed.">		if(clip!=null)</span>
+<span class="nc" id="L22">			clip.stop();</span>
+<span class="nc" id="L23">	}</span>
+	
+	public void setFramePosition(int frames){
+<span class="nc" id="L26">		clip.setFramePosition(frames);</span>
+<span class="nc" id="L27">	}</span>
+	
+	public void restart(){
+<span class="nc bnc" id="L30" title="All 2 branches missed.">		if(clip!=null)</span>
+<span class="nc" id="L31">			clip.setFramePosition(0);</span>
+<span class="nc" id="L32">	}</span>
+	
+	public void loop(){
+<span class="nc" id="L35">		clip.loop(Clip.LOOP_CONTINUOUSLY);</span>
+<span class="nc" id="L36">	}</span>
+	
+	public int getFramePosition(){
+<span class="nc" id="L39">		return clip.getFramePosition();</span>
+	}
+	
+	
+	
+	
+	
+	
+}//end 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>NetworkedChess (Mar 7, 2016 4:29:16 PM)</div></body></html>
