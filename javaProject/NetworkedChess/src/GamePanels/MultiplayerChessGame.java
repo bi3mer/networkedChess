@@ -15,6 +15,8 @@ import KLD.Input;
 import KLD.Loader;
 import KLD.cmd.Command;
 import KLD.cmd.Draw;
+import KLD.cmd.TimedCommand;
+import KLD.cmd.TimedDraw;
 import intf.MovementTracker;
 import menus.MainMenu;
 import model.ChessBoard;
@@ -39,6 +41,8 @@ public class MultiplayerChessGame extends Game
 	
 	private int selectedX, selectedY; 
 	
+	private int winner; 
+	
 	private boolean whiteDead; 
 	private boolean blackDead; 
 	
@@ -50,6 +54,8 @@ public class MultiplayerChessGame extends Game
 	
 	private Rectangle undoButton; 
 	private Rectangle forfeitButton; 
+	
+	private float timer; 
 	
 	// 0 false, 7 true 
 	/**
@@ -70,17 +76,64 @@ public class MultiplayerChessGame extends Game
 	private Boolean myTurn;
 	private JSONObject previousMove;
 	
+	private int timeLimit; 
+	
 	/**
 	 * Go to main menu and destroy current game frame
 	 */
 	private void endGame()
 	{		
-		// Destroy current frame
-		GameFrame.destroy();
 		
-		// Go to main menu
-		MainMenu menu = new MainMenu();
-		menu.setVisible(true);
+		add(new TimedCommand("Gamed ended", (int)10*GameFrame.FPS) 
+		{
+			
+			@Override
+			public void draw(Graphics g)
+			{
+				g.setColor(Color.black);
+				Game.setFade(g, .8f);
+				g.fillRect(0, 0, GameFrame.width, GameFrame.height);
+				
+				Game.setFade(g, 1f);
+				
+				String outcome = ""; 
+				
+				if(winner != myTeam)
+				{
+					outcome = "You lost";
+				}
+				else
+				{
+					outcome = "You won!";
+				}
+				
+				g.setColor(Color.white);
+				g.drawString(outcome, GameFrame.width/2 - 50, GameFrame.height/2);				
+				
+			}
+			
+			@Override
+			public void deteminate()
+			{
+				super.deteminate();
+				// Destroy current frame
+				GameFrame.destroy();
+				
+				// Go to main menu
+				MainMenu menu = new MainMenu();
+				menu.setVisible(true);
+				
+			}
+
+			@Override
+			public void action() 
+			{
+				if(input.mouseIsClicked())
+					deteminate(); 
+				
+			}
+		}); 
+		
 	}
 	
 	/**
@@ -101,6 +154,37 @@ public class MultiplayerChessGame extends Game
 		this.endGame();
 	}
 	
+	private Boolean isPrevMove(JSONObject previousMove)
+	{
+		Boolean isPrevMove = true;
+		
+		try 
+		{
+			if(((JSONObject) previousMove.get("to")).getInt("x") == ((JSONObject) this.previousMove.get("to")).getInt("x"))
+			{
+				isPrevMove = false;
+			}
+			else if(((JSONObject) previousMove.get("to")).getInt("y") == ((JSONObject) this.previousMove.get("to")).getInt("y"))
+			{
+				isPrevMove = false;
+			}
+			else if(((JSONObject) previousMove.get("from")).getInt("x") == ((JSONObject) this.previousMove.get("from")).getInt("x"))
+			{
+				isPrevMove = false;
+			}
+			else if(((JSONObject) previousMove.get("from")).getInt("y") == ((JSONObject) this.previousMove.get("from")).getInt("y"))
+			{
+				isPrevMove = false;
+			}
+		} 
+		catch (JSONException e) 
+		{
+			// pass
+		}
+		
+		return isPrevMove;
+	}
+	
 	private void opponentMove(JSONObject move)
 	{
 		// Add move to board
@@ -109,6 +193,9 @@ public class MultiplayerChessGame extends Game
 			// Get form and to
 			JSONObject from = (JSONObject) move.get("from");
 			JSONObject to   = (JSONObject) move.get("to");
+			
+			System.out.println("from: " + from.toString());
+			System.out.println("to:   " + to.toString());
 			
 			cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
 			
@@ -123,8 +210,6 @@ public class MultiplayerChessGame extends Game
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
 	
 	@Override
@@ -146,6 +231,8 @@ public class MultiplayerChessGame extends Game
 		promotionTeam = 0; 
 		
 		undoRequested = 0; 
+		timer = 0; 
+		timeLimit = 100; 
 		
 		placePieces(); 
 	
@@ -182,8 +269,8 @@ public class MultiplayerChessGame extends Game
 					g.setColor(Color.gray); 
 					g.fillRect(offsetX - 150,  offsetY - 60, 200, 80);
 					
-					g.setColor(Color.black);
-					g.drawString("Awaiting response", offsetX + tileWidth*2 - 80, offsetY + tileHeight/2); 
+					g.setColor(Color.white);
+					g.drawString("Awaiting response", offsetX + 150 - 80, offsetY + 60); 
 				}
 				else //it's from the other player 
 				{
@@ -193,30 +280,56 @@ public class MultiplayerChessGame extends Game
 					
 					g.drawImage(load.loadRawImage("g/accept.png"), offsetX - 100, offsetY, 90, 40, null);
 					g.drawImage(load.loadRawImage("g/Decline.png"), offsetX + 20, offsetY, 90, 40, null);
-					
 				}
 			}
 			
 			@Override
 			protected void action() 
 			{
-				if(undoRequested == myTeam && input.mouseIsClicked())
+				if(undoRequested == -myTeam && input.mouseIsClicked())
 				{
+					Boolean inBounds = false;
+					Boolean acceptUndoRequest = true;
+					
 					if(input.isIn(new Rectangle(offsetX - 100, offsetY, 90, 40)))
 					{
 						System.out.println("accept undo");
 						//TODO accept undo
-						//cboard.untoLastMove(fromX, fromY, toX, toY);
+						inBounds = true;
 						
-						//this.deactivate();
-						this.disable();
+						try 
+						{
+							JSONObject from = previousMove.getJSONObject("from");
+							JSONObject to = previousMove.getJSONObject("to");
+							cboard.untoLastMove(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+
+							myTurn = !myTurn;
+						} 
+						catch (JSONException e) 
+						{
+							// pass
+						}
 					}
 					else if (input.isIn(new Rectangle(offsetX + 20, offsetY, 90, 40)))
 					{
 						System.out.println("no undo");
-						//decline undo 
-						//this.deactivate();
+						inBounds = true;
+						acceptUndoRequest = false;
+					}
+					
+					if(inBounds)
+					{
 						this.disable();
+						
+						try 
+						{
+							ChessPlayerController.getInstance().acceptOrDenyUndo(acceptUndoRequest);
+						} 
+						catch (JSONException | IOException | InterruptedException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
@@ -303,7 +416,9 @@ public class MultiplayerChessGame extends Game
 		this.add(boradui);
 		this.add(undoCmd);
 		this.add(forfeitCmd);
-
+		
+		// Set pervious move
+		this.previousMove = new JSONObject();
 		
 		undoCmd.disable();
 		forfeitCmd.disable();
@@ -324,6 +439,10 @@ public class MultiplayerChessGame extends Game
 		
 		g.drawString(myTurn? "My turn" : "His turn", 500, 30);
 		
+		if(myTurn)
+			g.drawString((String.format("%2d:%2d", (timeLimit-(int)timer)/60,  (timeLimit-(int)timer)%60)).replaceAll(" ", "0"), 410,30);
+		
+	 
 		if(promotionTeam !=0)
 		{
 			drawPromotionMenu(g);
@@ -333,6 +452,18 @@ public class MultiplayerChessGame extends Game
 	@Override
 	protected void update() 
 	{	
+		if(myTurn)
+		{
+			if((timer+= 1f/GameFrame.FPS) >= timeLimit)
+			{
+				forfeit();	
+			}
+		}
+		else 
+		{
+			timer = 0;
+		}
+		
 		try 
 		{
 			// Get Updates from server
@@ -343,33 +474,49 @@ public class MultiplayerChessGame extends Game
 			{
 				// Get Object
 				JSONObject update = (JSONObject) updates.get(i);
-				System.out.println(update.toString());
 				
 				// Accept or decline undo request
 				if(update.has("undo"))
 				{
+					System.out.println("Undo Called!");
+					// set request
+					this.undoRequested = 0;
+					
+					// disable undo
+					this.undoCmd.disable();
+					
+					// check if accepted
 					if(update.getBoolean("undo"))
 					{
-						System.out.println("TODO: undo request was accepted");
+						// accepted
+						JSONObject move = update.getJSONObject("move");
+						JSONObject from = move.getJSONObject("from");
+						JSONObject to = move.getJSONObject("to");
+//						this.cboard.untoLastMove(to.getInt("x"), to.getInt("y"), from.getInt("x"), from.getInt("y"));
+						this.cboard.untoLastMove(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+
+						System.out.println(from.toString() + ", " + to.toString());
+						myTurn = !myTurn;
 					}
 					else
 					{
-						System.out.println("TODO: undo request was denyed");
+						// Denied
 					}
-					
-					// TODO; disable undo menu
 				}
 				else if(update.has("undoRequest")) 
 				{
 					System.out.println("TODO: update to show undo request");
-					// TODO: enable undo request
+					this.undoRequested = -this.myTeam;
+					this.undoCmd.enable();
 				}
 				else if(update.has("forfeit"))
 				{
+					winner = myTeam;
 					this.endGame();
 				}
 				else if(update.has("move"))
 				{
+					this.previousMove = update.getJSONObject("move");
 					this.opponentMove(update.getJSONObject("move"));
 				}
 				else if(update.has("previousMove"))
@@ -378,7 +525,7 @@ public class MultiplayerChessGame extends Game
 					JSONObject prevMove = update.getJSONObject("previousMove");
 					
 					// Check move
-					if(this.previousMove != null && !this.previousMove.equals(prevMove))
+					if(this.previousMove != null && this.isPrevMove(prevMove))
 					{
 						this.previousMove = prevMove;
 						this.opponentMove(prevMove);
@@ -426,8 +573,18 @@ public class MultiplayerChessGame extends Game
 		{
 			forfeitCmd.enable(); 
 		}
-		else if(input.isIn(undoButton))
+		else if(input.isIn(undoButton) && !this.myTurn)
 		{
+			try 
+			{
+				ChessPlayerController.getInstance().requestUndo();
+			} 
+			catch (JSONException | IOException | InterruptedException e) 
+			{
+				// pass
+			}
+			
+			undoRequested = this.myTeam;
 			undoCmd.enable(); 
 		}
 		else if(input.mouseIsClicked())
@@ -479,14 +636,9 @@ public class MultiplayerChessGame extends Game
 		
 		//update check and check mate 
 		if((whiteDead = marker.isThreatened()))
-			if(marker.isCheckMate(1))
+			if(marker.isCheck(1))
 			{
-				blackMessage = "Checkmate!";
-			
-				if(this.myTeam == 1)
-				{
-					this.forfeit();
-				}
+				blackMessage = "Check...";
 			}
 			else
 				blackMessage = "Check.."; 
@@ -497,14 +649,9 @@ public class MultiplayerChessGame extends Game
 		marker.calebrate(-1);
 		
 		if((blackDead = marker.isThreatened()))
-			if(marker.isCheckMate(-1))
+			if(marker.isCheck(-1))
 			{
-				whiteMessage = "Checkmate!";
-				
-				if(this.myTeam == -1)
-				{
-					this.forfeit();
-				}
+				whiteMessage = "Check..";
 			}
 			else 
 				whiteMessage = "Check.."; 
@@ -513,18 +660,25 @@ public class MultiplayerChessGame extends Game
 		
 		
 		// calibrate the other team 
-		int team = cboard.teamAt(x, y); 
-		if(marker.didLose(team))
+		
+		if(marker.didLose(1))
 		{
-			if(team == 1)
+			winner = -1; 
+			if(this.myTeam == 1)
 			{
-				whiteMessage = "Lost!"; 
-				blackMessage = "Won!";
-			}	
-			else
+				forfeit(); 
+			}
+		}
+		
+		marker.calebrate(-1); 
+		
+		if(marker.didLose(-1))
+		{
+			winner = 1;
+			
+			if(this.myTeam == -1)
 			{
-				whiteMessage = "Won!"; 
-				blackMessage = "Lost!";
+				forfeit(); 
 			}
 		}
 	}
@@ -536,7 +690,7 @@ public class MultiplayerChessGame extends Game
 			return;
 		}
 		
-		y = Math.abs(reverse-y); 
+		y = Math.abs(reverse-y);
 		
 		// Check tile
 		if(mboard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE && this.myTeam == cboard.teamAt(selectedX, selectedY))
@@ -561,6 +715,11 @@ public class MultiplayerChessGame extends Game
 				to.put("x", x);
 				to.put("y", y);
 				
+				// Create and set new prev move
+				this.previousMove = new JSONObject();
+				this.previousMove.put("from", from);
+				this.previousMove.put("to", to);
+
 				// Send object to server
 				JSONObject status = ChessPlayerController.getInstance().addMove(from, to);
 				System.out.println(status.toString());

@@ -106,7 +106,12 @@ public class ChessBoard extends Board
 	 */
 	public void untoLastMove(int fromX, int fromY, int toX, int toY)
 	{
-		setTileValue(fromX, fromX, getTileValue(toX, toY)); 
+		System.out.println("From: " + fromX + ", " + fromY);
+		System.out.println("to: " + toX + ", " + toY);
+		
+		System.out.println("killed: " + lastKilled);
+		
+		setTileValue(fromX, fromY, getTileValue(toX, toY)); 
 		setTileValue(toX, toY, lastKilled);
 	}
 
