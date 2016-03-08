@@ -47,6 +47,6 @@ public class Launcher
 		//adding a title to the game frame. 
 		GameFrame.setTitle("Chess Game");
 		GameFrame.setResizable(false);
-		GameFrame.FPS = 30; 
+		GameFrame.FPS = 10; 
 	}
 }
