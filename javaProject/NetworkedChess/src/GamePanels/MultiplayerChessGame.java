@@ -535,7 +535,8 @@ public class MultiplayerChessGame extends Game
 				to.put("y", y);
 				
 				// Send object to server
-				ChessPlayerController.getInstance().addMove(from, to);
+				JSONObject status = ChessPlayerController.getInstance().addMove(from, to);
+				System.out.println(status.toString());
 			} 
 			catch (JSONException | IOException | InterruptedException e) 
 			{
