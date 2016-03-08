@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.json.JSONException;
@@ -23,6 +24,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class Queue extends JFrame {
 
@@ -62,9 +64,9 @@ public class Queue extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		JButton btnCancel = new JButton("Cancel");		//Queue Cancel button
+		btnCancel.setBounds(100, 70, 97, 25);
 		btnCancel.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -86,14 +88,33 @@ public class Queue extends JFrame {
 				}
 			}
 		});
+		contentPane.setLayout(null);
 		
+		JLabel time = new JLabel("");
+		time.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		time.setBounds(164, 44, 56, 16);
+		contentPane.add(time);
+		contentPane.add(btnCancel); //timer
 		
-		btnCancel.setBounds(100, 70, 97, 25);
-		contentPane.add(btnCancel);
+		class Counter{
+		int timer = 0;
+		}
+		Counter counted = new Counter();
+		ActionListener listun = new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				counted.timer+=1;
+				time.setText(Integer.toString(counted.timer));
+			}
+			
+		};
+		Timer rimer = new Timer(1000,listun);
+		rimer.start();
 		
 		JLabel label = new JLabel("");
-		label.setIcon(new ImageIcon(Queue.class.getResource("/graphics/Queue.png")));
 		label.setBounds(0, 0, 299, 108);
+		label.setIcon(new ImageIcon(Queue.class.getResource("/graphics/Queue.png")));
 		contentPane.add(label);		//background
 		
 		try 
