@@ -378,8 +378,9 @@ public class MultiplayerChessGame extends Game
 					JSONObject prevMove = update.getJSONObject("previousMove");
 					
 					// Check move
-					if(this.previousMove.equals(prevMove))
+					if(this.previousMove != null && !this.previousMove.equals(prevMove))
 					{
+						this.previousMove = prevMove;
 						this.opponentMove(prevMove);
 					}
 				}

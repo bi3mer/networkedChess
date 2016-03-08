@@ -150,9 +150,6 @@
 		 * @param {function} callback  - Response object to send back to request
 		 */
 		getUpdate: function(id, user, callback) {
-			/*
-								Update time end game
-			*/
 			console.log(fileName, 'getUpdate: entered function with id: ' + id);
 
 			Game.findOne(createIDQuery(id), function getGameUpdate(err, game) {
@@ -169,21 +166,24 @@
 						console.log(fileName, 'getUpdate: return blackPlayer updates');
 
 						// get black player moves
-						updates = game.blackPlayerUpdates;
+						updates = game.blackPlayerUpdates.slice(0);
 						playerType = "blackPlayerUpdates";
 					} else {
 						console.log(fileName, 'getUpdate: return whitePlayer updates');
 
 						// Return white player moves
-						updates = game.whitePlayerUpdates;
+						updates = game.whitePlayerUpdates.slice(0);
 						playerType = "whitePlayerUpdates";
 					}
 
 					// Add rcent move to updates
 					updates.push({'previousMove': game.moves[game.moves.length - 1]});
 
+					console.log('update str: ' + JSON.stringify({'previousMove': game.moves[game.moves.length - 1]}));
+					console.log('game: ' + JSON.stringify(updates));
+
 					// Send updates to user
-					callback(false, update, game.gameOver);
+					callback(false, updates, game.gameOver);
 
 					// Empty array of objects for player, for next call
 					resetUpdatesForPlayer(id, playerType);
