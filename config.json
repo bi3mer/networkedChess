@@ -44,7 +44,7 @@
 		"player": {
 			"path": "./playerDBMongo",
 			"mongo": {
-				"url": "mongodb://cs451user:cs451user@ds023458.mlab.com:23458/451projecttest",
+				"url": "mongodb://localhost/player",
 				"settings": {
 					"db": { 
 						"native_parser": true 
@@ -59,7 +59,7 @@
 		"game": {
 			"path": "./gameDBMongo",
 			"mongo": {
-				"url": "mongodb://cs451user:cs451user@ds023458.mlab.com:23458/451projecttest",
+				"url": "mongodb://localhost/game",
 				"settings": {
 					"db": { 
 						"native_parser": true 

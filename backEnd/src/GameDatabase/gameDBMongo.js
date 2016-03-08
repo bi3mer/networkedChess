@@ -162,21 +162,28 @@
 
 					// Used to reset db updates after being initiailized
 					var playerType;
+					var updates;
 
 					// Return updates for proper player
 					if(game.blackPlayer === user) {
 						console.log(fileName, 'getUpdate: return blackPlayer updates');
 
-						// Return black player errors
-						callback(false, game.blackPlayerUpdates, game.gameOver);
+						// get black player moves
+						updates = game.blackPlayerUpdates;
 						playerType = "blackPlayerUpdates";
 					} else {
 						console.log(fileName, 'getUpdate: return whitePlayer updates');
 
 						// Return white player moves
-						callback(false, game.whitePlayerUpdates, game.gameOver);
+						updates = game.whitePlayerUpdates;
 						playerType = "whitePlayerUpdates";
 					}
+
+					// Add rcent move to updates
+					updates.push({'previousMove': game.moves[game.moves.length - 1]});
+
+					// Send updates to user
+					callback(false, update, game.gameOver);
 
 					// Empty array of objects for player, for next call
 					resetUpdatesForPlayer(id, playerType);

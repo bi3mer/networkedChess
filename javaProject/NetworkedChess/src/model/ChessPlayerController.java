@@ -19,7 +19,8 @@ public class ChessPlayerController
 	
 	private int playerTeam; 
 	
-	private String host = "http://serene-stream-56878.herokuapp.com";
+//	private String host = "http://serene-stream-56878.herokuapp.com";
+	private String host = "http://localhost:3000";
 	
 	// TODO: use config file for these in the future
 	private String createAccount = "/createAccount";

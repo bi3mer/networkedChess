@@ -68,6 +68,7 @@ public class MultiplayerChessGame extends Game
 	private int myTeam;
 	private String myTurnString;
 	private Boolean myTurn;
+	private JSONObject previousMove;
 	
 	/**
 	 * Go to main menu and destroy current game frame
@@ -98,6 +99,32 @@ public class MultiplayerChessGame extends Game
 		}
 		
 		this.endGame();
+	}
+	
+	private void opponentMove(JSONObject move)
+	{
+		// Add move to board
+		try 
+		{
+			// Get form and to
+			JSONObject from = (JSONObject) move.get("from");
+			JSONObject to   = (JSONObject) move.get("to");
+			
+			cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+			
+			// Check for checkmate and check and handle
+			this.checkMate(to.getInt("x"), to.getInt("y"));
+			
+			// Opponent has made move, so I can now make a move
+			this.myTurn = true;
+		} 
+		catch (JSONException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	@Override
@@ -324,7 +351,6 @@ public class MultiplayerChessGame extends Game
 					if(update.getBoolean("undo"))
 					{
 						System.out.println("TODO: undo request was accepted");
-						
 					}
 					else
 					{
@@ -344,18 +370,18 @@ public class MultiplayerChessGame extends Game
 				}
 				else if(update.has("move"))
 				{
-					// Opponent has made move, so I can now make a move
-					this.myTurn = true;
+					this.opponentMove(update.getJSONObject("move"));
+				}
+				else if(update.has("previousMove"))
+				{
+					// get move
+					JSONObject prevMove = update.getJSONObject("previousMove");
 					
-					// Get form and to
-					JSONObject from = (JSONObject) ((JSONObject) update.get("move")).get("from");
-					JSONObject to   = (JSONObject) ((JSONObject) update.get("move")).get("to");
-					
-					// Add move to board
-					cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
-					
-					// Check for checkmate and check and handle
-					this.checkMate(to.getInt("x"), to.getInt("y"));
+					// Check move
+					if(this.previousMove.equals(prevMove))
+					{
+						this.opponentMove(prevMove);
+					}
 				}
 			}
 		} 
