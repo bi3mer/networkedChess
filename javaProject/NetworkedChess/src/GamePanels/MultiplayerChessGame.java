@@ -66,6 +66,7 @@ public class MultiplayerChessGame extends Game
 	
 	private String otherPlayer;
 	private int myTeam;
+	private String myTurnString;
 	private Boolean myTurn;
 	
 	/**
@@ -107,6 +108,7 @@ public class MultiplayerChessGame extends Game
 	
 		whiteMessage = ""; 
 		blackMessage = ""; 
+		myTurnString = "";
 		
 		cboard = new ChessBoard(); 
 		mboard= new MobilityBoard(cboard); 
@@ -228,8 +230,14 @@ public class MultiplayerChessGame extends Game
 						// Forfeit
 						forfeit();
 					}
+					else if (input.isIn(new Rectangle(offsetX + 20, offsetY, 90, 40)))
+					{
+						System.out.println("nope");
+						//decline undo 
+						//this.deactivate();
+						this.disable();
+					}
 				}
-				
 			}
 		};
 		
@@ -286,7 +294,9 @@ public class MultiplayerChessGame extends Game
 
 		g.drawString(whiteMessage, 200, 20);
 		g.drawString(blackMessage, 200, 40);
-
+		
+		g.drawString(myTurn? "My turn" : "His turn", 500, 30);
+		
 		if(promotionTeam !=0)
 		{
 			drawPromotionMenu(g);
@@ -306,22 +316,27 @@ public class MultiplayerChessGame extends Game
 			{
 				// Get Object
 				JSONObject update = (JSONObject) updates.get(i);
+				System.out.println(update.toString());
 				
-				// Check for the kind of update
+				// Accept or decline undo request
 				if(update.has("undo"))
 				{
 					if(update.getBoolean("undo"))
 					{
 						System.out.println("TODO: undo request was accepted");
+						
 					}
 					else
 					{
 						System.out.println("TODO: undo request was denyed");
 					}
+					
+					// TODO; disable undo menu
 				}
 				else if(update.has("undoRequest")) 
 				{
 					System.out.println("TODO: update to show undo request");
+					// TODO: enable undo request
 				}
 				else if(update.has("forfeit"))
 				{
@@ -489,10 +504,15 @@ public class MultiplayerChessGame extends Game
 	
 	public void boardClicked(int x, int y)
 	{
+		if(!this.myTurn)
+		{
+			return;
+		}
+		
 		y = Math.abs(reverse-y); 
 		
 		// Check tile
-		if(mboard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE)
+		if(mboard.getTileValue(x, y) > MobilityBoard.MARK_INVISIBLE && this.myTeam == cboard.teamAt(selectedX, selectedY))
 		{
 			
 			// I've made move, so I have to wait for opponent
