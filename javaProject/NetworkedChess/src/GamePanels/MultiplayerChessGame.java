@@ -55,6 +55,9 @@ public class MultiplayerChessGame extends Game
 	private Rectangle undoButton; 
 	private Rectangle forfeitButton; 
 	
+	private int xx; 
+	private int yy; 
+	
 	private float timer; 
 	
 	// 0 false, 7 true 
@@ -197,10 +200,15 @@ public class MultiplayerChessGame extends Game
 			System.out.println("from: " + from.toString());
 			System.out.println("to:   " + to.toString());
 			
-			cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x"), to.getInt("y"));
+			cboard.movePiece(from.getInt("x"), from.getInt("y"), to.getInt("x")%8, to.getInt("y"));
 			
 			// Check for checkmate and check and handle
-			this.checkMate(to.getInt("x"), to.getInt("y"));
+			this.checkMate(to.getInt("x")%8, to.getInt("y"));
+			
+			if(to.getInt("x")/8 > 0)
+			{
+				cboard.setTileValue(to.getInt("x")%8, to.getInt("y"), -myTeam*to.getInt("x")/8); 
+			}
 			
 			// Opponent has made move, so I can now make a move
 			this.myTurn = true;
@@ -553,9 +561,42 @@ public class MultiplayerChessGame extends Game
 				
 				int x = ((Input.point.x - offsetX) / tileWidth); 
 				
-				cboard.setTileValue(selectedX, selectedY, pieces[x]); 
+				cboard.setTileValue(selectedX,selectedY, myTeam*pieces[x]); 
+				cboard.movePiece(selectedX, selectedY, xx, yy); 
 				
-				marker.calebrate(cboard.teamAt(selectedX, selectedY)); 
+				//cboard.setTileValue(xx,yy, myTeam*pieces[x]); 
+				
+				// Add move to board
+				JSONObject from = new JSONObject();
+				JSONObject to = new JSONObject();
+				try 
+				{
+					// create from object
+					from.put("x", selectedX);
+					from.put("y", selectedY);
+					
+					// Create to object
+					to.put("x", xx+(8*pieces[x]));
+					to.put("y", yy);
+					
+					// Create and set new prev move
+					this.previousMove = new JSONObject();
+					this.previousMove.put("from", from);
+					this.previousMove.put("to", to);
+
+					// Send object to server
+					JSONObject status = ChessPlayerController.getInstance().addMove(from, to);
+					System.out.println(status.toString());
+				} 
+				catch (JSONException | IOException | InterruptedException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					
+				
+				
+				//marker.calebrate(cboard.teamAt(selectedX, selectedY)); 
 				
 				//TODO server sent pieces[x] to finalize promotion 
 				
@@ -702,6 +743,15 @@ public class MultiplayerChessGame extends Game
 			//rook or king moved notifications 
 			int notification =	cboard.movePiece(selectedX, selectedY, x, y);
 
+			if(cboard.getPiece(x, y) == Piece.TYPE_PAWN && y%7==0)
+			{
+				promotionTeam = cboard.teamAt(x, y); 
+				xx = x; 
+				yy = y; 
+				mboard.reset();
+				return; 
+			}
+			
 			// Add move to board
 			JSONObject from = new JSONObject();
 			JSONObject to = new JSONObject();
@@ -730,11 +780,7 @@ public class MultiplayerChessGame extends Game
 				e.printStackTrace();
 			}
 				
-			if(cboard.getPiece(x, y) == Piece.TYPE_PAWN && y%7==0)
-			{
-				promotionTeam = cboard.teamAt(x, y); 
-			}
-		
+
 			//notify mobility to adjust castling 
 			if (notification > 0)
 			{
@@ -775,10 +821,10 @@ public class MultiplayerChessGame extends Game
 		g.fillRect(offsetX, offsetY, tileWidth*4, tileHeight);
 		
 		//TODO chnage to == myTeam
-		if(promotionTeam == 1)
+		if(promotionTeam == myTeam)
 			for(int i=0; i<pieces.length; i++)
 			{
-				int pieceIndex = 2*pieces[i] - (cboard.teamAt(selectedX, selectedY) > 0? 0 : 1); 
+				int pieceIndex = (2*pieces[i] - (myTeam==1? 0 : 1) ); 
 				
 				//draw tiles
 				 g.drawImage(PieceImageFactory.Instnece().factor(pieceIndex), offsetX+i*tileWidth, offsetY,tileWidth, tileHeight, null); 
